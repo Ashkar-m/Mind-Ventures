@@ -22,5 +22,5 @@ EXPOSE 5173
 # Expose port 4173 for Vite's production preview server
 EXPOSE 4173
 
-# Serve the built application (using Vite's preview for simplicity)
-CMD ["npm", "run", "preview"]
+# Serve the Vite build output
+CMD ["serve", "-s", "dist", "-l", "5000"]
