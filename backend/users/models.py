@@ -2,8 +2,9 @@ from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.contrib.auth.base_user import BaseUserManager
 from django.utils.text import slugify
-from django.utils.transalation import gettext_lazy as _
-
+from django.utils.translation import gettext_lazy as _
+from phonenumber_field.modelfields import PhoneNumberField
+    
 # Create your models here.
 
 class UserAccountManager(BaseUserManager):
@@ -58,4 +59,53 @@ class UserAccountManager(BaseUserManager):
         
         return self.create_user(email,password,**extra_fields)
 
-        
+class UserAccount(AbstractUser):
+    """
+    user model with id and role based differentiation
+    """
+
+    # Three type of users
+    STUDENT = 'student'
+    MENTOR = 'mentor'
+    ADMIN = 'admin'
+
+    role_choices = [(STUDENT,'Student'),(MENTOR,'Mentor'),(ADMIN,'Admin')]
+    role = models.CharField(max_length=10,choices=role_choices)
+    first_name = models.CharField(max_length=200)
+    last_name = models.CharField(max_length=200)
+    username = models.CharField(max_length=100,blank=True,unique=True)
+    email = models.EmailField(_('email address'),unique=True)
+    phone_number = PhoneNumberField(blank=True)
+    is_active = models.BooleanField(default=True)
+    is_superuser = models.BooleanField(default=True)
+    is_staff = models.BooleanField(default=True)
+    is_verified = models.BooleanField(default=True)
+    date_joined = models.DateTimeField(auto_now_add=True)
+    USERNAME_FIELD = "email"
+    REQUIRED_FIELDS = "first_name"
+
+    # Link the custom user manager
+    objects = UserAccountManager()
+
+    class Meta:
+        verbose_name = 'user'
+        verbose_name_plural = 'users'
+    
+     # Add unique related_name for groups and user_permissions
+    groups = models.ManyToManyField(
+        'auth.Group',
+        related_name='useraccount_set',  # Unique related_name
+        blank=True,
+        help_text='The groups this user belongs to.',
+        verbose_name='groups',
+    )
+    user_permissions = models.ManyToManyField(
+        'auth.Permission',
+        related_name='useraccount_set',  # Unique related_name
+        blank=True,
+        help_text='Specific permissions for this user.',
+        verbose_name='user permissions',
+    )
+
+    def __str__(self):
+        return f"{self.username}"
