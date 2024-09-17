@@ -9,6 +9,8 @@ from rest_framework.decorators import api_view
 from django.core.cache import cache
 from rest_framework.views import APIView
 from django.contrib.auth import authenticate
+from django.contrib.auth.models import User
+
 
 import os
 import random
@@ -33,11 +35,9 @@ class LoginView(APIView):
     def post(self, request):
         serializer = LoginSerializer(data=request.data)
         if serializer.is_valid():
-            user = authenticate(username=serializer.validate_data['username'], password=serializer.validate_data['password'])
-            if user is not None:
+                user = serializer.validated_data['user']
+
                 return Response({"message": "Login succefully"}, status=status.HTTP_200_OK)
-            else:
-                return Response({"message": "Invalid credentials"}, status=status.HTTP_400_BAD_REQUEST)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
