@@ -3,11 +3,12 @@ from django.contrib.auth.models import User
 from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from dotenv import load_dotenv
+from django.contrib.auth import get_user_model
+
 from . models import UserAccount
 
 import os
 
-from django.contrib.auth import get_user_model
 
 User = get_user_model()
 

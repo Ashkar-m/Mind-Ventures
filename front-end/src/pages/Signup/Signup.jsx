@@ -15,11 +15,11 @@ const Signup = () => {
 const { accessToken } = useSelector(state => state.auth )
 const navigate = useNavigate()
 
-useEffect( () => {
-    if (accessToken) {
-        navigate('/register')
-    }
-}, [])
+// useEffect( () => {
+//     if (accessToken) {
+//         navigate('/register')
+//     }
+// }, [])
 
 const handleSubmit = async (e) => {
     e.preventDefaul()
@@ -57,17 +57,17 @@ const handleSubmit = async (e) => {
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                 
                 <div className='form-row'>
-                    <div>
+                    {/* <div>
                     <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="username">Username</label>
                     <input type="text" id='username' name='username' required onChange={(e) => setUsername(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
 
-                    </div>
-                    <div>
+                    </div> */}
+                    {/* <div>
                     <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="fullname">Bio</label>
                     <input type="text" id='fullname' name='fullname' required onChange={(e) => setFullname(e.target.value)}
                     className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
-                    </div>
+                    </div> */}
                     <div>
                     <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="password">Password</label>
                     <input type="password" id='password' name='password' required onChange={(e) => setPassword(e.target.value)}

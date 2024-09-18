@@ -24,13 +24,23 @@ const handleSubmit = async (e) => {
     }
 
     try {
-        const tokenData = await login(e.target.email.value, e.target.password.value)
-        await getProfile()
-        if (tokenData.is_superuser) {
-            navigate ('/adminpanel')
+        const email = e.target.email.value;  // Accesses the value of the 'email' input
+        const password = e.target.password.value;  // Accesses the value of the 'password' input
+  
+        const tokenData = await login(email,password)
+        // await getProfile()
+        // if (tokenData.is_superuser) {
+        //     navigate ('/adminpanel')
+        // } else {
+        //     navigate ('/login')
+        // }
+        if (tokenData) {
+            navigate('/')
         } else {
-            navigate ('/login')
+            console.error('Login failed');
+            
         }
+        
     } catch (error) {
         console.log(error);
         window.alert(error);
@@ -47,11 +57,11 @@ return (
                 <form className='space-y-6' onSubmit={handleSubmit}>
 
                 <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="email">Email</label>
-                <input type="email" id="email" required 
+                <input type="email" id="email" name='email'  
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
 
                 <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="password">Password</label>
-                <input type="password" id="password" required
+                <input type="password" id="password" name='password' 
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
 
                 <button className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"

@@ -6,7 +6,7 @@ const baseUrl='http://127.0.0.1:8000';
 
 const login = async (email,password) => {
     try {
-        const response = await axios.post(`${baseUrl}/users/api/token`,{
+        const response = await axios.post(`${baseUrl}/users/token/`,{
             email,password
         });
 
@@ -36,15 +36,15 @@ const login = async (email,password) => {
         
         return tokenData;
     }
-    } catch(error) {
-        console.error('Error loging in ', error);
+    } catch (error) {
+        console.error ('Error loging in ', error);
         return null;
     }
 };
 
 const signUp = async (email, username, fullname, password, password2) => {
     try {
-        const response = await axios.post(`${baseUrl}/users/api/register/`,{
+        const response = await axios.post(`${baseUrl}/users/register/`,{
             email, username, password, password2, fullname });
         if (response.status >= 200 && response.status < 300) {
             window.alert('User registered successfully');
