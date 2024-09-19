@@ -42,10 +42,10 @@ const login = async (email,password) => {
     }
 };
 
-const signUp = async (email, username, password, password2) => {
+const signUp = async (email, username, password, password2, role) => {
     try {
         const response = await axios.post(`${baseUrl}/users/register/`,{
-            email, username, password, password2 });
+            email, username, password, password2, role });
         if (response.status >= 200 && response.status < 300) {
             window.alert('User registered successfully');
         } else {
