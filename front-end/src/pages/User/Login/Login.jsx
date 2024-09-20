@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import './Login.css';
-import { login } from '../../components/auth/authService';
+import { login } from '../../../components/auth/authService';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
 

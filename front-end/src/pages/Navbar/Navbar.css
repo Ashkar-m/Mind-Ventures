@@ -1,0 +1,93 @@
+/* Navbar container */
+nav {
+    background-color: #2563eb; /* Blue color from Tailwind's bg-blue-600 */
+}
+
+/* Navbar items container */
+nav .mx-auto {
+    max-width: 7xl; /* Tailwind's max-w-7xl */
+    padding-left: 0.5rem; /* Tailwind's px-2 */
+    padding-right: 0.5rem; /* Tailwind's px-2 */
+}
+
+/* Navbar header */
+nav .relative {
+    height: 4rem; /* Tailwind's h-16 */
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* Mobile menu button */
+nav .sm:hidden button {
+    background-color: transparent;
+    border: none;
+}
+
+/* Mobile menu button icon */
+nav .sm:hidden svg {
+    color: #9ca3af; /* Tailwind's text-gray-400 */
+}
+
+/* Navigation links */
+nav .hidden.sm\\:ml-6 {
+    display: flex;
+    gap: 1rem; /* Tailwind's space-x-4 */
+}
+
+nav .hidden.sm\\:ml-6 a {
+    padding: 0.5rem 1rem; /* Tailwind's px-3 py-2 */
+    text-decoration: none;
+    color: #e5e7eb; /* Tailwind's text-gray-300 */
+}
+
+nav .hidden.sm\\:ml-6 a.bg-gray-900 {
+    background-color: #1f2937; /* Tailwind's bg-gray-900 */
+    color: #ffffff; /* Tailwind's text-white */
+}
+
+/* Dropdown button */
+nav .relative button {
+    background-color: #374151; /* Tailwind's bg-gray-800 */
+}
+
+/* Dropdown menu */
+nav .relative .absolute {
+    background-color: #ffffff; /* Tailwind's bg-white */
+    border: 1px solid #d1d5db; /* Tailwind's ring-1 */
+    border-radius: 0.375rem; /* Tailwind's rounded-md */
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Tailwind's shadow-lg */
+}
+
+/* Mobile menu */
+nav .sm\\:hidden {
+    display: block;
+}
+
+/* Mobile menu links */
+nav .sm\\:hidden a {
+    display: block;
+    padding: 0.75rem 1rem; /* Tailwind's px-3 py-2 for mobile */
+    text-decoration: none;
+    color: #e5e7eb; /* Tailwind's text-gray-300 */
+}
+
+nav .sm\\:hidden a.bg-gray-900 {
+    background-color: #1f2937; /* Tailwind's bg-gray-900 */
+    color: #ffffff; /* Tailwind's text-white */
+}
+
+/* Transition for dropdown menu */
+nav .relative .absolute {
+    transition: opacity 0.2s ease-in-out, transform 0.2s ease-in-out;
+}
+
+nav .relative .absolute.hidden {
+    opacity: 0;
+    transform: scale(0.95);
+}
+
+nav .relative .absolute.show {
+    opacity: 1;
+    transform: scale(1);
+}

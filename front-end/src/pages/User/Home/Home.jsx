@@ -1,6 +1,7 @@
 import React from 'react';
-import { logout } from '../../features/authReducer';
+import { logout } from '../../../features/authReducer';
 import { useDispatch } from 'react-redux';
+import Navbar from '../../Navbar/Navbar';
 
 
 export default function Home() {
@@ -13,6 +14,7 @@ export default function Home() {
   
   return (
     <div>
+      <Navbar/>
       <h1>hey</h1>
       <button className="logout-btn" onClick={handleLogout}>Logout</button>
         

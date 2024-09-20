@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom'
-import { signUp } from '../../components/auth/authService'
+import { signUp } from '../../../components/auth/authService'
 import './signup.css'
 import { useSelector } from 'react-redux'
 import { useEffect, useState } from 'react'
