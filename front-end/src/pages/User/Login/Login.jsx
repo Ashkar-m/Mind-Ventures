@@ -1,10 +1,15 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import './Login.css';
 import { login } from '../../../components/auth/authService';
 import { useNavigate } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { validateEmail,validatePassword } from "../../../utils/validation/user/login";
+import Toast from "../../../utils/validation/Toast";
+import './Login.css';
 
 const LoginPage = () => {
+    const [toastMessages, setToastMessage] = useState([]);
+
     const { accessToken } = useSelector(state => state.auth);
     const navigate = useNavigate();
 
@@ -13,42 +18,66 @@ useEffect( () => {
     if (accessToken) {
         navigate('/login')
     }
-}, [])
+}, [accessToken, navigate])
 
 const handleSubmit = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
 
-    if (e.target.email.value.trim === "") {
-        window.alert('Enter valid Mail id')
+    const email = e.target.email.value.trim();
+    const password = e.target.password.value.trim();
+    let messages = [] ;
+    
+    if (!email) {
+        messages.push({ message : 'Email field is required', type : 'danger'});
+    } else if (!validateEmail(email)) {
+        messages.push({ message : 'Please enter a valid email address', type : 'danger'});
     }
+
+    if (!password) {
+        messages.push({ message : 'Password field is required', type : 'danger' });
+    } else if (!validatePassword(password)) {
+        messages.push({ message : 'Password should contain atleast 8 characters', type : 'warning'});
+    }
+
+    if (messages.length > 0) {
+        setToastMessage(messages);
+        return;
+    }
+
+    setToastMessage([]);
 
     try {
         const email = e.target.email.value;  // Accesses the value of the 'email' input
         const password = e.target.password.value;  // Accesses the value of the 'password' input
   
         const tokenData = await login(email,password)
-        // await getProfile()
-        // if (tokenData.is_superuser) {
-        //     navigate ('/adminpanel')
-        // } else {
-        //     navigate ('/login')
-        // }
         if (tokenData) {
             navigate('/')
+            setToastMessage([{ message : 'Successfully logged in', type : 'success'}])
         } else {
-            console.error('Login failed');
+            setToastMessage([{ message : 'Invalid username or password', type : 'danger'}])
             
         }
         
     } catch (error) {
         console.log(error);
-        window.alert(error);
-        
+        setToastMessage([{ message : error.message || 'Login failed', type : 'danger'}])
     }
+};
+
+const handleToastClose =(indexToRemove) => {
+    setToastMessage(prevMessages => 
+        prevMessages.filter((_, index) => index !== indexToRemove )
+    );
 }
 
 return (
     <div className='signup-container flex min-h-full flex-col justify-center px-6 py-12 lg:px-8'>
+            <div className="toast-container">
+                { toastMessages.length >0  && toastMessages.map((toast, index) => (
+                    <Toast key={index} type={toast.type} message={toast.message} onClose={() => handleToastClose(index)} />
+                )) }
+            </div>
             <div className='sm:mx-auto sm:w-full sm:max-w-sm'>
                 <h2 className='mt-10 text-center text-2xl font-bold leading-9 tracking-tight text-gray-900'>Login</h2>
             </div>
@@ -56,7 +85,7 @@ return (
                 <form className='space-y-6' onSubmit={handleSubmit}>
 
                 <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="email">Email</label>
-                <input type="email" id="email" name='email'  
+                <input type="text" id="email" name='email'  
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
 
                 <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="password">Password</label>
