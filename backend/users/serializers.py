@@ -4,6 +4,9 @@ from django.contrib.auth.password_validation import validate_password
 from django.contrib.auth import authenticate
 from dotenv import load_dotenv
 from django.contrib.auth import get_user_model
+from django.conf import settings
+from django.core.cache import cache
+
 
 from . models import UserAccount
 
@@ -15,10 +18,11 @@ User = get_user_model()
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])
     password2 = serializers.CharField(write_only=True, required=True) 
+    role = serializers.ChoiceField(choices=[('student', 'Student'),('mentor','Mentor'),('admin','Admin')], required=True)
 
     class Meta:
         model = UserAccount
-        fields = ('username', 'email', 'password', 'password2')
+        fields = ('username', 'email', 'password', 'password2', 'role')
 
     def validate(self, data):
         password = data.get('password')
@@ -34,7 +38,8 @@ class RegisterSerializer(serializers.ModelSerializer):
     
     def create(self, validated_data):
         user = User.objects.create(username=validated_data['username'],
-            email=validated_data['email'])
+            email=validated_data['email'],
+            role=validated_data['role'])
         user.set_password(validated_data['password'])
         user.save()
 
@@ -55,19 +60,37 @@ class LoginSerializer(serializers.Serializer):
 
 
 class OTPVerificationSerializer(serializers.Serializer):
-    username = serializers.CharField(required=True)
+    email = serializers.EmailField(required=True)
     otp = serializers.CharField(required=True)
 
+    def verify_otp(self, email, otp):
+        # Fetch otp from cache using the email id
+        cached_otp = cache.get(f'otp_{email}')
+
+        if cached_otp and cached_otp == otp :
+            return True
+        else:
+            return False
+
     def validate(self, data):
-        if not self.verify_otp(data['username'], data['otp']):
+        if not self.verify_otp(data['email'], data['otp']):
             raise serializers.ValidationError('Invalid OTP.')
     
         return data
 
-    def verify_otp(self, username, otp):
 
+class OTPSendSerializer(serializers.Serializer):
+    email = serializers.EmailField(required=True)
+
+    def validate(self, data):
+        if not self.send_otp(data['email']):
+            raise serializers.ValidationError("Unable to send otp.")
+
+        return data
+    
+    def send_otp(self, username):
+        print(f"OTP sent to the given mail.")
         return True
-
 
 class OTPResendSerializer(serializers.Serializer):
     username = serializers.CharField(required=True)
@@ -105,7 +128,6 @@ class ForgotPaswordSerializer(serializers.Serializer):
             # composing mail
             subject = "Password Reset Request"
             message = f"Hi {user.username},\n Use the link below to reset your password.{reset_link}\n If you did not request a password reset, you can ignore this email."
-            load_dotenv()
             from_email = os.getenv('EMAIL_HOST_USER')
             recipiant_list = [email]
 
