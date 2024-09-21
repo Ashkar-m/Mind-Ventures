@@ -15,8 +15,11 @@ export default function Home() {
   return (
     <div>
       <Navbar/>
+      <div className="mt-16">
       <h1>hey</h1>
       <button className="logout-btn" onClick={handleLogout}>Logout</button>
+      </div>
+      
         
     </div>
   )

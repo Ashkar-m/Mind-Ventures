@@ -1,12 +1,15 @@
 import './App.css'
-import { Route, Routes } from 'react-router-dom'
 import UserRouting from './routing/userRouting'
+import ToastProvider from './components/toastProvider/toastProvider'
+import MentorRouting from './routing/mentorRouting'
 
 function App() {
 
   return (
      <div>
-      <UserRouting /> 
+      <ToastProvider />
+      <UserRouting />
+      <MentorRouting />
      </div>
   )
 }

@@ -2,17 +2,18 @@ import { useEffect, useState } from "react";
 import './Login.css';
 import { login } from '../../../components/auth/authService';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { validateEmail,validatePassword } from "../../../utils/validation/user/login";
 import Toast from "../../../utils/validation/Toast";
 import './Login.css';
+import { addToast } from "../../../features/toastReducer";
 
 const LoginPage = () => {
+    const dispatch = useDispatch();
     const [toastMessages, setToastMessage] = useState([]);
 
     const { accessToken } = useSelector(state => state.auth);
     const navigate = useNavigate();
-
 
 useEffect( () => {
     if (accessToken) {
@@ -52,16 +53,26 @@ const handleSubmit = async (e) => {
   
         const tokenData = await login(email,password)
         if (tokenData) {
+            const userId = tokenData.user_id;
+            const userDetails = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`).then(response => response.json());
+            
+            if (userDetails) {
+                console.log(userDetails.email,userDetails.role);
+                
+            }
             navigate('/')
-            setToastMessage([{ message : 'Successfully logged in', type : 'success'}])
+            // setToastMessage([{ message : 'Successfully logged in', type : 'success'}])
+            dispatch(addToast({ message : 'Successfully logged in', type : 'sucees'}))
         } else {
-            setToastMessage([{ message : 'Invalid username or password', type : 'danger'}])
+            dispatch(addToast({ message : 'Invalid username or password', type : 'danger'}))
+            // setToastMessage([{ message : 'Invalid username or password', type : 'danger'}])
             
         }
         
     } catch (error) {
         console.log(error);
-        setToastMessage([{ message : error.message || 'Login failed', type : 'danger'}])
+        dispatch(addToast({ message : error.message || 'Login failed', type : 'danger'}))
+        // setToastMessage([{ message : error.message || 'Login failed', type : 'danger'}])
     }
 };
 
@@ -105,4 +116,4 @@ return (
     </div>
 )
 }
-export default LoginPage
+export default LoginPage;
