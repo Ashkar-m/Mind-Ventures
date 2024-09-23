@@ -6,6 +6,7 @@ from rest_framework_simplejwt.views import(
 )
 
 urlpatterns = [
+    path('user-detail/<int:id>/', views.get_user_details, name='user-detail'),
     path('send-otp/', views.send_otp, name='send-otp'),
     path('resend-otp/', views.resend_otp, name='resend-otp'),
     path('verify-otp/', views.verify_otp, name='verify-otp'),

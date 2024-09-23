@@ -11,12 +11,13 @@ from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.conf import settings
 
-
 import os
 import random
 
+from . models import UserAccount
 from . serializers import OTPResendSerializer, RegisterSerializer, OTPSendSerializer
 from . serializers import ForgotPaswordSerializer, LoginSerializer, OTPVerificationSerializer
+from . serializers import UserAccountSerializer
 # Create your views here.
 
 
@@ -40,6 +41,16 @@ class LoginView(APIView):
                 return Response({"message": "Login succefully"}, status=status.HTTP_200_OK)
         
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+def get_user_details(request, id):
+    try:
+        user = UserAccount.objects.get(pk=id)
+    except UserAccount.DoesNotExist:
+        return Response({ 'error' : 'User not found' }, status=status.HTTP_404_NOT_FOUND)
+    serializer = UserAccountSerializer(user)
+    return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class OtpManger:
