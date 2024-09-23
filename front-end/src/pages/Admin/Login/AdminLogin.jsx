@@ -4,22 +4,20 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { validateEmail,validatePassword } from "../../../utils/validation/user/loginValidation";
 import Toast from "../../../utils/validation/Toast";
-import './Login.css';
 import { addToast } from "../../../features/toastReducer";
 
-const LoginPage = () => {
+const AdminLogin = () => {
     const dispatch = useDispatch();
     const [toastMessages, setToastMessage] = useState([]);
 
     const { accessToken } = useSelector(state => state.auth);
     const navigate = useNavigate();
-    
 
 useEffect( () => {
     if (accessToken) {
         navigate('/login')
     }
-}, [accessToken])
+}, [accessToken, navigate])
 
 const handleSubmit = async (e) => {
     e.preventDefault();
@@ -54,37 +52,25 @@ const handleSubmit = async (e) => {
         const tokenData = await login(email,password)
         if (tokenData) {
             const userId = tokenData.user_id;
-            const userDetailsResponse = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`);
-        
-            if (!userDetailsResponse.ok) {
-                throw new Error('Failed to fetch user details');
-            }
-    
-            const userDetails = await userDetailsResponse.json();
+            const userDetails = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`).then(response => response.json());
             
             if (userDetails) {
-                if (userDetails.role === 'student') {
-                    navigate('/home/')
-                    messages.push({ message : 'Successfully logged in', type : 'suceess'})
-                } else if (userDetails.role === 'mentor') {
-                    navigate('/mentor/home/')
-                    messages.push({ message : 'Successfully logged in as mentor', type : 'success'})
-                } else if (userDetails.role === 'admin') {
-                    messages.push({ message : "Admin can't able to login using this page. You can choose admin login.", type : 'warning'});
-                } else {
-                    messages.push({ message : 'unknown role', type : 'danger'});
-                }  
+                console.log(userDetails.email,userDetails.role);
+                
             }
+            navigate('/')
+            // setToastMessage([{ message : 'Successfully logged in', type : 'success'}])
+            dispatch(addToast({ message : 'Successfully logged in', type : 'sucees'}))
         } else {
-            // messages.push({ message : 'Invalid username or password', type : 'danger'})
-            setToastMessage([{ message : 'Invalid username or password', type : 'danger'}])
+            dispatch(addToast({ message : 'Invalid username or password', type : 'danger'}))
+            // setToastMessage([{ message : 'Invalid username or password', type : 'danger'}])
             
         }
         
     } catch (error) {
-        // console.log(error);
-        // messages.push({ message : error.message || 'Login failed', type : 'danger'})
-        setToastMessage([{ message : error.message || 'Login failed', type : 'danger'}])
+        console.log(error);
+        dispatch(addToast({ message : error.message || 'Login failed', type : 'danger'}))
+        // setToastMessage([{ message : error.message || 'Login failed', type : 'danger'}])
     }
 };
 
@@ -119,7 +105,7 @@ return (
                  type="submit">Login</button>
                  <p className="mt-10 text-center text-sm text-gray-500" >
                 Don't have an account
-                <a onClick={()=> navigate('/register/')} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-2">Register</a>
+                <a onClick={()=> navigate('/register')} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-2">Register</a>
                 </p>
                 </form>
 
@@ -128,4 +114,4 @@ return (
     </div>
 )
 }
-export default LoginPage;
+export default AdminLogin;

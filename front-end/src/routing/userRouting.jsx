@@ -8,11 +8,12 @@ import { Route, Routes } from 'react-router-dom'
  const UserRouting = () => {
   return (
     <div>
-        <Routes>
-        <Route path='/login' element={<LoginPage />} />
-        <Route path='/register' element={<Signup />} />
-        <Route path='/' element= {<ProtectedRoute><Home/></ProtectedRoute>} />
+      <Routes>
+            <Route path='/login' element={<LoginPage />} />
+            <Route path='/register' element={<Signup />} />
+            <Route path='/home' element= {<ProtectedRoute><Home/></ProtectedRoute>} />
         </Routes>
+        
     </div>
   )
 }

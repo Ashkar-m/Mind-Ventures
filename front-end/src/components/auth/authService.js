@@ -15,19 +15,18 @@ const login = async (email,password) => {
             const { access, refresh } = data;
         
         const tokenData = JSON.parse(atob(access.split('.')[1]));
+
+        console.log('tokenDataValue',tokenData.user_id);
+        
         
         localStorage.setItem('ACCESS_TOKEN', JSON.stringify(data.access));
         localStorage.setItem('REFRESH_TOKEN', JSON.stringify(data.refresh));
         localStorage.setItem('user', JSON.stringify({
-            username : tokenData.username,
-            fullname : tokenData.fullname,
-            is_superuser : tokenData.is_superuser,
+            user_id : tokenData.user_id
         }));
         store.dispatch(setCredentials({
             user : {
-                username : tokenData.username,
-                fullname : tokenData.fullname,
-                is_superuser : tokenData.is_superuser
+                user_id : tokenData.user_id
             },
             accessToken : access,
             refreshToken : refresh,
@@ -38,7 +37,6 @@ const login = async (email,password) => {
     }
     } catch (error) {
         console.error ('Error loging in ', error);
-        return null;
     }
 };
 
@@ -53,6 +51,7 @@ const signUp = async (email, username, password, password2, role) => {
         }
     } catch (error) {
         if (error.response) {
+            let messages = []
             const errorData = error.response.data;
             if (errorData.email) {
                 window.alert(errorData.email.join(', '));
