@@ -46,10 +46,10 @@ export default function Home() {
       } else if (role === 'student') {
         navigate('/home');
       } else if (role === 'admin') {
-        navigate('admin/home/')
+        navigate('/admin/home/')
       }
     }
-  }, [userInfo, navigate]);
+  }, [userInfo]);
 
 
   const handleLogout = () => {

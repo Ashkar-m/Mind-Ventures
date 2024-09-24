@@ -15,9 +15,9 @@ const AdminLogin = () => {
 
 useEffect( () => {
     if (accessToken) {
-        navigate('/login')
+        navigate('/admin/home')
     }
-}, [accessToken, navigate])
+}, [accessToken])
 
 const handleSubmit = async (e) => {
     e.preventDefault();
@@ -34,9 +34,10 @@ const handleSubmit = async (e) => {
 
     if (!password) {
         messages.push({ message : 'Password field is required', type : 'danger' });
-    } else if (!validatePassword(password)) {
-        messages.push({ message : 'Password should contain atleast 8 characters', type : 'warning'});
-    }
+    } 
+    // else if (!validatePassword(password)) {
+    //     messages.push({ message : 'Password should contain atleast 8 characters', type : 'warning'});
+    // }
 
     if (messages.length > 0) {
         setToastMessage(messages);
@@ -54,23 +55,19 @@ const handleSubmit = async (e) => {
             const userId = tokenData.user_id;
             const userDetails = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`).then(response => response.json());
             
-            if (userDetails) {
-                console.log(userDetails.email,userDetails.role);
-                
-            }
-            navigate('/')
-            // setToastMessage([{ message : 'Successfully logged in', type : 'success'}])
-            dispatch(addToast({ message : 'Successfully logged in', type : 'sucees'}))
+            navigate('/admin/home')
+            setToastMessage([{ message : 'Successfully logged in', type : 'success'}])
+            // dispatch(addToast({ message : 'Successfully logged in', type : 'sucees'}))
         } else {
-            dispatch(addToast({ message : 'Invalid username or password', type : 'danger'}))
-            // setToastMessage([{ message : 'Invalid username or password', type : 'danger'}])
+            // dispatch(addToast({ message : 'Invalid username or password', type : 'danger'}))
+            setToastMessage([{ message : 'Invalid username or password', type : 'danger'}])
             
         }
         
     } catch (error) {
         console.log(error);
-        dispatch(addToast({ message : error.message || 'Login failed', type : 'danger'}))
-        // setToastMessage([{ message : error.message || 'Login failed', type : 'danger'}])
+        // dispatch(addToast({ message : error.message || 'Login failed', type : 'danger'}))
+        setToastMessage([{ message : error.message || 'Login failed', type : 'danger'}])
     }
 };
 
@@ -93,19 +90,19 @@ return (
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
                 <form className='space-y-6' onSubmit={handleSubmit}>
 
-                <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="email">Email</label>
+                <label className="block pl-2 text-sm font-medium leading-6 text-gray-900" htmlFor="email">Email</label>
                 <input type="text" id="email" name='email'  
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
 
-                <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="password">Password</label>
+                <label className="block pl-2 text-sm font-medium leading-6 text-gray-900" htmlFor="password">Password</label>
                 <input type="password" id="password" name='password' 
                 className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
 
                 <button className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                  type="submit">Login</button>
                  <p className="mt-10 text-center text-sm text-gray-500" >
-                Don't have an account
-                <a onClick={()=> navigate('/register')} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-2">Register</a>
+                Login as an admin
+                <a onClick={()=> navigate('/login')} className="font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-2">Login</a>
                 </p>
                 </form>
 

@@ -94,20 +94,20 @@ const handleToastClose = (indexToRemove) => {
                 
                 <label htmlFor="email" className="block text-sm font-medium leading-6 text-gray-900" >Email</label>
                 <input type="text" id='email' name='email'  onChange={(e) => setEmail(e.target.value)} 
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
+                className="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
                    
                 <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="username">Username</label>
                 <input type="text" id='username' name='username'  onChange={(e) => setUsername(e.target.value)}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                className="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                 
                 
                 <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="password">Password</label>
                 <input type="password" id='password' name='password'  onChange={(e) => setPassword(e.target.value)}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                className="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
             
                 <label className="block text-sm font-medium leading-6 text-gray-900" htmlFor="password2">Confirm Password</label>
                 <input type="password" id='password2' name='password2'  onChange={(e) => setPassword2(e.target.value)}
-                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                className="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                 
                 <fieldset className='mt-4'>
                     <legend className='block text-sm font-medium leading-6 text-gray-900'>Register As</legend>
