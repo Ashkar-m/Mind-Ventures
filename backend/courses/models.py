@@ -17,7 +17,7 @@ class Category(models.Model):
         on_delete=models.CASCADE,
         null=True,
         blank=True,
-        relation_name='subcategories'
+        related_name='subcategories'
     )
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
@@ -39,7 +39,7 @@ class Course(models.Model):
         ("rejected", "Rejected")
     ]
     title = models.CharField(max_length=255)
-    description = models.TextField()
+    description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     preview_image = models.ImageField(
         upload_to='course_preview/',
@@ -56,11 +56,27 @@ class Course(models.Model):
         return self.title
 
 
+class CourseVariant(models.Model):
+    # Variant for couses
+    course = models.ForeignKey(Course,on_delete=models.CASCADE, related_name='variants')
+    variant_name = models.CharField(max_length=255)
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))]
+    )
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    def __str__(self):
+        return f"{self.course.title} - {self.variant_name}"
+
+
 class Chapters(models.Model):
     # Model for each chapters
-    course = models.ForeignKey(Course, on_delete=models.CASCADE, relation_name="chapters")
+    course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="chapters")
     title = models.CharField(max_length=255)
-    content = models.TextField()
+    content = models.TextField(blank=True)
     video_file = models.FileField(
         upload_to='videos/',
         blank=True,
