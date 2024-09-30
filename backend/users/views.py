@@ -10,14 +10,17 @@ from rest_framework.views import APIView
 from django.contrib.auth import authenticate
 from django.contrib.auth.models import User
 from django.conf import settings
+from rest_framework import generics
+from rest_framework.permissions import IsAuthenticated
+
 
 import os
 import random
 
-from . models import UserAccount
+from . models import UserAccount, StudentProfile, MentorProfile
 from . serializers import OTPResendSerializer, RegisterSerializer, OTPSendSerializer
 from . serializers import ForgotPaswordSerializer, LoginSerializer, OTPVerificationSerializer
-from . serializers import UserAccountSerializer
+from . serializers import UserAccountSerializer, StudentProfileSerializer, MentorProfileSerializer
 # Create your views here.
 
 
@@ -139,3 +142,33 @@ class ForgotPasswordView(APIView):
                 return Response({"message": "Failed to sent the message"}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class StudentProfileListCreateAPIView(generics.ListCreateAPIView):
+    queryset = StudentProfile.objects.all()
+    serializer_class = StudentProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class StudentProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+    queryset = StudentProfile.objects.all()
+    serializer_class = StudentProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+
+class MentorProfileListCreateAPIView(generics.ListCreateAPIView):
+    queryset = MentorProfile.objects.all()
+    serializer_class = MentorProfileSerializer
+    permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(user=self.request.user)
+
+
+class MentorProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+    queryset = MentorProfile.objects.all()
+    serializer_class = MentorProfileSerializer
+    permission_classes = [IsAuthenticated]

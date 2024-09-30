@@ -8,7 +8,7 @@ from django.conf import settings
 from django.core.cache import cache
 
 
-from . models import UserAccount
+from . models import UserAccount, StudentProfile, MentorProfile
 
 import os
 
@@ -147,3 +147,14 @@ class ForgotPaswordSerializer(serializers.Serializer):
 
                 return False
                 
+
+class StudentProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = StudentProfile
+        fields = '__all__'
+
+
+class MentorProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MentorProfile
+        fields = '__all__'

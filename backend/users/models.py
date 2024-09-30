@@ -4,6 +4,8 @@ from django.contrib.auth.base_user import BaseUserManager
 from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
+from django.db.models.signals import post_save
+from django.dispatch import reciever
     
 # Create your models here.
 
@@ -91,4 +93,78 @@ class UserAccount(AbstractUser):
         return f"{self.username}"
 
 class ProfileBase(models.model):
-    
+    # Abstract base model for profiles with common fields
+    user = model.OneToOneField(UserAccount, on_delete=models.CASCADE)
+    profile_picture = models.ImageField(
+        upload_to='profile_pics/',
+        blank=True,
+        null=True,
+    )
+    bio = models.TextField(blank=True)
+    date_of_birth = models.DateTimeField(null=True, blank=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        abstract = True
+
+
+class StudentProfile(ProfileBase):
+
+    UNDERGRADUATE = 'undergraduate'
+    POSTGRADUATE = 'postgraduate'
+    HIGHERSECONDARY = 'highersecondary'
+    SSLC = 'sslc'
+    DIPLOMA = 'diploma'
+
+    EDUCATION_LEVEL_CHOICES = [
+        (DIPLOMA,'Diploma'),
+        (SSLC,'sslc'),
+        (HIGHER_SECONDARY, 'Higher Secondary'),
+        (UNDER_GRADUATE, 'Under Graduate'),
+        (POST_GRADUATE, 'Post Graduate')
+    ]
+    highest_education_qualification = models.CharField(max_length=30,
+    choices=EDUCATION_LEVEL_CHOICES, blank=True, null=True)
+    current_education_qualification = models.CharField(max_length=30,
+    choices=EDUCATION_LEVEL_CHOICES, blank=True, null=True)
+    expected_graduation_date = models.DateTimeField(blank=True, null=True)
+
+
+class MentorProfile(ProfileBase):
+
+    UNDERGRADUATE = 'undergraduate'
+    POSTGRADUATE = 'postgraduate'
+    HIGHERSECONDARY = 'highersecondary'
+    DIPLOMA = 'diploma'
+
+    EDUCATION_LEVEL_CHOICES = [
+        (DIPLOMA,'Diploma'),
+        (HIGHER_SECONDARY, 'Higher Secondary'),
+        (UNDER_GRADUATE, 'Under Graduate'),
+        (POST_GRADUATE, 'Post Graduate')
+    ]
+    highest_education_qualification = models.CharField(max_length=30,
+    choices=EDUCATION_LEVEL_CHOICES, blank=True, null=True)
+    experience = models.DecimalField(max_digits=5, decimal_places=1, blank=True, null=True)
+    average_rating = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
+    specialisation = models.CharField(max_length=100, blank=True, null=True)
+
+
+@reciever(post_save, sender=UserAccount)
+def create_user_profile(sender, instance, created, **kwargs):
+    # signal for creating user profile instance according to the roles
+    if created:
+        if instance.role == UserAccount.STUDENT:
+            StudentProfile.objects.create(user=instance)
+        elif instance.role == UserAccount.MENTOR:
+            MentorProfile.objects.create(user=instance)
+
+
+@reciever(post_save, sender=UserAccount)
+def save_user_profile(sender, instance, **kwargs):
+    # for saving the profiles
+    if instance.role == UserAccount.STUDENT:
+        instance.studentprofile.save()
+    elif instance.role == UserAccount.MENTOR:
+        instance.mentorprofile.save()

@@ -15,4 +15,9 @@ urlpatterns = [
     path('forgot-password/', views.ForgotPasswordView.as_view(), name='forgot-password'),
     path('token/', TokenObtainPairView.as_view(), name='token-obtain-pair-view'),
     path('token/refresh/', TokenRefreshView.as_view(), name='token-refresh-view'),
+    path('student-list/', views.StudentProfileListCreateAPIView.as_view(), name='student-list'),
+    path('student-profile-view/<int:pk>', views.StudentProfileRetrieveUpdateAPIView.as_view(), name='student-profile-view'),
+    path('mentor-list/', views.MentorProfileListCreateAPIView.as_view(), name='mentor-list'),
+    path('mentor-profile-view/<int:pk>', views.MentorProfileRetrieveUpdateAPIView.as_view(), name='mentor-profile-view'),
+    
 ]
