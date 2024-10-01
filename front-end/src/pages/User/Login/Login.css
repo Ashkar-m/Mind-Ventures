@@ -1,4 +1,15 @@
+html,body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+body {
+    background-color: #F7FAFC;
+}
+
 /* Toast.css */
+
 .toast-container {
     position: fixed;
     top: 20px; /* Adjust based on how far from the top you want it */
