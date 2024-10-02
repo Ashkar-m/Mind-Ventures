@@ -19,5 +19,5 @@ urlpatterns = [
     path('student-profile-view/<int:pk>', views.StudentProfileRetrieveUpdateAPIView.as_view(), name='student-profile-view'),
     path('mentor-list/', views.MentorProfileListCreateAPIView.as_view(), name='mentor-list'),
     path('mentor-profile-view/<int:pk>', views.MentorProfileRetrieveUpdateAPIView.as_view(), name='mentor-profile-view'),
-    
+    path('token-view/', views.CustomTokenObtainPairView.as_view(), name='token-view'),
 ]

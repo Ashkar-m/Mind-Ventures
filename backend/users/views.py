@@ -12,17 +12,20 @@ from django.contrib.auth.models import User
 from django.conf import settings
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
-
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 import os
 import random
 
+from . serializers import CustomTokenObtainPairSerializer
 from . models import UserAccount, StudentProfile, MentorProfile
 from . serializers import OTPResendSerializer, RegisterSerializer, OTPSendSerializer
 from . serializers import ForgotPaswordSerializer, LoginSerializer, OTPVerificationSerializer
 from . serializers import UserAccountSerializer, StudentProfileSerializer, MentorProfileSerializer
 # Create your views here.
 
+class CustomTokenObtainPairView(TokenObtainPairView):
+    serializer_class = CustomTokenObtainPairSerializer
 
 class RegisterView(APIView):
     def post(self, request):

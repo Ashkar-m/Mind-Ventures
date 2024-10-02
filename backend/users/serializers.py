@@ -6,14 +6,27 @@ from dotenv import load_dotenv
 from django.contrib.auth import get_user_model
 from django.conf import settings
 from django.core.cache import cache
-
+from rest_framework_simplejwt.tokens import AccessToken
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 from . models import UserAccount, StudentProfile, MentorProfile
 
 import os
 
 
+
 User = get_user_model()
+
+class CustomTokenObtainPairSerializer(TokenObtainPairSerializer):
+
+    @classmethod
+    def get_token(cls, user):
+        token = super().get_token(user)
+
+        token['email'] = user.email
+        token['role'] = user.role
+
+        return token
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only=True, required=True, validators=[validate_password])

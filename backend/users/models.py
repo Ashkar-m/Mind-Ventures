@@ -5,7 +5,7 @@ from django.utils.text import slugify
 from django.utils.translation import gettext_lazy as _
 from phonenumber_field.modelfields import PhoneNumberField
 from django.db.models.signals import post_save
-from django.dispatch import reciever
+from django.dispatch import receiver
     
 # Create your models here.
 
@@ -92,9 +92,9 @@ class UserAccount(AbstractUser):
     def __str__(self):
         return f"{self.username}"
 
-class ProfileBase(models.model):
+class ProfileBase(models.Model):
     # Abstract base model for profiles with common fields
-    user = model.OneToOneField(UserAccount, on_delete=models.CASCADE)
+    user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
     profile_picture = models.ImageField(
         upload_to='profile_pics/',
         blank=True,
@@ -120,9 +120,9 @@ class StudentProfile(ProfileBase):
     EDUCATION_LEVEL_CHOICES = [
         (DIPLOMA,'Diploma'),
         (SSLC,'sslc'),
-        (HIGHER_SECONDARY, 'Higher Secondary'),
-        (UNDER_GRADUATE, 'Under Graduate'),
-        (POST_GRADUATE, 'Post Graduate')
+        (HIGHERSECONDARY, 'Higher Secondary'),
+        (UNDERGRADUATE, 'Under Graduate'),
+        (POSTGRADUATE, 'Post Graduate')
     ]
     highest_education_qualification = models.CharField(max_length=30,
     choices=EDUCATION_LEVEL_CHOICES, blank=True, null=True)
@@ -140,9 +140,9 @@ class MentorProfile(ProfileBase):
 
     EDUCATION_LEVEL_CHOICES = [
         (DIPLOMA,'Diploma'),
-        (HIGHER_SECONDARY, 'Higher Secondary'),
-        (UNDER_GRADUATE, 'Under Graduate'),
-        (POST_GRADUATE, 'Post Graduate')
+        (HIGHERSECONDARY, 'Higher Secondary'),
+        (UNDERGRADUATE, 'Under Graduate'),
+        (POSTGRADUATE, 'Post Graduate')
     ]
     highest_education_qualification = models.CharField(max_length=30,
     choices=EDUCATION_LEVEL_CHOICES, blank=True, null=True)
@@ -151,7 +151,7 @@ class MentorProfile(ProfileBase):
     specialisation = models.CharField(max_length=100, blank=True, null=True)
 
 
-@reciever(post_save, sender=UserAccount)
+@receiver(post_save, sender=UserAccount)
 def create_user_profile(sender, instance, created, **kwargs):
     # signal for creating user profile instance according to the roles
     if created:
@@ -161,7 +161,7 @@ def create_user_profile(sender, instance, created, **kwargs):
             MentorProfile.objects.create(user=instance)
 
 
-@reciever(post_save, sender=UserAccount)
+@receiver(post_save, sender=UserAccount)
 def save_user_profile(sender, instance, **kwargs):
     # for saving the profiles
     if instance.role == UserAccount.STUDENT:
