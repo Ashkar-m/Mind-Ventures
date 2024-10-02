@@ -22,7 +22,7 @@ const AdminLogin = () => {
             .email('Please enter a valid email address')
             .required('Email field is required'),
         password: Yup.string()
-            .min(8, 'Password should contain at least 8 characters')
+            .min(4, 'Password should contain at least 4 characters')
             .required('Password field is required')
     });
 
@@ -155,7 +155,7 @@ return (
                 <button className="flex w-full justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
                  type="submit">Login</button>
                  <p className="mt-10 text-center text-sm text-gray-500" >
-                Login as an admin
+                Login as an user
                 <a onClick={()=> navigate('/login')} className="font-semibold cursor-pointer leading-6 text-indigo-600 hover:text-indigo-500 ml-2">Login</a>
                 </p>
                 </form>

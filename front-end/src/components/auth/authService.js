@@ -2,11 +2,11 @@ import axios from 'axios';
 import { setCredentials } from '../../features/authReducer'
 import store from '../../store/store';
 
-const baseUrl='http://127.0.0.1:8000';
+export const baseUrl='http://127.0.0.1:8000';
 
 const login = async (email,password) => {
     try {
-        const response = await axios.post(`${baseUrl}/users/token/`,{
+        const response = await axios.post(`${baseUrl}/users/token-view/`,{
             email,password
         });
 
@@ -15,18 +15,19 @@ const login = async (email,password) => {
             const { access, refresh } = data;
         
         const tokenData = JSON.parse(atob(access.split('.')[1]));
-
-        console.log('tokenDataValue',tokenData.user_id);
-        
         
         localStorage.setItem('ACCESS_TOKEN', JSON.stringify(data.access));
         localStorage.setItem('REFRESH_TOKEN', JSON.stringify(data.refresh));
         localStorage.setItem('user', JSON.stringify({
-            user_id : tokenData.user_id
+            user_id : tokenData.user_id,
+            email : tokenData.email,
+            role : tokenData.role
         }));
         store.dispatch(setCredentials({
             user : {
-                user_id : tokenData.user_id
+                user_id : tokenData.user_id,
+                email : tokenData.email,
+                role : tokenData.role
             },
             accessToken : access,
             refreshToken : refresh,
@@ -45,27 +46,26 @@ const signUp = async (email, username, password, password2, role) => {
         const response = await axios.post(`${baseUrl}/users/register/`,{
             email, username, password, password2, role });
         if (response.status >= 200 && response.status < 300) {
-            window.alert('User registered successfully');
+            console.log('User registered successfully');
         } else {
             console.error('Error occured while registering');
         }
     } catch (error) {
         if (error.response) {
-            let messages = []
             const errorData = error.response.data;
             if (errorData.email) {
-                window.alert(errorData.email.join(', '));
+                console.log(errorData.email.join(', '));
             } else if (errorData.username) {
-                window.alert(errorData.username.join(', '));
+                console.log(errorData.username.join(', '));
             } else if (errorData.password) {
-                window.alert(errorData.password.join(', '));
+                console.log(errorData.password.join(', '));
             } else {
-                window.alert('Error response: ' + JSON.stringify(errorData));
+                console.log('Error response: ' + JSON.stringify(errorData));
             }
         } else if (error.request) {
-            window.alert('Error request: ' + error.request);
+            console.log('Error request: ' + error.request);
         } else {
-            window.alert('Error: ' + error.message);
+            console.log('Error: ' + error.message);
         }
         throw error;
     }

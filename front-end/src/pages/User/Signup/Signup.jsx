@@ -45,20 +45,38 @@ const Signup = () => {
             email: '',
             password: '',
             username: '',
-            password2: ''
+            password2: '',
+            role: 'student',
         },
         validationSchema,
         onSubmit: async (values, {resetForm}) => {
             setToastMessages([]);
-            const { email, username, password, role } = values;
+            const { email, username, password, password2, role } = values;
             try {
                 const response = await signUp(email, username, password, password2, role);
                 console.log('Registered successfully', response);
                 resetForm();
-                navigate('/login');
+                navigate('/otp', { state: { email }});
             } catch (error) {
-                setToastMessages([{ message: 'Error while registering', type: 'danger'}])
-                console.error("Error occured", error);
+                const errorData = error.response.data;
+                const messages = [];
+
+                if (errorData.email) {
+                    messages.push({ message: 'Email already exists.', type: 'danger'})
+                }
+
+                if (errorData.username) {
+                    messages.push({ message : 'Username already exists.', type: 'danger'})
+                } 
+
+                if (messages.length > 0) {
+                    setToastMessages(messages);
+                }
+                
+                else {
+                    setToastMessages([{ message: 'Error while registering', type: 'danger'}])
+                    console.error("Error occured", error);
+                }
             }
         }
     })
@@ -138,11 +156,11 @@ const Signup = () => {
                         <div className='mt-3'>
                         <label>
                             <input type="radio" value='student' checked={ role === 'student' }
-                            onChange={(e) => setRole(e.target.value)} /> Student
+                            onChange={ formik.handleChange } /> Student
                         </label>
                         <label className="ml-4">
                                 <input type="radio" value='mentor' checked={role === 'mentor'} 
-                                onChange={(e) => setRole(e.target.value)} /> Mentor
+                                onChange={ formik.handleChange } /> Mentor
                         </label>
                         </div>
                     </fieldset>

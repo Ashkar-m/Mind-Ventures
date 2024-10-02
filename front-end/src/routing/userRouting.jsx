@@ -7,6 +7,7 @@ import { Route, Routes } from 'react-router-dom'
 import UserDashboard from '../pages/User/Dashboard/Dashboard'
 import CourseList from '../pages/User/CourseList/CourseList'
 import CourseDetail from '../pages/User/CourseDetail/CourseDetail'
+import OtpPage from '../pages/User/OtpPage/OtpPage'
 
  const UserRouting = () => {
   return (
@@ -18,6 +19,7 @@ import CourseDetail from '../pages/User/CourseDetail/CourseDetail'
             <Route path='/dashboard' element= {<ProtectedRoute><UserDashboard/></ProtectedRoute>} />
             <Route path='/course-list' element={<CourseList/>} />
             <Route path='/course-detail' element={<CourseDetail/>} />
+            <Route path='/otp' element={<OtpPage/>} />
         </Routes>
         
     </div>
