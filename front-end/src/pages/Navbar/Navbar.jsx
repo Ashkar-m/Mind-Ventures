@@ -1,13 +1,22 @@
 
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { logout } from '../../features/authReducer';
+import { useDispatch } from 'react-redux';
 
 const Navbar = () => {
   const [dropdownOpen, setDropdownOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const toggleDropdown = () => {
     setDropdownOpen(prevState => !prevState);
   };
+
+  const handleLogout = () => {
+    localStorage.removeItem('ACCESS_TOKEN')
+    localStorage.removeItem('REFRESH_TOKEN')
+    dispatch(logout())
+  }
 
   const navigate = useNavigate();
   return (
@@ -16,7 +25,7 @@ const Navbar = () => {
       <div className="max-w-screen-xl flex flex-wrap items-center justify-between mx-auto p-4">
         <a onClick={() => navigate('/home')} className="flex items-center space-x-3 rtl:space-x-reverse">
           {/* <img src="hey" className="h-8" alt="Flowbite Logo" /> */}
-  6       <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">MindVentures</span>
+        <span className="self-center text-2xl font-semibold whitespace-nowrap dark:text-white">MindVentures</span>
         </a>
         <div className="flex items-center md:order-2 space-x-3 md:space-x-0 rtl:space-x-reverse " >
           <button
@@ -52,7 +61,7 @@ const Navbar = () => {
                   <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Earnings</a>
                 </li>
                 <li>
-                  <a href="#" className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Sign out</a>
+                  <a onClick={handleLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">Logout</a>
                 </li>
               </ul>
             </div>
