@@ -3,7 +3,7 @@ import { logout } from "../../../features/authReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 
-const AdminHome = () => {
+const AdminDashboard = () => {
    
     const [dropdownOpen, setDropdownOpen] = useState(false);
     const [userDetails, setUserDetails] = useState(null);
@@ -639,4 +639,4 @@ const AdminHome = () => {
     )
 }
 
-export default AdminHome;
+export default AdminDashboard;
