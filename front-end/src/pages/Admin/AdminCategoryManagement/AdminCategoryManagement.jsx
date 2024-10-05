@@ -4,32 +4,32 @@ import axios from "axios";
 import AdminNavbar from "../AdminNavbar/AdminNavbar";
 import AdminSidebar from "../AdminSidebar/AdminSidebar";
 
-const AdminMentorManagement = () => {
+const AdminCategoryManagement = () => {
    
-    const [userList, setUserList] = useState([]);
+    const [categoryList, setCategoryList] = useState([]);
     const [isActiveUpdated, setIsActiveUpdated] = useState(false);
 
     useEffect( () => {
-        const fetchUserList = async () => {
+        const fetchCategoryList = async () => {
             try {
-                const response = await fetch(`${baseUrl}/useradmin/mentor-list/`);
+                const response = await fetch(`${baseUrl}/courses/category-list/`);
                 if (!response.ok) {
-                    throw new Error('Failed to fetch user details')
+                    throw new Error('Failed to fetch category details')
                 }
                 const list = await response.json();
-                setUserList(list);
+                setCategoryList(list);
             } catch (error) {
                 console.error('Error while fetching user details', error);
                 
             }
         }
-        fetchUserList();
+        fetchCategoryList();
     },[isActiveUpdated]);
-    console.log(userList);
+    
 
-    const handleToggleStatus = async (userId) => {
+    const handleToggleStatus = async (categoryId) => {
         try {
-            const response = await axios.patch(`${baseUrl}/useradmin/mentors/toggle-status/${userId}/`);
+            const response = await axios.post(`${baseUrl}/courses/category/toggle-status/${categoryId}/`);
             console.log('Status updated:', response.data);
             setIsActiveUpdated((prev) => !prev);
         } catch (error) {
@@ -57,15 +57,12 @@ const AdminMentorManagement = () => {
             <div>
                 <h3
                 className="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-                Mentors List
+                Category List
                 </h3>
             </div>
             </div>
-            <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
-            <div className="block w-full overflow-hidden md:w-max">
-            </div>
-            <div className="w-full md:w-72">
-                <div className="relative h-10 w-full min-w-[200px]">
+            <div className="flex items-center justify-end gap-8 mb-8">
+            <div className="relative h-10 w-full min-w-[200px]">
                 <div className="absolute grid w-5 h-5 top-2/4 right-3 -translate-y-2/4 place-items-center text-blue-gray-500">
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
                     stroke="currentColor" aria-hidden="true" className="w-5 h-5">
@@ -81,6 +78,18 @@ const AdminMentorManagement = () => {
                     Search
                 </label>
                 </div>
+            <div className="flex flex-col gap-2 shrink-0 sm:flex-row">
+                <button
+                className="flex select-none items-center gap-3 rounded-lg bg-gray-900 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                type="button">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+                    stroke-width="2" className="w-4 h-4">
+                    <path
+                    d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z">
+                    </path>
+                </svg>
+                Add member
+                </button>
             </div>
             </div>
         </div>
@@ -92,7 +101,7 @@ const AdminMentorManagement = () => {
                     className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
                     <p
                     className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                    Member
+                    Category
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" aria-hidden="true" className="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -104,7 +113,43 @@ const AdminMentorManagement = () => {
                     className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
                     <p
                     className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                    Function
+                    Description
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" aria-hidden="true" className="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
+                    </svg>
+                    </p>
+                </th>
+                <th 
+                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    <p
+                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                    Parent
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" aria-hidden="true" className="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
+                    </svg>
+                    </p>
+                </th>
+                <th
+                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    <p
+                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                    Subcategories
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" aria-hidden="true" className="w-4 h-4">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
+                    </svg>
+                    </p>
+                </th>
+                <th
+                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    <p
+                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                    Path
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" aria-hidden="true" className="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -124,75 +169,50 @@ const AdminMentorManagement = () => {
                     </svg>
                     </p>
                 </th>
-                <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
-                    <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                    Employed
-                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
-                        stroke="currentColor" aria-hidden="true" className="w-4 h-4">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
-                    </svg>
-                    </p>
-                </th>
-                <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
-                    <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                    </p>
-                </th>
                 </tr>
             </thead>
             <tbody>
-                { userList.map( (user) => (
-                        <tr key={ user.id }>
+                {/* ['id', 'name', 'description', 'parent', 'subcategories', 'full_path','active'] */}
+                { categoryList.map( (course) => (
+                        <tr key={ course.id }>
                         <td className="p-4 border-b border-blue-gray-50">
-                            <div className="flex items-center gap-3">
-                            <img src={ user.profileImage || "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg"}
-                                alt={ user.username } 
-                                className="relative inline-block h-9 w-9 !rounded-full object-cover object-center" />
                             <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                            { user.username }
-                            </p>
-                            </div>
+                                { course.name }
+                                </p>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
                             <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                { user.email }
+                                { course.description }
                                 </p>
                             </td>
                         <td className="p-4 border-b border-blue-gray-50">
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                            { user.phone_number }
+                            { course.parent }
+                            </p>
+                        </td>
+                        <td className="p-4 border-b border-blue-gray-50">
+                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                            { course.subcategories }
+                            </p>
+                        </td>
+                        <td className="p-4 border-b border-blue-gray-50">
+                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                            { course.full_path }
                             </p>
                         </td>
                         <td className="p-4 border-b border-blue-gray-50">
                             <div 
-                                onClick={() => handleToggleStatus(user.id)}
+                                onClick={() => handleToggleStatus(course.id)}
                                 className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${
-                                    user.is_verified
+                                    course.active
                                         ? 'bg-green-500/20 text-green-900'
                                         : 'bg-red-500/20 text-red-900'
                                 }`}
                             >
-                                <span>{user.is_verified ? 'Block' : 'Unblock'}</span>
+                                <span>{course.active ? 'Delete' : 'Admit'}</span>
                             </div>
                         </td>
-                        {/* <td className="p-4 border-b border-blue-gray-50">
-                            <button
-                            className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                            type="button">
-                            <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-                                className="w-4 h-4">
-                                <path
-                                    d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z">
-                                </path>
-                                </svg>
-                            </span>
-                            </button>
-                        </td> */}
+                        
                         </tr>
                     ))}
             </tbody>
@@ -224,4 +244,4 @@ const AdminMentorManagement = () => {
     )
 }
 
-export default AdminMentorManagement;
+export default AdminCategoryManagement;
