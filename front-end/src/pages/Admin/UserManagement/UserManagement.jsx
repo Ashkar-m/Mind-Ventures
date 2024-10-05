@@ -2,53 +2,42 @@ import React, { useEffect, useState } from "react";
 import { logout } from "../../../features/authReducer";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { baseUrl } from "../../../components/auth/authService";
 
 const AdminUserManagement = () => {
    
     const [dropdownOpen, setDropdownOpen] = useState(false);
-    const [userDetails, setUserDetails] = useState(null);
-    const [userInfo, setUserInfo] = useState(null);
+    const [userList, setUserList] = useState([]);
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
     useEffect( () => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        
-        setUserDetails(user);
-    }, [])
-
-    useEffect( () => {
-        const fetchUserInfo = async () => {
-            if (userDetails) {
-                try {
-                    const id = userDetails['user_id']
-                    const response = (await fetch(`http://127.0.0.1:8000/users/user-detail/${id}/`));
-                    if (!response.ok) {
-                        throw new Error('Failed to fetch user details');
-                    }
-                    const info = await response.json();
-                    setUserInfo(info);
-                } catch (error) {
-                    console.error('Error while fetching user details', error);
-                    
+        const fetchUserList = async () => {
+            try {
+                const response = await fetch(`${baseUrl}/useradmin/users-list/`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user details')
                 }
-            }
-        };
-        fetchUserInfo();
-    }, [userDetails]);
-
-    useEffect( () => {
-        if (userInfo && userInfo['role']) {
-            const role = userInfo['role'];
-            if (role === 'student') {
-                navigate('/home')
-            } else if ( role === 'mentor') {
-                navigate('/mentor/home')
-            } else if (role === 'admin') {
-                navigate('/admin/home')
+                const list = await response.json();
+                setUserList(list);
+            } catch (error) {
+                console.error('Error while fetching user details', error);
+                
             }
         }
-    }, [userInfo])
+        fetchUserList();
+    },[userList]);
+    console.log(userList);
+    
+    const handleToggleStatus = async (userId) => {
+        try {
+            const response = await axios.patch(`${baseUrl}/useradmin/users/toggle-status/${userId}/`);
+            console.log('Status updated:', response.data);
+        } catch (error) {
+            console.error('Error updating status:', error);
+        }
+    }
 
     const toggleDropdown = () => {
         setDropdownOpen(prevState => !prevState);
@@ -193,65 +182,18 @@ const AdminUserManagement = () => {
     {/* Body part  */}
     <div className="p-4 sm:ml-64 mt-20">
 
-    <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
+    <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-xl rounded-xl bg-clip-border transform hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-in-out">
         <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
-            <div className="flex items-center justify-between gap-8 mb-8">
+            <div className="flex items-center justify-center gap-8 mb-8">
             <div>
-                <h5
+                <h3
                 className="block font-sans text-xl antialiased font-semibold leading-snug tracking-normal text-blue-gray-900">
-                Members list
-                </h5>
-                <p className="block mt-1 font-sans text-base antialiased font-normal leading-relaxed text-gray-700">
-                See information about all members
-                </p>
-            </div>
-            <div className="flex flex-col gap-2 shrink-0 sm:flex-row">
-                <button
-                className="select-none rounded-lg border border-gray-900 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-gray-900 transition-all hover:opacity-75 focus:ring focus:ring-gray-300 active:opacity-[0.85] disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                type="button">
-                view all
-                </button>
-                <button
-                className="flex select-none items-center gap-3 rounded-lg bg-gray-900 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                type="button">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-                    stroke-width="2" className="w-4 h-4">
-                    <path
-                    d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z">
-                    </path>
-                </svg>
-                Add member
-                </button>
+                Student List
+                </h3>
             </div>
             </div>
             <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
             <div className="block w-full overflow-hidden md:w-max">
-                <nav>
-                <ul role="tablist" className="relative flex flex-row p-1 rounded-lg bg-blue-gray-50 bg-opacity-60">
-                    <li role="tab"
-                    className="relative flex items-center justify-center w-full h-full px-2 py-1 font-sans text-base antialiased font-normal leading-relaxed text-center bg-transparent cursor-pointer select-none text-blue-gray-900"
-                    data-value="all">
-                    <div className="z-20 text-inherit">
-                        &nbsp;&nbsp;All&nbsp;&nbsp;
-                    </div>
-                    <div className="absolute inset-0 z-10 h-full bg-white rounded-md shadow"></div>
-                    </li>
-                    <li role="tab"
-                    className="relative flex items-center justify-center w-full h-full px-2 py-1 font-sans text-base antialiased font-normal leading-relaxed text-center bg-transparent cursor-pointer select-none text-blue-gray-900"
-                    data-value="monitored">
-                    <div className="z-20 text-inherit">
-                        &nbsp;&nbsp;Monitored&nbsp;&nbsp;
-                    </div>
-                    </li>
-                    <li role="tab"
-                    className="relative flex items-center justify-center w-full h-full px-2 py-1 font-sans text-base antialiased font-normal leading-relaxed text-center bg-transparent cursor-pointer select-none text-blue-gray-900"
-                    data-value="unmonitored">
-                    <div className="z-20 text-inherit">
-                        &nbsp;&nbsp;Unmonitored&nbsp;&nbsp;
-                    </div>
-                    </li>
-                </ul>
-                </nav>
             </div>
             <div className="w-full md:w-72">
                 <div className="relative h-10 w-full min-w-[200px]">
@@ -275,13 +217,13 @@ const AdminUserManagement = () => {
         </div>
         <div className="p-6 px-0 overflow-scroll">
             <table className="w-full mt-4 text-left table-auto min-w-max">
-            <thead>
+            <thead className="shadow-2xl bg-gradient-to-r from-white via-white to-gray-100">
                 <tr>
                 <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                    Member
+                    className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
+                    Username
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" aria-hidden="true" className="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -290,10 +232,10 @@ const AdminUserManagement = () => {
                     </p>
                 </th>
                 <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                    Function
+                    className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
+                    Email
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" aria-hidden="true" className="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -302,10 +244,10 @@ const AdminUserManagement = () => {
                     </p>
                 </th>
                 <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                    Status
+                    className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
+                    Phone Number
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" aria-hidden="true" className="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round"
@@ -313,303 +255,80 @@ const AdminUserManagement = () => {
                     </svg>
                     </p>
                 </th>
-                <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                {/* <th
+                    className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
-                    Employed
+                    className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
+                    Phone Number
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" aria-hidden="true" className="w-4 h-4">
                         <path stroke-linecap="round" stroke-linejoin="round"
                         d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                     </svg>
                     </p>
-                </th>
+                </th> */}
                 <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                    className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
+                    Block/Unblock
                     </p>
                 </th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="flex items-center gap-3">
-                    <img src="https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg"
-                        alt="John Michael" className="relative inline-block h-9 w-9 !rounded-full object-cover object-center" />
-                    <div className="flex flex-col">
+                { userList.map( (user) => (
+                    <tr key={ user.id }>
+                    <td className="p-4 border-b border-blue-gray-50">
+                        <div className="flex items-center gap-3">
+                        <img src={ user.profileImage || "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg"}
+                            alt={ user.username } 
+                            className="relative inline-block h-9 w-9 !rounded-full object-cover object-center" />
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        John Michael
+                        { user.username }
                         </p>
-                        <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        john@creative-tim.com
-                        </p>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="flex flex-col">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        Manager
-                    </p>
-                    <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        Organization
-                    </p>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="w-max">
-                    <div
-                        className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                        <span className="">online</span>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    23/04/18
-                    </p>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <button
-                    className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    type="button">
-                    <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-                        className="w-4 h-4">
-                        <path
-                            d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z">
-                        </path>
-                        </svg>
-                    </span>
-                    </button>
-                </td>
-                </tr>
-                <tr>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="flex items-center gap-3">
-                    <img src="https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-2.jpg"
-                        alt="Alexa Liras" className="relative inline-block h-9 w-9 !rounded-full object-cover object-center" />
-                    <div className="flex flex-col">
+                        </div>
+                    </td>
+                    <td className="p-4 border-b border-blue-gray-50">
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        Alexa Liras
-                        </p>
-                        <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        alexa@creative-tim.com
-                        </p>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="flex flex-col">
+                            { user.email }
+                            </p>
+                        </td>
+                    <td className="p-4 border-b border-blue-gray-50">
                     <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        Programator
-                    </p>
-                    <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        Developer
-                    </p>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="w-max">
-                    <div
-                        className="relative grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
-                        <span className="">offline</span>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    23/04/18
-                    </p>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <button
-                    className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    type="button">
-                    <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-                        className="w-4 h-4">
-                        <path
-                            d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z">
-                        </path>
-                        </svg>
-                    </span>
-                    </button>
-                </td>
-                </tr>
-                <tr>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="flex items-center gap-3">
-                    <img src="https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-1.jpg"
-                        alt="Laurent Perrier"
-                        className="relative inline-block h-9 w-9 !rounded-full object-cover object-center" />
-                    <div className="flex flex-col">
-                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        Laurent Perrier
+                        { user.phone_number }
                         </p>
-                        <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        laurent@creative-tim.com
-                        </p>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="flex flex-col">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        Executive
-                    </p>
-                    <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        Projects
-                    </p>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="w-max">
-                    <div
-                        className="relative grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
-                        <span className="">offline</span>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    19/09/17
-                    </p>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <button
-                    className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    type="button">
-                    <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-                        className="w-4 h-4">
-                        <path
-                            d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z">
-                        </path>
-                        </svg>
-                    </span>
-                    </button>
-                </td>
-                </tr>
-                <tr>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="flex items-center gap-3">
-                    <img src="https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-4.jpg"
-                        alt="Michael Levi" className="relative inline-block h-9 w-9 !rounded-full object-cover object-center" />
-                    <div className="flex flex-col">
-                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        Michael Levi
-                        </p>
-                        <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        michael@creative-tim.com
-                        </p>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="flex flex-col">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        Programator
-                    </p>
-                    <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        Developer
-                    </p>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <div className="w-max">
-                    <div
-                        className="relative grid items-center px-2 py-1 font-sans text-xs font-bold text-green-900 uppercase rounded-md select-none whitespace-nowrap bg-green-500/20">
-                        <span className="">online</span>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    24/12/08
-                    </p>
-                </td>
-                <td className="p-4 border-b border-blue-gray-50">
-                    <button
-                    className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    type="button">
-                    <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-                        className="w-4 h-4">
-                        <path
-                            d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z">
-                        </path>
-                        </svg>
-                    </span>
-                    </button>
-                </td>
-                </tr>
-                <tr>
-                <td className="p-4">
-                    <div className="flex items-center gap-3">
-                    <img src="https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-5.jpg"
-                        alt="Richard Gran" className="relative inline-block h-9 w-9 !rounded-full object-cover object-center" />
-                    <div className="flex flex-col">
-                        <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        Richard Gran
-                        </p>
-                        <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        richard@creative-tim.com
-                        </p>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4">
-                    <div className="flex flex-col">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                        Manager
-                    </p>
-                    <p
-                        className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900 opacity-70">
-                        Executive
-                    </p>
-                    </div>
-                </td>
-                <td className="p-4">
-                    <div className="w-max">
-                    <div
-                        className="relative grid items-center px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-blue-gray-500/20 text-blue-gray-900">
-                        <span className="">offline</span>
-                    </div>
-                    </div>
-                </td>
-                <td className="p-4">
-                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                    04/10/21
-                    </p>
-                </td>
-                <td className="p-4">
-                    <button
-                    className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
-                    type="button">
-                    <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
-                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-                        className="w-4 h-4">
-                        <path
-                            d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z">
-                        </path>
-                        </svg>
-                    </span>
-                    </button>
-                </td>
-                </tr>
+                    </td>
+                    <td className="p-4 border-b border-blue-gray-50">
+                        <div 
+                            onClick={() => handleToggleStatus(user.id)}
+                            className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${
+                                user.is_active
+                                    ? 'bg-green-500/20 text-green-900'
+                                    : 'bg-red-500/20 text-red-900'
+                            }`}
+                        >
+                            <span>{user.is_active ? 'Block' : 'Unblock'}</span>
+                        </div>
+                    </td>
+                    {/* <td className="p-4 border-b border-blue-gray-50">
+                        <button
+                        className="relative h-10 max-h-[40px] w-10 max-w-[40px] select-none rounded-lg text-center align-middle font-sans text-xs font-medium uppercase text-gray-900 transition-all hover:bg-gray-900/10 active:bg-gray-900/20 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
+                        type="button">
+                        <span className="absolute transform -translate-x-1/2 -translate-y-1/2 top-1/2 left-1/2">
+                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
+                            className="w-4 h-4">
+                            <path
+                                d="M21.731 2.269a2.625 2.625 0 00-3.712 0l-1.157 1.157 3.712 3.712 1.157-1.157a2.625 2.625 0 000-3.712zM19.513 8.199l-3.712-3.712-12.15 12.15a5.25 5.25 0 00-1.32 2.214l-.8 2.685a.75.75 0 00.933.933l2.685-.8a5.25 5.25 0 002.214-1.32L19.513 8.2z">
+                            </path>
+                            </svg>
+                        </span>
+                        </button>
+                    </td> */}
+                    </tr>
+                ))}
+                
+                
             </tbody>
             </table>
         </div>
