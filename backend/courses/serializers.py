@@ -4,15 +4,16 @@ from . models import Category, Chapters, CourseVariant, Course
 
 class CategorySerializer(serializers.ModelSerializer):
     subcategories = serializers.StringRelatedField(many=True, read_only=True)
+    full_path = serializers.SerializerMethodField()
 
     class Meta:
         model = Category
-        fields = ['id', 'name', 'description', 'parent', 'subcategories', 'created_at', 'updated_at']
+        fields = ['id', 'name', 'description', 'parent', 'subcategories', 'full_path','active']
 
-    def get_subcategories(self, obj):
-        subcategories = obj.subcategories.all()
-        return CategorySerializer(subcategories, many=True).data
-    
+
+    def get_full_path(self, obj):
+        return obj.get_full_path()
+
     def validate_parent(self, value):
         # Ensure a category cannot be its own parent.
         if self.instance and value == self.instance:
@@ -26,7 +27,8 @@ class CourseSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'category', 'mentor', 'status', 'preview_image', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'description', 'category', 'mentor', 'status', 'preview_image',
+         'created_at', 'price', 'duration', 'updated_at']
 
 class CourseVariantSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()

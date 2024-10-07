@@ -19,6 +19,7 @@ class Category(models.Model):
         blank=True,
         related_name='subcategories'
     )
+    active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -46,9 +47,18 @@ class Course(models.Model):
         blank=True,
         null=True,
     )
+    duration = models.IntegerField(null=True,blank=True)
+    price = models.DecimalField(
+        max_digits=10,
+        decimal_places=2,
+        validators=[MinValueValidator(Decimal('0.00'))],
+        blank=True,
+        null=True,
+    )
     # Mentor submission of the course
     mentor = models.ForeignKey(User, on_delete=models.CASCADE)
     status = models.CharField(max_length=20, choices=status_choices, default='pending')
+    active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -65,6 +75,7 @@ class CourseVariant(models.Model):
         decimal_places=2,
         validators=[MinValueValidator(Decimal('0.00'))]
     )
+    active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -83,6 +94,7 @@ class Chapters(models.Model):
         null=True,
         validators=[FileExtensionValidator(["mp4"])],
     )
+    active = models.BooleanField(default=False)
     # For order of each chapters
     order = models.IntegerField(default=0)
     created_at = models.DateTimeField(auto_now_add=True)

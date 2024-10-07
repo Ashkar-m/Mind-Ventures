@@ -11,16 +11,32 @@ class CategoryListView(APIView):
     def get(self, request):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         # Create a new category with the option of assigning a parent category
         serializer = CategorySerializer(data=request.data)
         if serializer.is_valid():
-            serializer.save()
-
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            try:
+               serializer.save()
+               return Response(serializer.data, status=status.HTTP_201_CREATED)
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+class ToggleCategoryActiveView(APIView):
+    def post(self, request, pk):
+        try:
+            category = Category.objects.get(pk=pk)
+        except Category.DoesNotExist:
+            return Response({"Error": "Category not found."}, status=status.HTTP_404_NOT_FOUND)
+        
+        category.active = not category.active
+        category.save()
+
+        return Response({"succes": "Category toggled"}, status=status.HTTP_200_OK)
 
 
 class CategoryDetailAPIView(APIView):
@@ -85,8 +101,9 @@ class CourseDetailAPIView(APIView):
         course = self.get_object(pk)
         if course is None:
             return Response({"error": "course not found"}, status=status.HTTP_404_NOT_FOUND)
-            serializer = CourseSerializer(course)
-            return Response(serializer.data)
+        
+        serializer = CourseSerializer(course)
+        return Response(serializer.data)
 
 
 class CourseVariantAPIView(APIView):
