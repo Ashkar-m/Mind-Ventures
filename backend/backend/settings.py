@@ -240,3 +240,9 @@ AUTHENTICATION_BACKENDS = [
     # `allauth` specific authentication methods, such as login by email
     'allauth.account.auth_backends.AuthenticationBackend',
 ]
+
+# Define the URL that serves media files
+MEDIA_URL = '/media/'
+
+# Define the path where uploaded files are stored
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
