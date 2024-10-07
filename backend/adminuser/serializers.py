@@ -11,4 +11,4 @@ class UserDetailSerializers(serializers.ModelSerializer):
 class MentorDetailSerialzer(serializers.ModelSerializer):
     class Meta:
         model = UserAccount
-        fields = ['id', 'email', 'first_name', 'last_name', 'is_verified']
+        fields = ['id', 'email', 'phone_number', 'username', 'is_verified']
