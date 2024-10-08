@@ -72,7 +72,7 @@ export default function Home() {
                 <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/hero/phone-mockup.png" alt="mockup" />
             </div>                
         </div>
-    </section>
+      </section>
 
     {/* Features section */}
     <div class="bg-white py-24 sm:py-32">

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import UserNavbar from "../Navbar/Navbar";
 import UserSidebar from "../Sidebar/Sidebar";
 import { baseUrl } from "../../../components/auth/authService";
@@ -6,6 +6,7 @@ import { baseUrl } from "../../../components/auth/authService";
 const UserProfile = () => {
 
     const [userProfile, setUserProfile] = useState([]);
+    const formRef = useRef(null);
     const userId = 16 ;
 
     useEffect( () => {
@@ -24,6 +25,50 @@ const UserProfile = () => {
         fetchUserProfile();
     },[])
     console.log(userProfile);
+
+    const updateUserProfile = async (updatedData) => {
+        try {
+            const response = await fetch(`${baseUrl}/users/user-profile/${userId}/`,{
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: formData,
+            });
+            
+            if (!response.ok) {
+                throw new Error("Error updating user profile");
+            }
+
+            const updatedProfile = await response.json();
+            setUserProfile(updatedProfile)
+        } catch (error) {
+            console.error("Error while updating profile", error);
+            
+        }
+    };
+    
+    const handleUpdate = (event) => {
+        event.preventDefault();
+
+        const updatedData = {
+            profile_picture : formRef.current.elements.profile_picture.files[0],
+            first_name : formRef.current.elements.first_name.value,
+            last_name : formRef.current.elements.last_name.value,
+            gender : formRef.current.elements.gender.value,
+            date_of_birth : formRef.current.elements.date_of_birth.value,
+            bio : formRef.current.elements.bio.value,
+            highest_education_qualification : formRef.current.elements.highest_education_qualification.value,
+            current_education_qualification : formRef.current.elements.current_education_qualification.value,
+            expected_graduation_date : formRef.current.elements.expected_graduation_date.value,
+        };
+        const formData = new FormData();
+        for (let key in updatedData) {
+            formData.append(key, updatedData[key]);
+        }
+
+        updateUserProfile(updatedData);
+    }
 
     
     return (
@@ -119,7 +164,7 @@ const UserProfile = () => {
                         <h1 className="lg:text-3xl md:text-2xl sm:text-xl xs:text-xl font-serif font-extrabold mb-2 dark:text-white">
                             Profile
                         </h1>
-                        <form>
+                        <form ref={formRef} onSubmit={handleUpdate}>
                             {/* Profile Picture */}
                             <div className="w-full rounded-sm bg-cover bg-center bg-no-repeat items-center">
                             <div
@@ -135,8 +180,12 @@ const UserProfile = () => {
                                 <div className="bg-white/90 rounded-full w-6 h-6 text-center ml-28 mt-4">
                                 <input
                                     type="file"
-                                    name="profile"
+                                    name="profile_picture"
                                     id="upload_profile"
+                                    onChange={(e) => {
+                                        const fileInput = formRef.current.elements.profile_picture;
+                                        fileInput.files = e.target.files;
+                                    }}
                                     hidden
                                     required
                                 />
@@ -175,6 +224,7 @@ const UserProfile = () => {
                                 type="text"
                                 className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                                 placeholder="First Name"
+                                name="first_name"
                                 value={ userProfile?.first_name || "" } // populate dynamically
                                 onChange={ (e) => setUserProfile({ ...userProfile, first_name: e.target.value })}
                                 />
@@ -185,6 +235,7 @@ const UserProfile = () => {
                                 type="text"
                                 className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                                 placeholder="Last Name"
+                                name="last_name"
                                 value={ userProfile?.last_name || "" } // populate dynamically
                                 onChange={ (e) => setUserProfile({ ...userProfile, last_name: e.target.value })}
                                 />
@@ -199,6 +250,7 @@ const UserProfile = () => {
                                 className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                                 value={ userProfile?.gender || "" } // populate dynamically
                                 onChange={ (e) => setUserProfile({ ...userProfile, gender: e.target.value })}
+                                name="gender"
                                 >
                                 <option disabled value="">
                                     Select Gender
@@ -211,6 +263,7 @@ const UserProfile = () => {
                                 <h3 className="dark:text-gray-300 mb-2">Date Of Birth</h3>
                                 <input
                                 type="date"
+                                name="date_of_birth"
                                 className="text-grey p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                                 value={ userProfile?.date_of_birth || "" } // populate dynamically
                                 onChange={ (e) => setUserProfile({ ...userProfile, date_of_birth: e.target.value })}
@@ -224,6 +277,7 @@ const UserProfile = () => {
                             <textarea
                                 className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
                                 placeholder="Bio"
+                                name="bio"
                                 value={ userProfile?.bio || "" } // populate dynamically
                                 onChange={ (e) => setUserProfile({ ...userProfile, bio: e.target.value })}
                             />
@@ -235,34 +289,36 @@ const UserProfile = () => {
                                 <h3 className="dark:text-gray-300 mb-2">Highest Education Qualification</h3>
                                 <select
                                 className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                name="highest_education_qualification"
                                 value={ userProfile?.highest_education_qualification || "" } // populate dynamically
                                 onChange={ (e) => setUserProfile({ ...userProfile, highest_education_qualification: e.target.value })}
                                 >
                                 <option disabled value="">
                                     Select Qualification
                                 </option>
-                                <option value="Diploma">Diploma</option>
-                                <option value="SSLC">SSLC</option>
-                                <option value="Higher Secondary">Higher Secondary</option>
-                                <option value="Under Graduate">Under Graduate</option>
-                                <option value="Post Graduate">Post Graduate</option>
+                                <option value="diploma">Diploma</option>
+                                <option value="sslc">SSLC</option>
+                                <option value="highersecondary">Higher Secondary</option>
+                                <option value="undergraduate">Under Graduate</option>
+                                <option value="postgraduate">Post Graduate</option>
                                 </select>
                             </div>
                             <div className="w-full">
                                 <h3 className="dark:text-gray-300 mb-2">Current Education Qualification</h3>
                                 <select
                                 className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                name="current_education_qualification"
                                 value={ userProfile?.current_education_qualification || "" } // populate dynamically
                                 onChange={ (e) => setUserProfile({ ...userProfile, current_education_qualification: e.target.value })}
                                 >
                                 <option disabled value="">
                                     Select Qualification
                                 </option>
-                                <option value="Diploma">Diploma</option>
-                                <option value="SSLC">SSLC</option>
-                                <option value="Higher Secondary">Higher Secondary</option>
-                                <option value="Under Graduate">Under Graduate</option>
-                                <option value="Post Graduate">Post Graduate</option>
+                                <option value="diploma">Diploma</option>
+                                <option value="sslc">SSLC</option>
+                                <option value="highersecondary">Higher Secondary</option>
+                                <option value="undergraduate">Under Graduate</option>
+                                <option value="postgraduate">Post Graduate</option>
                                 </select>
                             </div>
                             </div>
@@ -273,6 +329,7 @@ const UserProfile = () => {
                             <input
                                 type="date"
                                 className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                name="expected_graduation_date"
                                 value={ userProfile?.expected_graduation_date || "" } // populate dynamically
                                 onChange={ (e) => setUserProfile({ ...userProfile, expected_graduation_date: e.target.value })}
                             />

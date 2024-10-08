@@ -1,34 +1,64 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import Navbar from "../../Navbar/Navbar";
+import { useParams } from "react-router-dom";
+import { baseUrl } from "../../../components/auth/authService";
+import Footer from "../Footer/Footer";
 
 
 const CourseDetail = () => {
+    const { id } = useParams();
+    const [course, setCourse] = useState('');
+    
+    useEffect( () => {
+
+        const fetchCourse = async () => {
+            try{
+                const response = await fetch(`${baseUrl}/courses/course-detail/${id}/`)
+
+                if (!response.ok) {
+                    throw new Error('Course does not exist');
+                }
+                
+                const data = await response.json();
+                setCourse(data);
+
+            } catch (error) {
+                console.error('Error while fetching course',error);
+            }
+        }
+        fetchCourse();
+    }, []);
+    console.log(course);
+    
 
     return(
         <div>
 
         <Navbar/>
 
-        <section className="py-8 bg-white md:py-16 dark:bg-gray-900 antialiased">
+        <section className="py-8 mt-20 bg-white md:py-16 dark:bg-gray-900 antialiased">
             <div className="max-w-screen-xl px-4 mx-auto 2xl:px-0">
             <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
                 <div className="shrink-0 max-w-md lg:max-w-lg mx-auto">
-                <img className="w-full dark:hidden" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front.svg" alt="" />
-                <img className="w-full hidden dark:block" src="https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg" alt="" />
+                
+                <img className="w-full hidden dark:block" 
+                src={course?.preview_image 
+                    ? `${baseUrl}${course.preview_image}`
+                    : "https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg"
+                } alt="course-image" />
                 </div>
 
                 <div className="mt-6 sm:mt-8 lg:mt-0">
                 <h1
                     className="text-xl font-semibold text-gray-900 sm:text-2xl dark:text-white"
                 >
-                    Apple iMac 24" All-In-One Computer, Apple M1, 8GB RAM, 256GB SSD,
-                    Mac OS, Pink
+                    {course.title}
                 </h1>
                 <div className="mt-4 sm:items-center sm:gap-4 sm:flex">
                     <p
                     className="text-2xl font-extrabold text-gray-900 sm:text-3xl dark:text-white"
                     >
-                    $1,249.99
+                    {course.price}
                     </p>
 
                     <div className="flex items-center gap-2 mt-2 sm:mt-0">
@@ -171,20 +201,14 @@ const CourseDetail = () => {
                 <hr className="my-6 md:my-8 border-gray-200 dark:border-gray-800" />
 
                 <p className="mb-6 text-gray-500 dark:text-gray-400">
-                    Studio quality three mic array for crystal clear calls and voice
-                    recordings. Six-speaker sound system for a remarkably robust and
-                    high-quality audio experience. Up to 256GB of ultrafast SSD storage.
-                </p>
-
-                <p className="text-gray-500 dark:text-gray-400">
-                    Two Thunderbolt USB 4 ports and up to two USB 3 ports. Ultrafast
-                    Wi-Fi 6 and Bluetooth 5.0 wireless. Color matched Magic Mouse with
-                    Magic Keyboard or Magic Keyboard with Touch ID.
+                    {course.description}                
                 </p>
                 </div>
             </div>
             </div>
         </section>
+
+        <Footer />
 
         </div>
     )
