@@ -17,11 +17,19 @@ from rest_framework_simplejwt.views import TokenObtainPairView
 import os
 import random
 
-from . serializers import CustomTokenObtainPairSerializer
 from . models import UserAccount, StudentProfile, MentorProfile
-from . serializers import OTPResendSerializer, RegisterSerializer, OTPSendSerializer
-from . serializers import ForgotPaswordSerializer, LoginSerializer, OTPVerificationSerializer
-from . serializers import UserAccountSerializer, StudentProfileSerializer, MentorProfileSerializer
+from .serializers import (
+    CustomTokenObtainPairSerializer,
+    OTPResendSerializer,
+    RegisterSerializer,
+    OTPSendSerializer,
+    ForgotPaswordSerializer,
+    LoginSerializer,
+    OTPVerificationSerializer,
+    UserAccountSerializer,
+    StudentProfileSerializer,
+    MentorProfileSerializer,
+)
 # Create your views here.
 
 class CustomTokenObtainPairView(TokenObtainPairView):
@@ -147,31 +155,70 @@ class ForgotPasswordView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StudentProfileListCreateAPIView(generics.ListCreateAPIView):
-    queryset = StudentProfile.objects.all()
-    serializer_class = StudentProfileSerializer
-    permission_classes = [IsAuthenticated]
+# class StudentProfileListCreateAPIView(generics.ListCreateAPIView):
+#     queryset = StudentProfile.objects.all()
+#     serializer_class = StudentProfileSerializer
+#     permission_classes = [IsAuthenticated]
 
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
-
-
-class StudentProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
-    queryset = StudentProfile.objects.all()
-    serializer_class = StudentProfileSerializer
-    permission_classes = [IsAuthenticated]
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
 
 
-class MentorProfileListCreateAPIView(generics.ListCreateAPIView):
-    queryset = MentorProfile.objects.all()
-    serializer_class = MentorProfileSerializer
-    permission_classes = [IsAuthenticated]
-
-    def perform_create(self, serializer):
-        serializer.save(user=self.request.user)
+# class StudentProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+#     queryset = StudentProfile.objects.all()
+#     serializer_class = StudentProfileSerializer
+#     permission_classes = [IsAuthenticated]
 
 
-class MentorProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
-    queryset = MentorProfile.objects.all()
-    serializer_class = MentorProfileSerializer
-    permission_classes = [IsAuthenticated]
+# class MentorProfileListCreateAPIView(generics.ListCreateAPIView):
+#     queryset = MentorProfile.objects.all()
+#     serializer_class = MentorProfileSerializer
+#     permission_classes = [IsAuthenticated]
+
+#     def perform_create(self, serializer):
+#         serializer.save(user=self.request.user)
+
+
+# class MentorProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
+#     queryset = MentorProfile.objects.all()
+#     serializer_class = MentorProfileSerializer
+#     permission_classes = [IsAuthenticated]
+
+class UserProfileView(APIView):
+    def get(self, request, pk, *args, **kwargs):
+        try:
+            user = UserAccount.objects.get(pk=pk)
+        except UserAccount.DoesNotExist:
+            return Response({"Error": "User not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        if hasattr(user, 'studentprofile'):
+            serializer = StudentProfileSerializer(user.studentprofile, context={'request': request})
+        elif hasattr(user, 'mentorprofile'):
+            serializer = StudentProfileSerializer(user.mentorprofile, context={'request': request})
+        else:
+            return Response({ "detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        return Response(serializer.data, status=status.HTTP_200_OK)
+    
+    def post(self, request, *args, **kwargs):
+        serializer = StudentProfileSerializer(data=request.data, context={'request': request})
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def patch(self, request, *args, **kwargs):
+        user = request.user
+        if hasattr(user, 'studentprofile'):
+            profile_instance = user.studentprofile
+        elif hasattr(user, 'mentorprofile'):
+            profile_instance = user.mentorprofile
+        else:
+            return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
+        
+        serializer = StudentProfileSerializer(profile_instance, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

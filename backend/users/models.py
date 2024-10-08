@@ -101,7 +101,16 @@ class ProfileBase(models.Model):
         null=True,
     )
     bio = models.TextField(blank=True)
-    date_of_birth = models.DateTimeField(null=True, blank=True)
+    date_of_birth = models.DateField(null=True, blank=True)
+    MALE = 'male'
+    FEMALE = 'female'
+    OTHER = 'other'
+    GENDER_CHOICES = [
+        (MALE,'Male'),
+        (FEMALE, 'Female'),
+        (OTHER, 'Other')
+    ]
+    gender = models.CharField(max_length=20, choices=GENDER_CHOICES, blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
@@ -111,6 +120,7 @@ class ProfileBase(models.Model):
 
 class StudentProfile(ProfileBase):
 
+    user = models.OneToOneField(UserAccount, on_delete=models.CASCADE, related_name='studentprofile')
     UNDERGRADUATE = 'undergraduate'
     POSTGRADUATE = 'postgraduate'
     HIGHERSECONDARY = 'highersecondary'
@@ -128,11 +138,15 @@ class StudentProfile(ProfileBase):
     choices=EDUCATION_LEVEL_CHOICES, blank=True, null=True)
     current_education_qualification = models.CharField(max_length=30,
     choices=EDUCATION_LEVEL_CHOICES, blank=True, null=True)
-    expected_graduation_date = models.DateTimeField(blank=True, null=True)
+    expected_graduation_date = models.DateField(blank=True, null=True)
+
+    def __str__(self):
+        return f"{self.user.username} - ({self.user.id})"
 
 
 class MentorProfile(ProfileBase):
 
+    user = models.OneToOneField(UserAccount, on_delete=models.CASCADE, related_name='mentorprofile')
     UNDERGRADUATE = 'undergraduate'
     POSTGRADUATE = 'postgraduate'
     HIGHERSECONDARY = 'highersecondary'
@@ -164,7 +178,7 @@ def create_user_profile(sender, instance, created, **kwargs):
 @receiver(post_save, sender=UserAccount)
 def save_user_profile(sender, instance, **kwargs):
     # for saving the profiles
-    if instance.role == UserAccount.STUDENT:
+    if instance.role == UserAccount.STUDENT and hasattr(instance, 'studentprofile'):
         instance.studentprofile.save()
-    elif instance.role == UserAccount.MENTOR:
+    elif instance.role == UserAccount.MENTOR and hasattr(instance, 'mentorprofile'):
         instance.mentorprofile.save()
