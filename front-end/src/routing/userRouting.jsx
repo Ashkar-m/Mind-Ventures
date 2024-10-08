@@ -8,6 +8,7 @@ import UserDashboard from '../pages/User/Dashboard/Dashboard'
 import CourseList from '../pages/User/CourseList/CourseList'
 import CourseDetail from '../pages/User/CourseDetail/CourseDetail'
 import OtpPage from '../pages/User/OtpPage/OtpPage'
+import UserProfile from '../pages/User/Profile/Profile'
 
  const UserRouting = () => {
   return (
@@ -16,10 +17,11 @@ import OtpPage from '../pages/User/OtpPage/OtpPage'
             <Route path='/login' element={<LoginPage />} />
             <Route path='/register' element={<Signup />} />
             <Route path='/home' element= {<ProtectedRoute><Home/></ProtectedRoute>} />
-            <Route path='/dashboard' element= {<ProtectedRoute><UserDashboard/></ProtectedRoute>} />
+            <Route path='/student/dashboard' element= {<ProtectedRoute><UserDashboard/></ProtectedRoute>} />
             <Route path='/course-list' element={<CourseList/>} />
-            <Route path='/course-detail' element={<CourseDetail/>} />
+            <Route path='/course-detail/:id' element={<CourseDetail/>} />
             <Route path='/otp' element={<OtpPage/>} />
+            <Route path='/student/profile' element={<UserProfile />} />
         </Routes>
         
     </div>
