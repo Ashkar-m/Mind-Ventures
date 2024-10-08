@@ -209,7 +209,7 @@ const AdminCategoryManagement = () => {
                                         : 'bg-red-500/20 text-red-900'
                                 }`}
                             >
-                                <span>{course.active ? 'Delete' : 'Admit'}</span>
+                                <span>{course.active ? 'Admit' : 'Delete'}</span>
                             </div>
                         </td>
                         
