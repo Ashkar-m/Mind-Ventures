@@ -164,6 +164,9 @@ class MentorProfile(ProfileBase):
     average_rating = models.DecimalField(max_digits=3, decimal_places=1, blank=True, null=True)
     specialisation = models.CharField(max_length=100, blank=True, null=True)
 
+    def __str__(self):
+        return f"{self.user.username} - ({self.user.id})"
+
 
 @receiver(post_save, sender=UserAccount)
 def create_user_profile(sender, instance, created, **kwargs):

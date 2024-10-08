@@ -7,6 +7,7 @@ import AdminMentorManagement from "../pages/Admin/MentorManagement/MentorManagem
 import AdminDashboard from "../pages/Admin/AdminDashboard/AdminDashboard";
 import AdminCategoryManagement from "../pages/Admin/AdminCategoryManagement/AdminCategoryManagement";
 import AdminCourseManagement from "../pages/Admin/Course/Course";
+import PageRedirect from "../components/PageRedirect/PageRedirect";
 
 
 const AdminRouting = () => {
@@ -15,12 +16,12 @@ const AdminRouting = () => {
         <div>
             <Routes>
                 <Route path="/admin/login" element={<AdminLogin />}></Route>
-                <Route path="/admin/home" element={<AdminHome />} />
-                <Route path='/admin/dashboard' element={<AdminDashboard />} />
-                <Route path='/admin/user-management' element={<AdminUserManagement />} />
-                <Route path='/admin/mentor-management' element={<AdminMentorManagement />} />
-                <Route path='/admin/category-management' element={<AdminCategoryManagement />} />
-                <Route path='/admin/course-management' element={<AdminCourseManagement/>} />
+                <Route path="/admin/home" element={<PageRedirect allowedRoles={['admin']}><AdminHome /></PageRedirect>} />
+                <Route path='/admin/dashboard' element={<PageRedirect allowedRoles={['admin']}><AdminDashboard /></PageRedirect>} />
+                <Route path='/admin/user-management' element={<PageRedirect allowedRoles={['admin']}><AdminUserManagement /></PageRedirect>} />
+                <Route path='/admin/mentor-management' element={<PageRedirect allowedRoles={['admin']}><AdminMentorManagement /></PageRedirect>} />
+                <Route path='/admin/category-management' element={<PageRedirect allowedRoles={['admin']}><AdminCategoryManagement /></PageRedirect>} />
+                <Route path='/admin/course-management' element={<PageRedirect allowedRoles={['admin']}><AdminCourseManagement/></PageRedirect>} />
             </Routes>
         </div>
     )

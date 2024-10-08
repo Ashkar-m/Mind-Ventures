@@ -29,6 +29,13 @@ const OtpPage = () => {
 
     const email = location.state?.email;
 
+    useEffect(() => {
+        // If no email is passed, redirect to the registration page
+        if (!email) {
+            navigate('/register');
+        }
+    }, [email]);
+
     const handleSendOtp = async () => {
         try {
             const response = await fetch(`${baseUrl}/users/send-otp/`, {
@@ -128,13 +135,6 @@ return (
             
             <button  className="flex w-full mt-6 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             type="submit">Verify</button>
-            {/* <p className="mt-10 text-center text-sm text-gray-500" >
-            Didn't revieve OTP?
-            <a onClick={handleSendOtp} disabled={!canResend}
-            className={`font-semibold leading-6 text-indigo-600 hover:text-indigo-500 ml-2 ${!canResend ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}`}>
-            {canResend ? 'Resend OTP' : `Resend OTP in ${resendTimer}s`}
-            </a>
-            </p> */}
             <p className="mt-10 text-center text-sm text-gray-500">
                 Didn't receive OTP?
                 <a 

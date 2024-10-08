@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { login } from '../../../components/auth/authService';
 import { useNavigate } from 'react-router-dom';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import Toast from "../../../utils/validation/Toast";
 import './Login.css';
 import * as Yup from 'yup';
@@ -9,7 +9,6 @@ import { useFormik } from 'formik';
 
 
 const LoginPage = () => {
-    const dispatch = useDispatch();
     const [toastMessages, setToastMessage] = useState([]);
 
     const { accessToken } = useSelector(state => state.auth);
@@ -19,7 +18,7 @@ const LoginPage = () => {
         if (accessToken) {
             navigate('/')
         }
-    }, [accessToken])
+    }, [accessToken]);
 
     const validationSchema = Yup.object({
         email: Yup.string()
@@ -64,7 +63,7 @@ const LoginPage = () => {
                         messages.push({ message: 'Unknown role', type: 'danger'});
                     }
 
-                    setToastMessage(message);
+                    setToastMessage(messages);
                 } else {
                     setToastMessage([{ message: 'Invalid username or password', type: 'danger'}]);
                 } 
@@ -126,7 +125,7 @@ return (
             <input type="password" id="password" name='password' style={{ marginBottom: '20px' }}
             value={formik.values.password} onChange={formik.handleChange} onBlur={formik.handleBlur}
             className="block pl-2 w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"/>
-            {formik.touched.password && formik.errors.password ? <div className="text-red-6 text-sm"> {formik.errors.password} </div> : null }
+            {formik.touched.password && formik.errors.password ? <div className="text-red-600 text-sm"> {formik.errors.password} </div> : null }
 
             <button className="flex w-full mt-6 justify-center rounded-md bg-indigo-600 px-3 py-1.5 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
             type="submit">Login</button>

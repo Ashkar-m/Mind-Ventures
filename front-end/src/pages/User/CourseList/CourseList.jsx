@@ -2,10 +2,12 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../../Navbar/Navbar';
 import Footer from '../Footer/Footer';
 import { baseUrl } from '../../../components/auth/authService';
+import { useNavigate } from 'react-router-dom';
 
 
 export default function CourseList() {
 
+    const navigate = useNavigate();
     const [courses, setCourses] = useState([]);
 
     useEffect( () => {
@@ -28,7 +30,7 @@ export default function CourseList() {
     console.log(courses);
 
     const handleButton = (courseId) => {
-        Navigate(`course/${courseId}`)
+        navigate(`/course-detail/${courseId}`)
     }
     
   return (

@@ -6,17 +6,18 @@ import AddCourse from "../pages/Mentor/AddCourse/AddCourse";
 import MentorProfile from "../pages/Mentor/Profile/Profile";
 import MentorDashboard from "../pages/Mentor/Dashboard/Dashboard";
 import EditCourse from "../pages/Mentor/EditCourse/EditCourse";
+import PageRedirect from "../components/PageRedirect/PageRedirect";
 
 
 const MentorRouting = () => {
     return (
         <div>
             <Routes>
-            <Route path='/mentor/home' element={<MentorHome/>} />
-            <Route path='/mentor/add-course' element={<AddCourse/>} />
-            <Route path="/mentor/profile" element={<MentorProfile />} />
-            <Route path='/mentor/dashboard' element={<MentorDashboard />} />
-            <Route path='/mentor/edit-course/:id' element={<EditCourse/>} />
+            <Route path='/mentor/home' element={<PageRedirect allowedRoles={['mentor']}><MentorHome/></PageRedirect>} />
+            <Route path='/mentor/add-course' element={<PageRedirect allowedRoles={['mentor']}><AddCourse/></PageRedirect>} />
+            <Route path="/mentor/profile" element={<PageRedirect allowedRoles={['mentor']}><MentorProfile /></PageRedirect>} />
+            <Route path='/mentor/dashboard' element={<PageRedirect allowedRoles={['mentor']}><MentorDashboard /></PageRedirect> } />
+            <Route path='/mentor/edit-course/:id' element={<PageRedirect allowedRoles={['mentor']}><EditCourse/></PageRedirect>} />
             </Routes>
         </div>
     )

@@ -155,11 +155,11 @@ const Signup = () => {
                         <legend className='block text-sm font-medium leading-6 text-gray-900'>Register As</legend>
                         <div className='mt-3'>
                         <label>
-                            <input type="radio" value='student' checked={ role === 'student' }
+                            <input type="radio" name='role' value='student' checked={formik.values.role === 'student'}
                             onChange={ formik.handleChange } /> Student
                         </label>
                         <label className="ml-4">
-                                <input type="radio" value='mentor' checked={role === 'mentor'} 
+                                <input type="radio" name='role' value='mentor' checked={formik.values.role === 'mentor'} 
                                 onChange={ formik.handleChange } /> Mentor
                         </label>
                         </div>

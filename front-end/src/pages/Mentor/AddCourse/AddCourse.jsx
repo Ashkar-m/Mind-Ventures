@@ -7,6 +7,42 @@ import { baseUrl } from "../../../components/auth/authService";
 export default function AddCourse() {
 
     const [categoryList, setCategoryList] = useState(null);
+    const [userDetails, setUserDetails] = useState(null);
+    const [mentorDetails, setMentorDetails] = useState(null);
+    const [isFormReadyToSubmit, setIsFormReadyToSubmit] = useState(false);
+
+
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        setUserDetails(user.user_id);
+    }, []);
+    console.log(userDetails);
+    
+
+    useEffect( () => {
+        const fetchMentorDetail = async () => {
+            try {
+                if (userDetails) {
+                    const response = await fetch(`${baseUrl}/users/user-detail/${userDetails}/`)
+                
+                    if (!response.ok) {
+                        throw new Error ('Error while fetching category')
+                    }
+                    
+                    const data = await response.json();
+
+                    setMentorDetails(data);
+                }
+
+            } catch (error) {
+                console.error("Error:",error);
+            }
+        }
+        fetchMentorDetail();
+    }, [userDetails]);
+    console.log(mentorDetails);
+    
+    
     
     useEffect( () => {
         const fetchCategoryList = async () => {
@@ -28,6 +64,9 @@ export default function AddCourse() {
         }
         fetchCategoryList();
     }, []);
+
+    console.log(categoryList);
+    
 
     const [formData, setFormData] = useState({
         title: "",
@@ -53,8 +92,13 @@ export default function AddCourse() {
         });
     };
 
-    const handleSubmit = async (e) => {
-        e.preventDefault();
+    useEffect(() => {
+        if (isFormReadyToSubmit && mentorDetails) {
+            submitForm();
+        }
+    }, [mentorDetails, isFormReadyToSubmit]);
+
+    const submitForm = async (e) => {
 
         const submitData = new FormData();
         submitData.append("title", formData.title);
@@ -63,6 +107,13 @@ export default function AddCourse() {
         submitData.append("duration", formData.duration);
         submitData.append("price", formData.price);
         submitData.append("preview_image", formData.preview_image);
+
+        if (mentorDetails && mentorDetails.user_id) {
+            submitData.append("mentor", mentorDetails.user_id);
+        } else {
+            console.error("mentor details are not available");
+            return;
+        }
 
         try {
             const response = await axios.post(`${baseUrl}/courses/course-list/`, submitData, {
@@ -75,13 +126,21 @@ export default function AddCourse() {
             console.error("There was an error creating the course", error);
             
         }
+
+        setIsFormReadyToSubmit(false);
     };
 
-    const [userDetails, setUserDetails] = useState(null);
-    useEffect(() => {
-        const user = JSON.parse(localStorage.getItem('user'));
-        setUserDetails(user);
-    }, []);
+    const handleSubmit = (e) => {
+        e.preventDefault();
+    
+        // Check if mentorDetails are already available
+        if (mentorDetails) {
+            submitForm();
+        } else {
+            // Set a flag to wait for mentorDetails
+            setIsFormReadyToSubmit(true);
+        }
+    };
     
 
   return (
