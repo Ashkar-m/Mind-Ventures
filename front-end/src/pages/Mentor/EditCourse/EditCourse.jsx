@@ -3,11 +3,36 @@ import MentorNavbar from "../Navbar/Navbar";
 import MentorSidebar from "../Sidebar/Sidebar";
 import axios from "axios";
 import { baseUrl } from "../../../components/auth/authService";
+import { useParams } from "react-router-dom";
 
-export default function AddCourse() {
+export default function EditCourse() {
 
+    const [course, setCourse] = useState('');
     const [categoryList, setCategoryList] = useState(null);
+    const { id } = useParams();
+    console.log(id);
     
+    useEffect( () => {
+
+        const fetchCourse = async () => {
+            try{
+                const response = await fetch(`${baseUrl}/courses/course-detail/${id}/`)
+
+                if (!response.ok) {
+                    throw new Error('Course does not exist');
+                }
+                
+                const data = await response.json();
+                setCourse(data);
+
+            } catch (error) {
+                console.error('Error while fetching course',error);
+            }
+        }
+        fetchCourse();
+    }, []);
+    console.log(course);
+
     useEffect( () => {
         const fetchCategoryList = async () => {
             try {
@@ -116,7 +141,7 @@ export default function AddCourse() {
                         <input
                             type="text"
                             name="title"
-                            value={formData.title}
+                            value={course.title}
                             onChange={handleChange}
                             id="course-name"
                             autoComplete="course-name"
@@ -138,7 +163,7 @@ export default function AddCourse() {
                         <select
                             id="category"
                             name="category"
-                            value={formData.category}
+                            value={course.category}
                             onChange={handleChange}
                             className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
                         >
@@ -164,7 +189,7 @@ export default function AddCourse() {
                         <input
                             type="text"
                             name="duration"
-                            value={formData.duration}
+                            value={course.duration}
                             onChange={handleChange}
                             id="duration"
                             className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
@@ -186,7 +211,7 @@ export default function AddCourse() {
                             type="text"
                             name="price"
                             id="price"
-                            value={formData.price}
+                            value={course.price}
                             onChange={handleChange}
                             className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
                             placeholder="Enter course price"
@@ -208,15 +233,13 @@ export default function AddCourse() {
                         id="description"
                         name="description"
                         rows="5"
-                        value={formData.description}
+                        value={course.description}
                         onChange={handleChange}
                         className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
                         placeholder="Write a brief description of the course"
                         ></textarea>
                     </div>
                     </div>
-
-                    {/* Course Image */}
                     <div className="mt-8">
                     <label
                         htmlFor="course-image"
@@ -225,11 +248,12 @@ export default function AddCourse() {
                         Upload Course Image
                     </label>
                     <div className="mt-2 flex items-center">
-                        {/* Image Preview (optional) */}
                         <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full bg-gray-100">
                         <img
-                            src="https://via.placeholder.com/64"
-                            alt="Course preview"
+                            src={course?.preview_image 
+                                ? `${baseUrl}${course.preview_image}`
+                                : "https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg"
+                            } alt="course-image"
                             id="course-image-preview"
                             className="h-full w-full object-cover"
                         />
@@ -241,7 +265,7 @@ export default function AddCourse() {
                             type="file"
                             accept="image/png, image/jpeg, image/gif"
                             className="hidden"
-                            onChange={handleImageChange} // You'll implement this function
+                            onChange={handleImageChange}
                         />
                         <label
                             htmlFor="course-image"
@@ -258,8 +282,6 @@ export default function AddCourse() {
 
                 </div>
                 </div>
-
-                {/* Action Buttons */}
                 <div className="mt-6 flex items-center justify-end gap-4">
                 <button
                     type="button"
@@ -276,7 +298,7 @@ export default function AddCourse() {
                 </div>
             </form>
         </div>
-    </div> 
+    </div>
   )
 }
 
