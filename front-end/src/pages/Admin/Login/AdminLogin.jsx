@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { login } from '../../../components/auth/authService';
+import { adminLogin } from '../../../components/auth/authService';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import Toast from "../../../utils/validation/Toast";
@@ -22,33 +22,33 @@ const AdminLogin = () => {
             .email('Please enter a valid email address')
             .required('Email field is required'),
         password: Yup.string()
-            .min(4, 'Password should contain at least 4 characters')
+            .min(8, 'Password should contain at least 8 characters')
             .required('Password field is required')
     });
 
-    const formik = useFormik({
-        initialValues: {
-            email: '',
-            password: '',
-        },
-        validationSchema,
-        onSubmit: async (values) => {
-            try {
-                const tokenData = await login(values.email, values.password);
-                if (tokenData) {
-                    const userId = tokenData.user_id;
-                    const userDetails = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`).then(response => response.json());
-                    navigate('/admin/home');
-                    setToastMessage([{ message: 'Successfully logged in', type: 'success' }]);
-                } else {
-                    setToastMessage([{ message: 'Invalid username or password', type: 'danger' }]);
-                }
-            } catch (error) {
-                console.log(error);
-                setToastMessage([{ message: error.message || 'Login failed', type: 'danger' }]);
-            }
-        }
-    });
+    // const formik = useFormik({
+    //     initialValues: {
+    //         email: '',
+    //         password: '',
+    //     },
+    //     validationSchema,
+    //     onSubmit: async (values) => {
+    //         try {
+    //             const tokenData = await login(values.email, values.password);
+    //             if (tokenData) {
+    //                 const userId = tokenData.user_id;
+    //                 const userDetails = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`).then(response => response.json());
+    //                 navigate('/admin/home');
+    //                 setToastMessage([{ message: 'Successfully logged in', type: 'success' }]);
+    //             } else {
+    //                 setToastMessage([{ message: 'Invalid username or password', type: 'danger' }]);
+    //             }
+    //         } catch (error) {
+    //             console.log(error);
+    //             setToastMessage([{ message: error.message || 'Login failed', type: 'danger' }]);
+    //         }
+    //     }
+    // });
 
 // const handleSubmit = async (e) => {
 //     e.preventDefault();
@@ -102,6 +102,76 @@ const AdminLogin = () => {
 //     }
 // };
 
+
+// const formik = useFormik({
+//     initialValues: {
+//         email: '',
+//         password: '',
+//     },
+//     validationSchema,
+//     onSubmit: async (values) => {
+//         try {
+//             const tokenData = await adminLogin(values.email, values.password);
+
+//             if (tokenData && tokenData.error) {
+//                 setToastMessage([{ message: 'Invalid username or password', type: 'danger' }]);
+//                 return;
+//             } else if (tokenData.error.message === 'Admins can not login using this page.') {
+//                 pass;
+//             }
+
+//             if (tokenData) {
+//                 const userId = tokenData.user_id;
+//                 const userDetails = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`).then(response => response.json());
+
+//                 if (userDetails.role === 'admin') {
+//                     navigate('/admin/home');
+//                     setToastMessage([{ message: 'Successfully logged in', type: 'success' }]);
+//                 } else {
+//                     setToastMessage([{ message: 'You are not authorized to access this page', type: 'danger' }]);
+//                 }
+//             } else {
+//                 setToastMessage([{ message: 'Invalid username or password', type: 'danger' }]);
+//             }
+//         } catch (error) {
+//             console.log(error);
+//             setToastMessage([{ message: error.message || 'Login failed', type: 'danger' }]);
+//         }
+//     }
+// });
+
+const formik = useFormik({
+    initialValues: {
+        email: '',
+        password: ''
+    },
+    validationSchema,
+    onSubmit: async (values) => {
+        try {
+            const { email, password } = values;
+            const tokenData = await adminLogin(email, password);
+
+            if (tokenData && tokenData.error) {
+                if (tokenData.error.message === 'Request failed with status code 401'){
+                    setToastMessage([{ message: 'Invalid Email or password', type: 'danger' }]);
+                    return;
+                }else{
+                    setToastMessage([{ message: tokenData.error.message, type: 'danger' }]);
+                    return;
+                }
+            }
+
+            if (tokenData) {
+                navigate('/admin/home');
+                setToastMessage([{ message: 'Admin login successful', type: 'success' }]);
+            } else {
+                setToastMessage([{ message: 'Invalid admin credentials', type: 'danger' }]);
+            }
+        } catch (error) {
+            setToastMessage([{ message: error.message || "Admin login failed", type: 'danger' }]);
+        }
+    }
+});
     const handleToastClose =(indexToRemove) => {
         setToastMessage(prevMessages => 
             prevMessages.filter((_, index) => index !== indexToRemove )

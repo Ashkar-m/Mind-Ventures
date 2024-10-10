@@ -20,7 +20,7 @@ class ToggleUserStatusView(generics.UpdateAPIView):
     def patch(self, request, *args, **kwargs):
         try:
             user = self.get_object()
-            user.is_active = not user.is_active
+            user.is_verified = not user.is_verified
             user.save()
             return Response(self.get_serializer(user).data)
         except Exception as e:

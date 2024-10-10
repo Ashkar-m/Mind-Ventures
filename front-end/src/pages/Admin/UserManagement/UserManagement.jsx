@@ -30,7 +30,7 @@ const AdminUserManagement = () => {
     const handleToggleStatus = async (userId) => {
         setUserList(prevList =>
             prevList.map(user =>
-                user.id === userId ? { ...user, is_active: !user.is_active } : user
+                user.id === userId ? { ...user, is_verified: !user.is_verified } : user
             )
         );
         try {
@@ -42,7 +42,7 @@ const AdminUserManagement = () => {
             console.error('Error updating status:', error);
             setUserList(prevList =>
                 prevList.map(user =>
-                    user.id === userId ? { ...user, is_active: !user.is_active } : user
+                    user.id === userId ? { ...user, is_verified: !user.is_verified } : user
                 )
             );
         
@@ -172,12 +172,12 @@ const AdminUserManagement = () => {
                         <div 
                             onClick={() => handleToggleStatus(user.id)}
                             className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${
-                                user.is_active
+                                user.is_verified
                                     ? 'bg-green-500/20 text-green-900'
                                     : 'bg-red-500/20 text-red-900'
                             }`}
                         >
-                            <span>{user.is_active ? 'Block' : 'Unblock'}</span>
+                            <span>{user.is_verified ? 'Unlock' : 'Block'}</span>
                         </div>
                     </td>
                     </tr>

@@ -14,7 +14,7 @@ const LoginPage = () => {
     const validationSchema = Yup.object({
         email: Yup.string()
             .email("Please enter a valid email address")
-            .required("Email field is required"),
+            .required("Email field is required"), 
         password: Yup.string()
             .min(8, "Password should contain at least 8 characters")
             .required("Password field is required"),
@@ -31,6 +31,18 @@ const LoginPage = () => {
                 const { email, password } = values;
                 const tokenData = await login(email, password);
 
+                if (tokenData && tokenData.error) {
+                    if (tokenData.error.message === 'Your account is blocked or unverified'){
+                        setToastMessage([{ message: tokenData.error.message, type: 'danger' }]);
+                        return;
+                    } else if (tokenData.error.message === 'Admins can not login using this page.') {
+                        setToastMessage([{ message: tokenData.error.message, type: 'warning' }]);
+                        return;
+                    } else if (tokenData.error.message === 'Request failed with status code 401'){
+                        setToastMessage([{ message: 'Invalid Email or password', type: 'danger' }]);
+                        return;
+                    }
+                }
                 if (tokenData) {
                     const userId = tokenData.user_id;
                     const userDetailsResponse = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`)
@@ -40,10 +52,16 @@ const LoginPage = () => {
                     }
 
                     const userDetails = await userDetailsResponse.json();
-                    if (userDetails.role === 'student' && !(userDetails.is_active)){
-                        setToastMessage([{ message: 'You are blocked', type: 'danger'}]);
+                    if (userDetails.role === 'student' && !(userDetails.is_verified)){
+                        setToastMessage([{ message: 'You are blocked.Please contact with support.', type: 'danger'}]);
                         return;
                     }
+                    if (userDetails.role === 'mentor' && !(userDetails.is_verified)){
+                        setToastMessage([{ message: 'Your profile is not verified.Please connect with support', type: 'danger'}]);
+                        return;
+                    }
+                    console.log(userDetails);
+                    
                     let messages = [];
                     
                     if (userDetails.role === 'student') {
@@ -60,13 +78,71 @@ const LoginPage = () => {
 
                     setToastMessage(messages);
                 } else {
-                    setToastMessage([{ message: 'Invalid username or password ', type: 'danger'}]);
+                    setToastMessage([{ message: 'Invalid username or password ', type: 'danger' }]);
                 } 
             } catch(error) {
                 setToastMessage([{ message: error.message || "Login failed", type: 'danger'}])
             }
         },
     })
+    // const formik = useFormik({
+    //     initialValues: {
+    //         email: '',
+    //         password: ''
+    //     },
+    //     validationSchema,
+    //     onSubmit: async (values) => {
+    //         try {
+    //             const { email, password } = values;
+    //             const tokenData = await login(email, password);
+    
+    //             if (tokenData && tokenData.error) {
+    //                 setToastMessage([{ message: 'Invalid Email or password ', type: 'danger' }]);
+    //                 return;
+    //             }
+    
+    //             if (tokenData) {
+    //                 const userId = tokenData.user_id;
+    //                 const userDetailsResponse = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`);
+    
+    //                 if (!userDetailsResponse.ok) {
+    //                     throw new Error('Failed to fetch user details');
+    //                 }
+    
+    //                 const userDetails = await userDetailsResponse.json();
+    
+    //                 if (userDetails.role === 'student' && !userDetails.is_verified) {
+    //                     setToastMessage([{ message: 'You are blocked.Please contact with support.', type: 'danger' }]);
+    //                     return;
+    //                 }
+    //                 if (userDetails.role === 'mentor' && !userDetails.is_verified) {
+    //                     setToastMessage([{ message: 'Your profile is not verified.Please connect with support', type: 'danger' }]);
+    //                     return;
+    //                 }
+    
+    //                 let messages = [];
+    
+    //                 if (userDetails.role === 'student') {
+    //                     navigate('/home');
+    //                     messages.push({ message: 'Succeffully logged in', type: 'success' });
+    //                 } else if (userDetails.role === 'mentor') {
+    //                     navigate('/mentor/home');
+    //                     messages.push({ message: 'Successfully logged in as mentor', type: 'success' });
+    //                 } else if (userDetails.role === 'admin') {
+    //                     messages.push({ message: 'Admin can not login using this page.', type: 'warning' });
+    //                 } else {
+    //                     messages.push({ message: 'Unknown role', type: 'danger' });
+    //                 }
+    
+    //                 setToastMessage(messages);
+    //             } else {
+    //                 setToastMessage([{ message: 'Invalid username or password ', type: 'danger' }]);
+    //             }
+    //         } catch (error) {
+    //             setToastMessage([{ message: error.message || "Login failed", type: 'danger' }]);
+    //         }
+    //     },
+    // });
 
 
 const handleToastClose =(indexToRemove) => {

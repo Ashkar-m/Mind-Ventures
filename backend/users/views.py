@@ -109,10 +109,17 @@ def verify_otp(request):
     serializer = OTPVerificationSerializer(data=request.data)
     otp = type(request.data.get('otp'))
     email= request.data.get('email')
-    print(cache.get(f'otp_{email}'))
     if serializer.is_valid():
         email = serializer.validated_data['email']
         otp = serializer.validated_data['otp']
+
+        User = get_user_model()
+        try:
+            user = User.objects.get(email=email)
+        except User.DoesNotExist:
+            return Response({'detail': 'User not found.'}, status=status.HTTP_404_NOT_FOUND)
+        user.is_verified = True
+        user.save()
        
         return Response({'detail': 'OTP verified scuccessfully.'}, status=status.HTTP_200_OK)
     else:
@@ -153,38 +160,7 @@ class ForgotPasswordView(APIView):
                 return Response({"message": "Failed to sent the message"}, status=HTTP_500_INTERNAL_SERVER_ERROR)
 
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-# class StudentProfileListCreateAPIView(generics.ListCreateAPIView):
-#     queryset = StudentProfile.objects.all()
-#     serializer_class = StudentProfileSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def perform_create(self, serializer):
-#         serializer.save(user=self.request.user)
-
-
-# class StudentProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
-#     queryset = StudentProfile.objects.all()
-#     serializer_class = StudentProfileSerializer
-#     permission_classes = [IsAuthenticated]
-
-
-# class MentorProfileListCreateAPIView(generics.ListCreateAPIView):
-#     queryset = MentorProfile.objects.all()
-#     serializer_class = MentorProfileSerializer
-#     permission_classes = [IsAuthenticated]
-
-#     def perform_create(self, serializer):
-#         serializer.save(user=self.request.user)
-
-
-# class MentorProfileRetrieveUpdateAPIView(generics.RetrieveUpdateAPIView):
-#     queryset = MentorProfile.objects.all()
-#     serializer_class = MentorProfileSerializer
-#     permission_classes = [IsAuthenticated]
-
-
+        
 
 class UserProfileView(APIView):
     def get(self, request, pk, *args, **kwargs):
