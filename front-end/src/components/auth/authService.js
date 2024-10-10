@@ -37,7 +37,7 @@ const login = async (email,password) => {
         return tokenData;
     }
     } catch (error) {
-        console.error ('Error loging in ', error);
+        console.error ('Error loging in:', error.response?.data?.detail || 'unknown error');
     }
 };
 

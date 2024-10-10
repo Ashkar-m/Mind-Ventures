@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { login } from '../../../components/auth/authService';
 import { useNavigate } from 'react-router-dom';
-import { useSelector } from 'react-redux';
 import Toast from "../../../utils/validation/Toast";
 import './Login.css';
 import * as Yup from 'yup';
@@ -10,15 +9,7 @@ import { useFormik } from 'formik';
 
 const LoginPage = () => {
     const [toastMessages, setToastMessage] = useState([]);
-
-    const { accessToken } = useSelector(state => state.auth);
     const navigate = useNavigate();
-    
-    useEffect( () => {
-        if (accessToken) {
-            navigate('/')
-        }
-    }, [accessToken]);
 
     const validationSchema = Yup.object({
         email: Yup.string()
@@ -49,6 +40,10 @@ const LoginPage = () => {
                     }
 
                     const userDetails = await userDetailsResponse.json();
+                    if (userDetails.role === 'student' && !(userDetails.is_active)){
+                        setToastMessage([{ message: 'You are blocked', type: 'danger'}]);
+                        return;
+                    }
                     let messages = [];
                     
                     if (userDetails.role === 'student') {
@@ -65,7 +60,7 @@ const LoginPage = () => {
 
                     setToastMessage(messages);
                 } else {
-                    setToastMessage([{ message: 'Invalid username or password', type: 'danger'}]);
+                    setToastMessage([{ message: 'Invalid username or password ', type: 'danger'}]);
                 } 
             } catch(error) {
                 setToastMessage([{ message: error.message || "Login failed", type: 'danger'}])

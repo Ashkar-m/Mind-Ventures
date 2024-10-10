@@ -8,6 +8,7 @@ import AdminDashboard from "../pages/Admin/AdminDashboard/AdminDashboard";
 import AdminCategoryManagement from "../pages/Admin/AdminCategoryManagement/AdminCategoryManagement";
 import AdminCourseManagement from "../pages/Admin/Course/Course";
 import PageRedirect from "../components/PageRedirect/PageRedirect";
+import CoursePreview from "../pages/Admin/CoursePrview/CoursePrivew";
 
 
 const AdminRouting = () => {
@@ -22,6 +23,7 @@ const AdminRouting = () => {
                 <Route path='/admin/mentor-management' element={<PageRedirect allowedRoles={['admin']}><AdminMentorManagement /></PageRedirect>} />
                 <Route path='/admin/category-management' element={<PageRedirect allowedRoles={['admin']}><AdminCategoryManagement /></PageRedirect>} />
                 <Route path='/admin/course-management' element={<PageRedirect allowedRoles={['admin']}><AdminCourseManagement/></PageRedirect>} />
+                <Route path='/admin/course-preview' element={<PageRedirect allowedRoles={['admin']}><CoursePreview /></PageRedirect>} />
             </Routes>
         </div>
     )

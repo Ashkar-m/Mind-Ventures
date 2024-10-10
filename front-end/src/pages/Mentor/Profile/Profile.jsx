@@ -2,14 +2,19 @@ import React, { useEffect, useRef, useState } from "react";
 import { baseUrl } from "../../../components/auth/authService";
 import MentorNavbar from "../Navbar/Navbar";
 import MentorSidebar from "../Sidebar/Sidebar";
+import axios from 'axios';
+import { useSelector } from "react-redux";
 
 const MentorProfile = () => {
 
     const [userProfile, setUserProfile] = useState([]);
-    const [mentorDetails, setMentorDetails] = useState(null);
     const formRef = useRef(null);
     const [userId, setUserId] = useState(null);
 
+    const {accessToken} = useSelector(state => state.auth);
+    console.log( accessToken );
+    
+    
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user'));
         if (user) {
@@ -36,24 +41,29 @@ const MentorProfile = () => {
             fetchUserProfile();
         }
         
-    },[userId])
-
+    },[userId]);
+    console.log(userProfile);
+    
     const updateUserProfile = async (formData) => {
         try {
-            const response = await fetch(`${baseUrl}/users/user-profile/${userId}/`,{
-                method: 'PATCH',
-                body: formData,
-            });
-            
-            if (!response.ok) {
+            const url = `${baseUrl}/users/student-profile/${userId}/update/`;
+    
+            const config = {
+                headers: {
+                    'Content-Type': 'multipart/form-data',
+                    'Authorization': `Bearer ${accessToken}` // Add the Authorization header
+                }
+            };
+    
+            const response = await axios.patch(url, formData, config);
+            if (response.status === 200) {
+                console.log("Profile updated successfully:", response.data);
+                setUserProfile(response.data); 
+            } else {
                 throw new Error("Error updating user profile");
             }
-
-            const updatedProfile = await response.json();
-            setUserProfile(updatedProfile);
         } catch (error) {
-            console.error("Error while updating profile", error);
-            
+            console.error("Error while updating profile", error.response ? error.response.data : error.message);
         }
     };
     
@@ -77,10 +87,8 @@ const MentorProfile = () => {
                 formData.append(key, updatedData[key]);
             }
         }
-
         updateUserProfile(formData);
     }
-
     
     return (
         <div className="min-w-full" >
