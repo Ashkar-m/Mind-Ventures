@@ -24,6 +24,7 @@ class CategorySerializer(serializers.ModelSerializer):
 class CourseSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField()
     mentor = serializers.StringRelatedField()
+    preview_image = serializers.ImageField(required=False)
 
     class Meta:
         model = Course

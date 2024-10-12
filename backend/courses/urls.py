@@ -1,7 +1,13 @@
-from django.urls import path
+from django.urls import path,include
 from . import views
+from rest_framework.routers import DefaultRouter
+from .views import CourseViewset
+
+router = DefaultRouter()
+router.register(r'courseview', CourseViewset, basename='courseview') 
 
 urlpatterns = [
+    path('', include(router.urls)),
     path('category-list/', views.CategoryListView.as_view(), name='category-list'),
     path('category/toggle-status/<int:pk>/', views.ToggleCategoryActiveView.as_view(), name='category-toggle'),
     path('course-list/', views.CourseAPIView.as_view(), name='course-list'),
