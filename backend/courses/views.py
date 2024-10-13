@@ -3,12 +3,15 @@ from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework import status
 from rest_framework import viewsets
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.parsers import MultiPartParser, FormParser
 
 from . models import Category, Course, CourseVariant, Chapters
 from . serializers import CategorySerializer, CourseSerializer, CourseVariantSerializer, ChapterSerializers
 
 
 class CategoryListView(APIView):
+    permission_classes = [IsAuthenticated]
     def get(self, request):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
@@ -76,10 +79,12 @@ class CategoryDetailAPIView(APIView):
 
 
 class CourseAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
     def get(self, request):
         courses = Course.objects.all()
         serializer = CourseSerializer(courses, many=True)
+        permission_classes = [IsAuthenticated]
         return Response(serializer.data)
     
     def post(self, request):
@@ -89,11 +94,12 @@ class CourseAPIView(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
-from rest_framework.permissions import AllowAny
+
 class CourseViewset(viewsets.ModelViewSet):
-    queryset = Course = Course.objects.all()
+    queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    permission_classes = [AllowAny]
+    parser_classes = [MultiPartParser, FormParser]
+    permission_classes = [IsAuthenticated]
 
 class CourseDetailAPIView(APIView):
 

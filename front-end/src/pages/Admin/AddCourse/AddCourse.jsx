@@ -3,6 +3,8 @@ import AdminNavbar from "../AdminNavbar/AdminNavbar";
 import AdminSidebar from "../AdminSidebar/AdminSidebar";
 import axios from "axios";
 import { baseUrl } from "../../../components/auth/authService";
+import axiosInstance from "../../../components/Bearer/axiosInterceptor";
+import { useDispatch, useSelector } from "react-redux";
 
 
 const AdminAddCourse = () => {
@@ -19,6 +21,48 @@ const AdminAddCourse = () => {
         preview_image: null,
         mentor: "",
     });
+    // const { accessToken, refreshToken } = useSelector(state => state.auth)
+    const [isTokenRefreshing, setIsTokenRefreshing] = useState(false);
+    const dispatch = useDispatch();
+    const refreshToken = useSelector((state) => state.auth.refreshToken);
+    const accessToken = useSelector((state) => state.auth.accessToken);
+    console.log(accessToken);
+    console.log(refreshToken);
+    
+    
+    if (accessToken === refreshToken){
+        console.log('2');
+    } else {
+        console.log('3');
+        
+    }
+
+//   useEffect(() => {
+//     if (!accessToken && refreshToken) {
+//       setIsTokenRefreshing(true);
+//       fetch(`${baseUrl}/token/refresh/`, {
+//         method: 'POST',
+//         headers: {
+//           'Content-Type': 'application/json',
+//         },
+//         body: JSON.stringify({
+//           grant_type: 'refresh_token',
+//           refresh_token: refreshToken,
+//         }),
+//       })
+//       .then(response => response.json())
+//       .then(data => {
+//         const newAccessToken = data.access_token;
+//         dispatch(updateAccessToken(newAccessToken));
+//         setIsTokenRefreshing(false);
+//       })
+//       .catch(error => {
+//         console.error('Error refreshing token:', error);
+//         setIsTokenRefreshing(false);
+//       });
+//     }
+//   }, [accessToken, refreshToken, dispatch]);
+    
 
     useEffect(() => {
         const user = JSON.parse(localStorage.getItem('user'));
@@ -26,14 +70,19 @@ const AdminAddCourse = () => {
         setToken(getToken)
         setUserDetails(user);
     }, []);
-    console.log(token);
+    console.log(accessToken);
+    
     
 
     useEffect( () => {
         const fetchMentorDetail = async () => {
             try {
                 if (userDetails) {
-                    const response = await fetch(`${baseUrl}/users/user-detail/${userDetails.user_id}/`)
+                    const response = await fetch(`${baseUrl}/users/user-detail/${userDetails.user_id}/`,{
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`, // Include the token
+                        },
+                    })
                 
                     if (!response.ok) {
                         throw new Error ('Error while fetching category')
@@ -59,26 +108,60 @@ const AdminAddCourse = () => {
     
     
     
-    useEffect( () => {
+    
+    // useEffect( () => {
+    //     const fetchCategoryList = async () => {
+    //         try {
+    //             // const response = await axiosInstance.get(`${baseUrl}/courses/category-list/`,{
+    //             //     headers: {
+    //             //         'Authorization': `Bearer ${token}`, // Include the token
+    //             //     },
+    //             const token = localStorage.getItem('access_token'); // Or wherever you are storing the token
+    //             const response = await axios.get('http://127.0.0.1:8000/courses/category-list/', {
+    //             headers: {
+    //                 'Authorization': `Bearer ${accessToken}` // Assuming you're using JWT tokens
+    //             }
+    //             })
+                
+    //             if (!response.ok) {
+    //                 const errorMessage = `Error fetching category list: ${response.status} ${response.statusText}`;
+    //     console.error(errorMessage);
+    //             }
+                
+    //             const data = await response.json();
+
+    //             setCategoryList(data);
+
+    //         } catch (error) {
+    //             console.error("Error:",error);
+                
+    //         }
+    //     }
+    //     fetchCategoryList();
+    // }, []);
+    useEffect(() => {
         const fetchCategoryList = async () => {
-            try {
-                const response = await fetch(`${baseUrl}/courses/category-list/`)
-                
-                if (!response.ok) {
-                    throw new Error ('Error while fetching category')
-                }
-                
-                const data = await response.json();
-
-                setCategoryList(data);
-
-            } catch (error) {
-                console.error("Error:",error);
-                
-            }
-        }
+          try { 
+            const response = await axios.get('http://127.0.0.1:8000/courses/category-list/', {
+              headers: {
+                'Authorization': `Bearer ${accessToken}`, // Use accessToken here
+              },
+            });
+    
+            // Axios automatically throws errors for non-2xx status codes, so no need for manual checks
+            const data = response.data; // This contains the actual response data
+            setCategoryList(data); // Assuming setCategoryList is a state setter function
+          } catch (error) {
+            console.error("Error fetching category list:", error);
+          }
+        };
+    
         fetchCategoryList();
     }, []);
+    console.log(categoryList);
+    
+    
+      
     
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -107,84 +190,38 @@ const AdminAddCourse = () => {
         });
     };
 
-    // const handleSubmit = async (e) => {
-    //     e.preventDefault();
-        
-    //     const postData = {
-    //         title: formData.title,
-    //         description: formData.description,
-    //         duration: parseFloat(formData.duration),
-    //         price: parseFloat(formData.price),
-    //         category: parseInt(formData.category, 10),
-    //         mentor: parseInt(formData.mentor, 10),
-    //     };
-
-    //     if (formData.preview_image) {
-    //         postData.preview_image = formData.preview_image;
-    //     }
-    
-    //     // Ensure preview_image is a valid file
-    //     // if (formData.preview_image && formData.preview_image instanceof File) {
-    //     //     postData.append("preview_image", formData.preview_image);
-    //     // } else {
-    //     //     console.warn("Preview image is not valid or not a file:", formData.preview_image);
-    //     // }
-    //     try {
-    //         console.log("Posting data:", Object.fromEntries(postData.entries()));
-            
-            
-    //         const response = await fetch(`${baseUrl}/courses`, {
-    //             method: "POST",
-    //             headers: {
-    //                 'Content-Type': 'application/json'
-    //             },
-    //             body: JSON.stringify(postData),
-    //         });
-
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             console.log("Course created:", data);
-    //         } else {
-    //             console.error("Error creating course");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error:", error);
-    //     }
-    // };
-
     const handleSubmit = async (e) => {
         e.preventDefault();
+        const formDataToSend = new FormData();
+    formDataToSend.append('title', formData.title);
+    formDataToSend.append('description', formData.description);
+    formDataToSend.append('duration', parseFloat(formData.duration));
+    formDataToSend.append('price', parseFloat(formData.price));
+    formDataToSend.append('category', parseInt(formData.category, 10));
+    formDataToSend.append('mentor', parseInt(formData.mentor, 10));
+
+    // Add the image file if it exists
+    if (formData.preview_image) {
+        formDataToSend.append('preview_image', formData.preview_image);
+    }
+
+    for (const [key, value] of formDataToSend.entries()) {
+        console.log(`${key}:`, value, `(Type: ${typeof value})`);
         
-        const postData = {
-            title: formData.title,
-            description: formData.description,
-            duration: parseFloat(formData.duration),
-            price: parseFloat(formData.price),
-            category: parseInt(formData.category, 10),
-            mentor: parseInt(formData.mentor, 10),
-        };
-    
-        if (formData.preview_image) {
-            postData.preview_image = formData.preview_image;
+        // If the value is a File object, you can specifically check its type
+        if (value instanceof File) {
+            console.log(`${key} is a File with name: ${value.name}`);
         }
+    }
+    
     
         try {
-            console.log(postData);
-            const response = await fetch(`${baseUrl}/courseview`, {
-                method: "POST",
+            const response = await axiosInstance.post('/courses/courseview/', formDataToSend, {
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'multipart/form-data', // Set content type for form data
+                    'Authorization': `Bearer ${token}`,
                 },
-                body: JSON.stringify(postData),
             });
-    
-            if (response.ok) {
-                const data = await response.json();
-                console.log("Course created:", data);
-            } else {
-                console.error("Error creating course");
-                console.log("Response status:", response.status);
-            }
         } catch (error) {
             console.error("Error:", error);
         }

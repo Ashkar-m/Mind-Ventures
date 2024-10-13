@@ -31,7 +31,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -49,12 +49,14 @@ INSTALLED_APPS = [
     'corsheaders',
     'rest_framework_simplejwt',
     'rest_framework.authtoken',
+    'rest_framework_simplejwt.token_blacklist',
     'dj_rest_auth',
     'django.contrib.sites',
     'allauth',
     'allauth.account',
     'allauth.socialaccount',
     'dj_rest_auth.registration',
+    'django_extensions',
 
     
     'users',
@@ -91,6 +93,7 @@ CORS_ALLOW_CREDENTIALS = True
 REST_FRAMEWORK = {
     'DEFAULT_RENDERER_CLASSES': (
         'rest_framework.renderers.JSONRenderer',
+        'rest_framework.renderers.BrowsableAPIRenderer',
     ),
     'DEFAULT_PARSER_CLASSES': (
         'rest_framework.parsers.JSONParser',
@@ -98,17 +101,17 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    'DEFAULT_PERMISSION_CLASSES': (
-        'rest_framework.permissions.IsAuthenticatedOrReadOnly',
-    ),
-    'DEFAULT_VERSIONING_CLASS': None,
-    'DEFAULT_PAGINATION_CLASS': None,
-    'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
-    'URL_FORMAT_OVERRIDE': None,
-    'DEFAULT_THROTTLE_RATES': {
-        'user': '1000/day',
-    },
-    'DEFAULT_TRAILING_SLASH': False,  # Disable trailing slashes globally
+    # 'DEFAULT_PERMISSION_CLASSES': (
+    #     'rest_framework.permissions.IsAuthenticated',  # Or IsAuthenticatedOrReadOnly based on your needs
+    # ),
+    # 'DEFAULT_VERSIONING_CLASS': None,
+    # 'DEFAULT_PAGINATION_CLASS': None,
+    # 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
+    # 'URL_FORMAT_OVERRIDE': None,
+    # 'DEFAULT_THROTTLE_RATES': {
+    #     'user': '1000/day',
+    # },
+    # 'DEFAULT_TRAILING_SLASH': False,  # Disable trailing slashes globally
 }
 
 TEMPLATES = [
@@ -263,3 +266,5 @@ MEDIA_URL = '/media/'
 
 # Define the path where uploaded files are stored
 MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
+APPEND_SLASH = False

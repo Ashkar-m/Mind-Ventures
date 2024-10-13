@@ -180,6 +180,7 @@ class UserProfileView(APIView):
     
     def post(self, request, *args, **kwargs):
         serializer = StudentProfileSerializer(data=request.data, context={'request': request})
+        permission_classes = [IsAuthenticated]
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -196,6 +197,7 @@ class UserProfileView(APIView):
             return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         
         serializer = StudentProfileSerializer(profile_instance, data=request.data, partial=True)
+        permission_classes = [IsAuthenticated]
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
