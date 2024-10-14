@@ -51,7 +51,7 @@ const AdminMentorManagement = () => {
     {/* Body part  */}
     <div className="p-4 sm:ml-64 mt-20">
 
-    <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border">
+    <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-xl rounded-xl bg-clip-border transform hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-in-out">
         <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
             <div className="flex items-center justify-center gap-8 mb-8">
             <div>
