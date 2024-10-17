@@ -33,6 +33,11 @@ class Category(models.Model):
         return self.name
 
 
+# lets us explicitly set upload path and filename
+def upload_to(instance, filename):
+    return 'images/{filename}'.format(filename=filename)
+
+
 class Course(models.Model):
     status_choices = [
         ("pending", "Pending"),
@@ -43,7 +48,7 @@ class Course(models.Model):
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     preview_image = models.ImageField(
-        upload_to='course_preview/',
+        upload_to= upload_to,
         blank=True,
         null=True,
     )
@@ -56,7 +61,7 @@ class Course(models.Model):
         null=True,
     )
     # Mentor submission of the course
-    mentor = models.ForeignKey(User, on_delete=models.CASCADE)
+    mentor = models.ForeignKey(User, on_delete=models.CASCADE, related_name="mentorInCourse")
     status = models.CharField(max_length=20, choices=status_choices, default='pending')
     active = models.BooleanField(default=False)
     created_at = models.DateTimeField(auto_now_add=True)

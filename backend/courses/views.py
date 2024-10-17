@@ -98,8 +98,12 @@ class CourseAPIView(APIView):
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
-    parser_classes = [MultiPartParser, FormParser]
+    parser_classes = (MultiPartParser, FormParser)
     permission_classes = [IsAuthenticated]
+
+    def perform_create(self, serializer):
+        serializer.save(mentor=self.request.user)
+
 
 class CourseDetailAPIView(APIView):
 

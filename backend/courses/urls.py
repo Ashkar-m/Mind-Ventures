@@ -1,7 +1,9 @@
 from django.urls import path,include
 from . import views
+from django.conf import settings
 from rest_framework.routers import DefaultRouter
 from .views import CourseViewset
+from django.conf.urls.static import static
 
 router = DefaultRouter()
 router.register(r'courseview', CourseViewset, basename='courseview') 
@@ -16,4 +18,5 @@ urlpatterns = [
     path('variant-detail/<int:pk>/', views.CourseVariantDetailAPIView.as_view(), name='variant-detail'),
     path('chapter-list/', views.ChapterAPIView.as_view(), name='chapter-list'),
     path('chapter-detail/<int:pk>/', views.ChapterDetailAPIView.as_view(), name='chapter-detail')
-]
+
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

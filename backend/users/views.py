@@ -204,15 +204,15 @@ class UserProfileView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
-class StudentProfileUpdateView(generics.UpdateAPIView):
-    queryset = UserAccount.objects.all()
-    serializer_class = StudentProfile
-    permission_classes = [IsAuthenticated]
+# class StudentProfileUpdateView(generics.UpdateAPIView):
+#     queryset = UserAccount.objects.all()
+#     serializer_class = StudentProfile
+#     permission_classes = [IsAuthenticated]
 
-    def get_queryset(self):
-        # Customize queryset to update the profile of the logged-in user only
-        user = self.request.user
-        return StudentProfile.objects.filter(user=user)
+#     def get_queryset(self):
+#         # Customize queryset to update the profile of the logged-in user only
+#         user = self.request.user
+#         return StudentProfile.objects.filter(user=user)
 
 @api_view(['PATCH'])
 def update_mentor_profile(request, pk):
@@ -221,7 +221,7 @@ def update_mentor_profile(request, pk):
         mentor = UserAccount.objects.get(pk=pk)
 
         # Update mentor profile with the data from request
-        serializer = MentorProfile(mentor, data=request.data, partial=True)  # Use partial=True for partial updates
+        serializer = MentorProfileSerializer(mentor, data=request.data, partial=True)  # Use partial=True for partial updates
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
@@ -229,3 +229,20 @@ def update_mentor_profile(request, pk):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     except UserAccount.DoesNotExist:
         return Response({'error': 'Mentor not found'}, status=status.HTTP_404_NOT_FOUND)
+
+
+@api_view(['PATCH'])
+def update_student_profile(request, pk):
+    try:
+        # Retrieve the user object using the primary key (pk)
+        student = UserAccount.objects.get(pk=pk)
+
+        # Update mentor profile with the data from request
+        serializer = StudentProfileSerializer(student, data=request.data, partial=True)  # Use partial=True for partial updates
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=status.HTTP_200_OK)
+
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    except UserAccount.DoesNotExist:
+        return Response({'error': 'Student not found'}, status=status.HTTP_404_NOT_FOUND)

@@ -1,7 +1,16 @@
 import { createSlice } from '@reduxjs/toolkit';
 
+function safelyParseJSON(jsonString) {
+    try {
+        return JSON.parse(jsonString);
+    } catch (error) {
+        console.error("Error parsing JSON from localStorage:", error);
+        return null;
+    }
+}
+
 const initialState = {
-    user : localStorage.getItem ('user') ? JSON.parse(localStorage.getItem('user')) : null,
+    user: localStorage.getItem('user') ? safelyParseJSON(localStorage.getItem('user')) : null,
     accessToken : localStorage.getItem ('ACCESS_TOKEN') ? JSON.parse(localStorage.getItem('ACCESS_TOKEN')) : null,
     refreshToken : localStorage.getItem ('REFRESH_TOKEN') ? JSON.parse(localStorage.getItem('REFRESH_TOKEN')) : null,
 };

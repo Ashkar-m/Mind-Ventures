@@ -92,11 +92,16 @@ class UserAccount(AbstractUser):
     def __str__(self):
         return f"{self.username}"
 
+
+def upload_to(instance, filename):
+    return 'images/{filename}'.format(filename=filename)
+
+
 class ProfileBase(models.Model):
     # Abstract base model for profiles with common fields
     user = models.OneToOneField(UserAccount, on_delete=models.CASCADE)
     profile_picture = models.ImageField(
-        upload_to='profile_pics/',
+        upload_to=upload_to,
         blank=True,
         null=True,
     )

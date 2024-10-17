@@ -265,6 +265,6 @@ AUTHENTICATION_BACKENDS = [
 MEDIA_URL = '/media/'
 
 # Define the path where uploaded files are stored
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
 
 APPEND_SLASH = False

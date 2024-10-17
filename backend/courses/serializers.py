@@ -23,12 +23,13 @@ class CategorySerializer(serializers.ModelSerializer):
         
 class CourseSerializer(serializers.ModelSerializer):
     category = serializers.StringRelatedField()
-    mentor = serializers.StringRelatedField()
+    mentor = serializers.ReadOnlyField(source='creator.username')
+    mentor_id = serializers.ReadOnlyField(source='mentor.id')
     preview_image = serializers.ImageField(required=False)
 
     class Meta:
         model = Course
-        fields = ['id', 'title', 'description', 'category', 'mentor', 'status', 'preview_image',
+        fields = ['id', 'title', 'description', 'category', 'mentor', 'mentor_id', 'status', 'preview_image',
          'created_at', 'price', 'duration', 'updated_at']
 
 class CourseVariantSerializer(serializers.ModelSerializer):

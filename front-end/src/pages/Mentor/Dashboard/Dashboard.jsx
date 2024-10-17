@@ -3,29 +3,48 @@ import MentorNavbar from "../Navbar/Navbar";
 import MentorSidebar from "../Sidebar/Sidebar";
 import { baseUrl } from "../../../components/auth/authService";
 import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const MentorDashboard = () => {
 
     const [courses, setCourses] = useState([]);
     const navigate = useNavigate();
+    const refreshToken = useSelector((state) => state.auth.refreshToken);
+    const accessToken = useSelector((state) => state.auth.accessToken);
+    const [loading, setLoading] = useState(false);
+    const [userDetails, setUserDetails] = useState(null);
 
+    useEffect(() => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const getToken = JSON.parse(localStorage.getItem('ACCESS_TOKEN'));
+        setUserDetails(user);
+    }, []);
+    console.log(accessToken);
+    
     useEffect( () => {
         const fetchCourses = async () => {
-            try{
-                const response = await fetch(`${baseUrl}/courses/course-list/`)
-
-                if (!response.ok) {
-                    throw new Error("Error while fetching ")
+            if(userDetails){
+                try{
+                    const response = await fetch(`${baseUrl}/courses/course-list/`,{
+                        headers: {
+                            'Authorization': `Bearer ${accessToken}`, // Include the token
+                        },
+                    })
+    
+                    if (!response.ok) {
+                        throw new Error("Error while fetching ")
+                    }
+    
+                    const course = await response.json();
+                    setCourses(course);
+                } catch (error) {
+                    console.error("Error while fetching the course:",error);
                 }
-
-                const course = await response.json();
-                setCourses(course);
-            } catch (error) {
-                console.error("Error while fetching the course:",error);
             }
+            
         }
         fetchCourses();
-    },[])
+    },[accessToken, userDetails])
     console.log(courses);
 
     const handleButton = (id) => {

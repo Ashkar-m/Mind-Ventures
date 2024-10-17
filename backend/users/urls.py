@@ -18,6 +18,6 @@ urlpatterns = [
     path('token-view/', views.CustomTokenObtainPairView.as_view(), name='token-view'),
     path('user-profile/', views.UserProfileView.as_view(), name='user-profile'),
     path('user-profile/<int:pk>/', views.UserProfileView.as_view(), name='user-profile-detail'),
-    path('student-profile/<int:pk>/update/', views.StudentProfileUpdateView.as_view(), name='student-profile-update'),
+    path('student-profile/update/', views.update_student_profile, name='student-profile-update'),
     path('mentor-profile/<int:pk>/update/', views.update_mentor_profile, name='mentor-profile-update'),
 ]
