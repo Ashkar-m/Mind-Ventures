@@ -10,6 +10,7 @@ import AdminCourseManagement from "../pages/Admin/Course/Course";
 import PageRedirect from "../components/PageRedirect/PageRedirect";
 import CoursePreview from "../pages/Admin/CoursePrview/CoursePrivew";
 import AdminAddCourse from "../pages/Admin/AddCourse/AddCourse";
+import AdminAddCategory from "../pages/Admin/Category/Category";
 
 
 const AdminRouting = () => {
@@ -26,6 +27,7 @@ const AdminRouting = () => {
                 <Route path='/admin/course-management' element={<PageRedirect allowedRoles={['admin']}><AdminCourseManagement/></PageRedirect>} />
                 <Route path='/admin/course-preview/:id' element={<PageRedirect allowedRoles={['admin']}><CoursePreview /></PageRedirect>} />
                 <Route path="/admin/add-course" element={<PageRedirect allowedRoles={['admin']}><AdminAddCourse/></PageRedirect>} />
+                <Route path="/admin/add-category" element={<PageRedirect allowedRoles={['admin']}><AdminAddCategory/></PageRedirect>} />
             </Routes>
         </div>
     )

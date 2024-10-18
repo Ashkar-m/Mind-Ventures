@@ -35,7 +35,6 @@ const MentorProfile = () => {
 
     const { accessToken, user } = useSelector(state => state.auth);
     
-    console.log( accessToken, user );
 
     // const handleChange = ({ currentTarget: input }) => {
     //     let newData = { ...userProfile };
@@ -44,28 +43,46 @@ const MentorProfile = () => {
     //     setUserProfile(newData);
     // };
 
-    const handleChange = ({ currentTarget: input }) => {
-        // Clone the current userProfile state
-        let updatedProfile = { ...userProfile };
+    // const handleChange = ({ currentTarget: input }) => {
+    //     // Clone the current userProfile state
+    //     let updatedProfile = { ...userProfile };
         
-        // Update the specific field that was changed
-        updatedProfile[input.name] = input.value;
+    //     // Update the specific field that was changed
+    //     updatedProfile[input.name] = input.value;
         
-        // Update the userProfile state with the new values
-        setUserProfile(updatedProfile);
-    };
+    //     // Update the userProfile state with the new values
+    //     setUserProfile(updatedProfile);
+    // };
     
 
+    // const handleImageChange = (e) => {
+    //     let newData = { ...userProfile };
+    //     newData["profile_picture"] = e.target.files[0];
+    //     setData(newData);
+    //     setUserProfile(newData);
+    // };
+
+    const handleChange = (e) => {
+        setUserProfile({
+            ...userProfile,
+            [e.target.name]: e.target.value,
+        });
+    };
+    
     const handleImageChange = (e) => {
-        let newData = { ...userProfile };
-        newData["profile_picture"] = e.target.files[0];
-        setData(newData);
-        setUserProfile(newData);
+        setUserProfile({
+            ...userProfile,
+            profile_picture: e.target.files[0],
+        });
     };
 
     const doSubmit = async (e) => {
         e.preventDefault();
-        const response = await apiSettings.createListing(data, accessToken);
+        const formData = new FormData();
+        for (const key in userProfile) {
+            formData.append(key, userProfile[key]);
+        }
+        const response = await apiSettings.createListing(formData, accessToken);
     
     // if (response.status === 200) {
     //     // Success: Handle the success case (e.g., show success message or redirect)
@@ -107,62 +124,6 @@ const MentorProfile = () => {
         }
         
     },[user.user_id]);
-    
-    // const updateUserProfile = async (formData) => {
-    //     try {
-    //         const url = `${baseUrl}/users/student-profile/${userId}/update/`;
-    
-    //         const config = {
-    //             headers: {
-    //                 'Content-Type': 'multipart/form-data',
-    //                 'Authorization': `Bearer ${accessToken}` // Add the Authorization header
-    //             }
-    //         };
-    
-    //         const response = await axios.patch(url, formData, config);
-    //         if (response.status === 200) {
-    //             console.log("Profile updated successfully:", response.data);
-    //             setUserProfile(response.data); 
-    //         } else {
-    //             throw new Error("Error updating user profile");
-    //         }
-    //     } catch (error) {
-    //         console.error("Error while updating profile", error.response ? error.response.data : error.message);
-    //     }
-    // };
-
-    // createMyModelEntry: async (data) => {
-    // let form_data = new FormData();
-    // if (data.image_url)
-    //     form_data.append("image_url", data.image_url, 
-    //     data.image_url.name);
-    // form_data.append("title", data.title);
-    // form_data.append("description", data.description);
-    // form_data.append("category", data.category);
-    //     }
-    
-    // const handleUpdate = (event) => {
-    //     event.preventDefault();
-
-    //     const updatedData = {
-    //         profile_picture : formRef.current.elements.profile_picture.files[0],
-    //         first_name : formRef.current.elements.first_name.value,
-    //         last_name : formRef.current.elements.last_name.value,
-    //         gender : formRef.current.elements.gender.value,
-    //         date_of_birth : formRef.current.elements.date_of_birth.value,
-    //         bio : formRef.current.elements.bio.value,
-    //         highest_education_qualification : formRef.current.elements.highest_education_qualification.value,
-    //         current_education_qualification : formRef.current.elements.current_education_qualification.value,
-    //         expected_graduation_date : formRef.current.elements.expected_graduation_date.value,
-    //     };
-    //     const formData = new FormData();
-    //     for (let key in updatedData) {
-    //         if (updatedData[key]){
-    //             formData.append(key, updatedData[key]);
-    //         }
-    //     }
-    //     updateUserProfile(formData);
-    // }
     
     return (
         <div className="min-w-full" >
@@ -336,6 +297,9 @@ const MentorProfile = () => {
                                 </select>
                             </div>
                             </div>
+                            {errors.description && (
+            <span className="text-red-500">{errors.first_name}</span>
+        )}
 
                             {/* Expected Graduation Date */}
                             {/* <div className="w-full mb-4 mt-6">
@@ -352,86 +316,6 @@ const MentorProfile = () => {
                                 <button type="submit" class="w-full p-4">Save</button>
                             </div>
                         </form>
-
-                        {/* <form ref={formRef} onSubmit={doSubmit}>
-    <div className="w-full rounded-sm bg-cover bg-center bg-no-repeat items-center">
-        <input
-            type="file"
-            name="image_url"
-            accept="image/jpeg,image/png,image/gif"
-            onChange={(e) => handleImageChange(e)}
-        />
-        <div
-            className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-cover bg-center bg-no-repeat"
-            style={{
-                backgroundImage: `url(${data.image_url || "default-image-url"})`,
-            }}
-        >
-            <div className="bg-white/90 rounded-full w-6 h-6 text-center ml-28 mt-4">
-                <input
-                    type="file"
-                    name="profile_picture"
-                    hidden
-                    required
-                />
-                <label htmlFor="upload_profile">
-                    <svg
-                        className="w-6 h-5 text-blue-700"
-                        fill="none"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
-                        ></path>
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
-                        ></path>
-                    </svg>
-                </label>
-            </div>
-        </div>
-    </div>
-    <div className="w-full mb-4 mt-6">
-        <label className="mb-2 dark:text-gray-300">Title</label>
-        <input
-            type="text"
-            className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-            placeholder="Title"
-            name="title"
-            value={data.title}
-            onChange={(e) => handleChange(e)}
-        />
-        {errors.title && (
-            <span className="text-red-500">{errors.title}</span>
-        )}
-    </div>
-
-    <div className="w-full mb-4 mt-6">
-        <label className="mb-2 dark:text-gray-300">Description</label>
-        <textarea
-            className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-            placeholder="Description"
-            name="description"
-            rows="10"
-            value={data.description}
-            onChange={(e) => handleChange(e)}
-        />
-        {errors.description && (
-            <span className="text-red-500">{errors.description}</span>
-        )}
-    </div>
-    <div className="w-full rounded-lg bg-blue-500 mt-4 text-white text-lg font-semibold">
-        <button type="submit" className="w-full p-4">Save</button>
-    </div>
-</form> */}
 
                        
                         </div>

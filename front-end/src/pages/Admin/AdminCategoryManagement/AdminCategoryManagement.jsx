@@ -3,16 +3,25 @@ import { baseUrl } from "../../../components/auth/authService";
 import axios from "axios";
 import AdminNavbar from "../AdminNavbar/AdminNavbar";
 import AdminSidebar from "../AdminSidebar/AdminSidebar";
+import { useNavigate } from "react-router-dom";
+import { useSelector } from "react-redux";
 
 const AdminCategoryManagement = () => {
    
     const [categoryList, setCategoryList] = useState([]);
     const [isActiveUpdated, setIsActiveUpdated] = useState(false);
+    const { accessToken } = useSelector( state => state.auth )
+
+    const navigate = useNavigate();
 
     useEffect( () => {
         const fetchCategoryList = async () => {
             try {
-                const response = await fetch(`${baseUrl}/courses/category-list/`);
+                const response = await axios.get(`${baseUrl}/courses/category-list/`, {
+                    headers: {
+                      'Authorization': `Bearer ${accessToken}`, // Use accessToken here
+                    },
+                  });
                 if (!response.ok) {
                     throw new Error('Failed to fetch category details')
                 }
@@ -79,7 +88,7 @@ const AdminCategoryManagement = () => {
                 </label>
                 </div>
             <div className="flex flex-col gap-2 shrink-0 sm:flex-row">
-                <button
+                <button onClick={ () => navigate('/admin/add-category')}
                 className="flex select-none items-center gap-3 rounded-lg bg-gray-900 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                 type="button">
                 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"

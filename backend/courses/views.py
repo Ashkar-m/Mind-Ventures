@@ -15,7 +15,7 @@ class CategoryListView(APIView):
     def get(self, request):
         categories = Category.objects.all()
         serializer = CategorySerializer(categories, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        return Response(serializer.data, status=status.HTTP_200_OK) 
 
     def post(self, request):
         # Create a new category with the option of assigning a parent category
