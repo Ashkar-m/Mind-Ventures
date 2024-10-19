@@ -213,18 +213,47 @@
 
 // export default axiosInstance;
 
-import axios from "axios";
-import { baseUrl } from "../auth/authService";
-import store from "../../store/store";
-import { setCredentials, logout } from "../../features/authReducer";
+// import axios from "axios";
+// import { baseUrl } from "../auth/authService";
+// import store from "../../store/store";
+// import { setCredentials, logout } from "../../features/authReducer";
 
-const axiosInstance = axios.create({
-    baseURL: baseUrl,
-});
+// const axiosInstance = axios.create({
+//     baseURL: baseUrl,
+// });
 
-// Function to refresh tokens
+// // Function to refresh tokens
+// // const refreshToken = async () => {
+// //     const refreshTokenValue = store.getState().auth.refreshToken;
+
+// //     if (refreshTokenValue) {
+// //         try {
+// //             console.log("Refreshing token...", refreshTokenValue);
+// //             const response = await axios.post(`${baseUrl}/users/token/refresh/`, {
+// //                 refresh: refreshTokenValue,
+// //             });
+
+// //             const { access: newAccessToken, refresh: newRefreshToken } = response.data;
+
+// //             console.log("New tokens:", { newAccessToken, newRefreshToken });
+
+// //             // Dispatch action to update tokens in Redux state
+// //             store.dispatch(setCredentials({ accessToken: newAccessToken, refreshToken: newRefreshToken }));
+
+// //             return newAccessToken;
+// //         } catch (error) {
+// //             console.error("Token refresh error:", error);
+// //             store.dispatch(logout());
+// //             throw error;
+// //         }
+// //     } else {
+// //         store.dispatch(logout());
+// //     }
+// // };
+
 // const refreshToken = async () => {
 //     const refreshTokenValue = store.getState().auth.refreshToken;
+//     const currentUser = store.getState().auth.user; // Get the current user from state
 
 //     if (refreshTokenValue) {
 //         try {
@@ -237,8 +266,12 @@ const axiosInstance = axios.create({
 
 //             console.log("New tokens:", { newAccessToken, newRefreshToken });
 
-//             // Dispatch action to update tokens in Redux state
-//             store.dispatch(setCredentials({ accessToken: newAccessToken, refreshToken: newRefreshToken }));
+//             // Dispatch action to update user and tokens in Redux state
+//             store.dispatch(setCredentials({
+//                 user: currentUser, // Make sure to keep the current user
+//                 accessToken: newAccessToken,
+//                 refreshToken: newRefreshToken
+//             }));
 
 //             return newAccessToken;
 //         } catch (error) {
@@ -251,9 +284,70 @@ const axiosInstance = axios.create({
 //     }
 // };
 
+// // Set up an interval to refresh the token every 4 minutes (240000 milliseconds)
+// setInterval(() => {
+//     refreshToken().catch((error) => {
+//         console.error("Error refreshing token:", error);
+//     });
+// }, 240000);
+
+// axiosInstance.interceptors.request.use(
+//     (config) => {
+//         const accessToken = store.getState().auth.accessToken;
+
+//         if (accessToken) {
+//             config.headers['Authorization'] = `Bearer ${accessToken}`;
+//         }
+
+//         return config;
+//     },
+//     (error) => {
+//         return Promise.reject(error);
+//     }
+// );
+
+// axiosInstance.interceptors.response.use(
+//     (response) => {
+//         return response;
+//     },
+//     async (error) => {
+//         console.log("Error in interceptor", error); // Log to see if the interceptor catches the error
+//         const originalRequest = error.config;
+
+//         if (error.response?.status === 401 && !originalRequest._retry) {
+//             console.log("401 detected"); // Log to see if it's a 401 error
+//             originalRequest._retry = true;
+
+//             const accessToken = await refreshToken(); // Get a new access token
+
+//             // Update the original request with the new access token
+//             originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
+
+//             // Retry the original request
+//             return axiosInstance(originalRequest);
+//         }
+
+//         return Promise.reject(error);
+//     }
+// );
+
+// export default axiosInstance;
+
+
+import axios from "axios";
+import { baseUrl } from "../auth/authService";
+import store from "../../store/store";
+import { setCredentials, logout } from "../../features/authReducer";
+
+const axiosInstance = axios.create({
+    baseURL: baseUrl,
+});
+
+// Function to refresh tokens
 const refreshToken = async () => {
     const refreshTokenValue = store.getState().auth.refreshToken;
-    const currentUser = store.getState().auth.user; // Get the current user from state
+    
+    const currentUser  = store.getState().auth.user;
 
     if (refreshTokenValue) {
         try {
@@ -268,9 +362,9 @@ const refreshToken = async () => {
 
             // Dispatch action to update user and tokens in Redux state
             store.dispatch(setCredentials({
-                user: currentUser, // Make sure to keep the current user
+                user: currentUser ,
                 accessToken: newAccessToken,
-                refreshToken: newRefreshToken
+                refreshToken: newRefreshToken,
             }));
 
             return newAccessToken;
@@ -284,12 +378,24 @@ const refreshToken = async () => {
     }
 };
 
-// Set up an interval to refresh the token every 4 minutes (240000 milliseconds)
-setInterval(() => {
-    refreshToken().catch((error) => {
-        console.error("Error refreshing token:", error);
-    });
-}, 240000);
+// Function to set up token refresh based on fixed expiration time
+const setupTokenRefresh = () => {
+    // Set the access token lifetime (in milliseconds)
+    const ACCESS_TOKEN_LIFETIME = 5 * 60 * 1000; // 5 minutes
+    const REFRESH_BEFORE_EXPIRATION = 4 * 60 * 1000; // Refresh 1 minute before expiration
+
+    setTimeout(async () => {
+        try {
+            await refreshToken();
+            setupTokenRefresh(); // Reset the refresh timer
+        } catch (error) {
+            console.error("Error during scheduled token refresh:", error);
+        }
+    }, ACCESS_TOKEN_LIFETIME - REFRESH_BEFORE_EXPIRATION); // Set timeout for 4 minutes
+};
+
+// Initial setup
+setupTokenRefresh();
 
 axiosInstance.interceptors.request.use(
     (config) => {
@@ -311,19 +417,16 @@ axiosInstance.interceptors.response.use(
         return response;
     },
     async (error) => {
-        console.log("Error in interceptor", error); // Log to see if the interceptor catches the error
+        console.log("Error in interceptor", error);
         const originalRequest = error.config;
 
         if (error.response?.status === 401 && !originalRequest._retry) {
-            console.log("401 detected"); // Log to see if it's a 401 error
+            console.log("401 detected");
             originalRequest._retry = true;
 
-            const accessToken = await refreshToken(); // Get a new access token
-
-            // Update the original request with the new access token
+            const accessToken = await refreshToken();
             originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
 
-            // Retry the original request
             return axiosInstance(originalRequest);
         }
 

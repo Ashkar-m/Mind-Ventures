@@ -5,6 +5,7 @@ import AdminNavbar from "../AdminNavbar/AdminNavbar";
 import AdminSidebar from "../AdminSidebar/AdminSidebar";
 import { useNavigate } from "react-router-dom";
 import { useSelector } from "react-redux";
+import axiosInstance from "../../../components/Bearer/axiosInterceptor";
 
 const AdminCategoryManagement = () => {
    
@@ -14,31 +15,33 @@ const AdminCategoryManagement = () => {
 
     const navigate = useNavigate();
 
-    useEffect( () => {
+    useEffect(() => {
         const fetchCategoryList = async () => {
             try {
-                const response = await axios.get(`${baseUrl}/courses/category-list/`, {
+                const response = await axiosInstance.get(`${baseUrl}/courses/category-list/`, {
                     headers: {
-                      'Authorization': `Bearer ${accessToken}`, // Use accessToken here
+                        'Authorization': `Bearer ${accessToken}`, 
                     },
-                  });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch category details')
-                }
-                const list = await response.json();
-                setCategoryList(list);
+                });
+                setCategoryList(response.data); 
             } catch (error) {
-                console.error('Error while fetching user details', error);
-                
+                if (error.response) {
+                    console.error('Error:', error.response.status, error.response.data);
+                } else if (error.request) {
+                    console.error('No response from server:', error.request);
+                } else {
+                    console.error('Error setting up request:', error.message);
+                }
             }
-        }
-        fetchCategoryList();
-    },[isActiveUpdated]);
+        };
     
+        fetchCategoryList();
+    }, [isActiveUpdated, accessToken]); 
 
+    
     const handleToggleStatus = async (categoryId) => {
         try {
-            const response = await axios.post(`${baseUrl}/courses/category/toggle-status/${categoryId}/`);
+            const response = await axiosInstance.post(`${baseUrl}/courses/category/toggle-status/${categoryId}/`);
             console.log('Status updated:', response.data);
             setIsActiveUpdated((prev) => !prev);
         } catch (error) {

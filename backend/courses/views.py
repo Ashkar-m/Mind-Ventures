@@ -80,6 +80,7 @@ class CategoryDetailAPIView(APIView):
 
 class CourseAPIView(APIView):
     permission_classes = [IsAuthenticated]
+    parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
         courses = Course.objects.all()
@@ -88,10 +89,31 @@ class CourseAPIView(APIView):
         return Response(serializer.data)
     
     def post(self, request):
-        serializer = CourseSerializer(data=request.data)
+        # Create a new request data dict including mentor_id
+        data = request.data.copy()  # Create a copy of the request data
+        print("Incoming data:", data)
+        data['mentor_id'] = request.user.id  # Add the mentor_id field
+        data['active'] = True  # Set active to True
+
+        serializer = CourseSerializer(data=data)  # Use the modified data
+        if serializer.is_valid():
+            serializer.save(mentor=request.user)  # Save the mentor (user instance)
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, pk):
+        try:
+            course = Course.objects.get(pk=pk, mentor=request.user)
+        except Course.DoesNotExist:
+            return Response({'error': 'Course not found or permission denied.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Allow partial updates using 'partial=True'
+        serializer = CourseSerializer(course, data=request.data, partial=True)
+
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

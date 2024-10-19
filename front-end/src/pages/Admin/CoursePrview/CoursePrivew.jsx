@@ -3,10 +3,37 @@ import AdminNavbar from "../AdminNavbar/AdminNavbar";
 import AdminSidebar from "../AdminSidebar/AdminSidebar";
 import { useParams } from "react-router-dom";
 import { baseUrl } from "../../../components/auth/authService";
+import { useSelector } from "react-redux";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../../components/Bearer/axiosInterceptor";
 
 const CoursePreview = () => {
     const { id } = useParams();
     const [course, setCourse] = useState('');
+    const [categoryList, setCategoryList] = useState([]);
+    const accessToken = useSelector((state) => state.auth.accessToken);
+    const navigate = useNavigate();
+
+    useEffect(() => {
+        const fetchCategoryList = async () => {
+            try {
+                const response = await axiosInstance.get(`${baseUrl}/courses/category-list/`, {
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`, 
+                    },
+                });
+
+                const data = response.data; 
+                setCategoryList(data); 
+            } catch (error) {
+                console.error("Error fetching category list:", error);
+            }
+        };
+
+        fetchCategoryList();
+    }, [accessToken]);
     
     useEffect( () => {
 
@@ -28,6 +55,32 @@ const CoursePreview = () => {
         fetchCourse();
     }, []);
     console.log(course);
+
+    const validationSchema = Yup.object().shape({
+        title: Yup.string()
+        .matches(/^[A-Za-z][A-Za-z0-9 ]*$/, "Course name must start with a letter and can contain only alphanumeric characters and spaces")
+        .required("Course title is required"),
+        description: Yup.string().required("Description is required"),
+        duration: Yup.number()
+            .typeError("Duration must be a number")
+            .required("Duration is required")
+            .positive("Duration must be greater than zero"),
+        price: Yup.number()
+            .typeError("Price must be a number")
+            .required("Price is required")
+            .positive("Price must be greater than zero"),
+        category: Yup.number().required("Category is required"),
+        preview_image: Yup.mixed()
+        .required("An image file is required")
+        .test("fileType", "Only image files are allowed", (value) => {
+            // Check if a file is selected
+            if (!value) return false; // If no file, validation fails
+
+            // Check if the file type is an image
+            const supportedFormats = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+            return supportedFormats.includes(value.type);
+        }),
+    });
 
     return (
         <div>

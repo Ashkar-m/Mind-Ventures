@@ -3,32 +3,46 @@ import AdminNavbar from "../AdminNavbar/AdminNavbar";
 import AdminSidebar from "../AdminSidebar/AdminSidebar";
 import { baseUrl } from "../../../components/auth/authService";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { useSelector } from "react-redux";
+import axiosInstance from "../../../components/Bearer/axiosInterceptor";
 
 const AdminCourseManagement = () => {
     const navigate = useNavigate();
     const [isActiveUpdated, setIsActiveUpdated] = useState(false);
     const [courseList, setCourseList] = useState([]);
 
-    useEffect( () => {
-        const fetchCourseList = async () => {
+    const { accessToken } = useSelector( state => state.auth )
+
+    useEffect(() => {
+        const fetchCategoryList = async () => {
             try {
-                const response = await axios.get(`${baseUrl}/courses/course-list/`, {
+                const response = await axiosInstance.get(`${baseUrl}/courses/course-list/`, {
                     headers: {
-                      'Authorization': `Bearer ${accessToken}`, // Use accessToken here
+                        'Authorization': `Bearer ${accessToken}`, // Ensure valid accessToken is used
                     },
-                  });
-                if (!response.ok) {
-                    throw new Error('Failed to fetch category details')
-                }
-                const list = await response.json();
-                setCourseList(list);
+                });
+    
+                // Axios doesn't need response.ok, handle it with status code directly
+                setCourseList(response.data); // Directly use response.data
             } catch (error) {
-                console.error('Error while fetching user details', error);
-                
+                // Improved error handling to check for common issues
+                if (error.response) {
+                    // Server responded with a status other than 2xx
+                    console.error('Error:', error.response.status, error.response.data);
+                } else if (error.request) {
+                    // Request was made but no response received
+                    console.error('No response from server:', error.request);
+                } else {
+                    // Something else happened in setting up the request
+                    console.error('Error setting up request:', error.message);
+                }
             }
-        }
-        fetchCourseList();
-    },[isActiveUpdated]);
+        };
+    
+        fetchCategoryList();
+    }, [isActiveUpdated, accessToken]); // Make sure to include accessToken in dependencies if it can change
+    
     
     const handleToggleStatus = async (categoryId) => {
         try {
@@ -39,6 +53,9 @@ const AdminCourseManagement = () => {
             console.error('Error updating status:', error);
         }
     }
+    const handleCourseClick = (courseId) => {
+        navigate(`/admin/course-preview/${courseId}`); // Adjust the path based on your routing structure
+    };
 
     return (
         <div className="w-full">
@@ -67,9 +84,9 @@ const AdminCourseManagement = () => {
                     <div className="flex items-center justify-end gap-8 mb-8">
                     <div className="relative h-10 w-full min-w-[200px]">
                         <div className="absolute grid w-5 h-5 top-2/4 right-3 -translate-y-2/4 place-items-center text-blue-gray-500">
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5"
                             stroke="currentColor" aria-hidden="true" className="w-5 h-5">
-                            <path stroke-linecap="round" stroke-linejoin="round"
+                            <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M21 21l-5.197-5.197m0 0A7.5 7.5 0 105.196 5.196a7.5 7.5 0 0010.607 10.607z"></path>
                             </svg>
                         </div>
@@ -86,7 +103,7 @@ const AdminCourseManagement = () => {
                         className="flex select-none items-center gap-3 rounded-lg bg-gray-900 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                         type="button">
                         <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"
-                            stroke-width="2" className="w-4 h-4">
+                            strokeWidth="2" className="w-4 h-4">
                             <path
                             d="M6.25 6.375a4.125 4.125 0 118.25 0 4.125 4.125 0 01-8.25 0zM3.25 19.125a7.125 7.125 0 0114.25 0v.003l-.001.119a.75.75 0 01-.363.63 13.067 13.067 0 01-6.761 1.873c-2.472 0-4.786-.684-6.76-1.873a.75.75 0 01-.364-.63l-.001-.122zM19.75 7.5a.75.75 0 00-1.5 0v2.25H16a.75.75 0 000 1.5h2.25v2.25a.75.75 0 001.5 0v-2.25H22a.75.75 0 000-1.5h-2.25V7.5z">
                             </path>
@@ -105,9 +122,9 @@ const AdminCourseManagement = () => {
                             <p
                             className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                             Course
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
+                                <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                             </svg>
                             </p>
@@ -117,9 +134,9 @@ const AdminCourseManagement = () => {
                             <p
                             className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                             Description
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
+                                <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                             </svg>
                             </p>
@@ -129,9 +146,9 @@ const AdminCourseManagement = () => {
                             <p
                             className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                             Category
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
+                                <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                             </svg>
                             </p>
@@ -141,9 +158,9 @@ const AdminCourseManagement = () => {
                             <p
                             className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                             Course Image
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
+                                <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                             </svg>
                             </p>
@@ -153,9 +170,9 @@ const AdminCourseManagement = () => {
                             <p
                             className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                             Duration
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
+                                <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                             </svg>
                             </p>
@@ -165,9 +182,9 @@ const AdminCourseManagement = () => {
                             <p
                             className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                             Price
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
+                                <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                             </svg>
                             </p>
@@ -177,9 +194,9 @@ const AdminCourseManagement = () => {
                             <p
                             className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                             Mentor
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
+                                <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                             </svg>
                             </p>
@@ -189,9 +206,9 @@ const AdminCourseManagement = () => {
                             <p
                             className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
                             Status
-                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                            <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
-                                <path stroke-linecap="round" stroke-linejoin="round"
+                                <path strokeLinecap="round" strokeLinejoin="round"
                                 d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                             </svg>
                             </p>
@@ -200,7 +217,7 @@ const AdminCourseManagement = () => {
                     </thead>
                     <tbody>
                         { courseList.map( (course) => (
-                                <tr key={ course.id }>
+                                <tr key={ course.id }  onClick={ () => handleCourseClick(course.id)}>
                                 <td className="p-4 border-b border-blue-gray-50">
                                     <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                                         { course.title }
@@ -224,7 +241,7 @@ const AdminCourseManagement = () => {
                                     : "https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1470&amp;q=80"
                                     }
                                     alt="course-image"
-                                    className="w-full h-20 object-cover rounded-lg mb-4" // Fixed height, full width, and object cover for proper image sizing
+                                    className="w-40 h-25 object-cover rounded-lg mb-4" // Fixed height, full width, and object cover for proper image sizing
                                 />
                                     </p>
                                 </td>
@@ -240,7 +257,12 @@ const AdminCourseManagement = () => {
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
                                 <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                    { course.mentor }
+                                    { course.mentor } - { course.mentor_role }
+                                    </p>
+                                </td>
+                                <td className="p-4 border-b border-blue-gray-50">
+                                <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                                    { course.status }
                                     </p>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
@@ -248,11 +270,11 @@ const AdminCourseManagement = () => {
                                         onClick={() => handleToggleStatus(course.id)}
                                         className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${
                                             course.active
-                                                ? 'bg-green-500/20 text-green-900'
-                                                : 'bg-red-500/20 text-red-900'
+                                                ? 'bg-red-500/20 text-red-900'
+                                                : 'bg-green-500/20 text-green-900'
                                         }`}
                                     >
-                                        <span>{course.active ? 'Admit' : 'Delete'}</span>
+                                        <span>{course.active ? 'Delete' : 'Admit'}</span>
                                     </div>
                                 </td>
                                 

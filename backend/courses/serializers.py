@@ -22,15 +22,37 @@ class CategorySerializer(serializers.ModelSerializer):
 
         
 class CourseSerializer(serializers.ModelSerializer):
-    category = serializers.StringRelatedField()
-    mentor = serializers.ReadOnlyField(source='creator.username')
+    category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    mentor = serializers.ReadOnlyField(source='mentor.username')
+    mentor_role = serializers.ReadOnlyField(source='mentor.role')
     mentor_id = serializers.ReadOnlyField(source='mentor.id')
     preview_image = serializers.ImageField(required=False)
 
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'category', 'mentor', 'mentor_id', 'status', 'preview_image',
-         'created_at', 'price', 'duration', 'updated_at']
+         'created_at', 'price', 'duration', 'updated_at','mentor_role','active']
+
+    def create(self, validated_data):
+        # Extract the category from validated data (which is an ID)
+        category = validated_data.pop('category')
+        
+        # Create the course with the extracted category
+        course = Course.objects.create(category=category, **validated_data)
+        
+        return course
+
+    def to_representation(self, instance):
+        # Modify the representation to show the category name instead of the ID
+        response = super().to_representation(instance)
+        
+        # Check if category exists to avoid 'NoneType' object error
+        if instance.category:
+            response['category'] = instance.category.name  # Replace category ID with its name
+        else:
+            response['category'] = None  # If no category, set it to None or handle appropriately
+        
+        return response
 
 class CourseVariantSerializer(serializers.ModelSerializer):
     course = serializers.StringRelatedField()
