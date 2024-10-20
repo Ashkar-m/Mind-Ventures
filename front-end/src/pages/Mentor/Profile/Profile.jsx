@@ -9,9 +9,7 @@ import apiSettings from "./API";
 const MentorProfile = () => {
 
     const [userProfile, setUserProfile] = useState('');
-    // const [userProfile, setUserProfile] = useState([]);
     const formRef = useRef(null);
-    // const [userId, setUserId] = useState(null);
     const [data, setData] = useState({
         first_name: "",
         last_name: "",
@@ -36,32 +34,6 @@ const MentorProfile = () => {
     const { accessToken, user } = useSelector(state => state.auth);
     
 
-    // const handleChange = ({ currentTarget: input }) => {
-    //     let newData = { ...userProfile };
-    //     newData[input.name] = input.value;
-    //     setData(newData);
-    //     setUserProfile(newData);
-    // };
-
-    // const handleChange = ({ currentTarget: input }) => {
-    //     // Clone the current userProfile state
-    //     let updatedProfile = { ...userProfile };
-        
-    //     // Update the specific field that was changed
-    //     updatedProfile[input.name] = input.value;
-        
-    //     // Update the userProfile state with the new values
-    //     setUserProfile(updatedProfile);
-    // };
-    
-
-    // const handleImageChange = (e) => {
-    //     let newData = { ...userProfile };
-    //     newData["profile_picture"] = e.target.files[0];
-    //     setData(newData);
-    //     setUserProfile(newData);
-    // };
-
     const handleChange = (e) => {
         setUserProfile({
             ...userProfile,
@@ -83,26 +55,8 @@ const MentorProfile = () => {
             formData.append(key, userProfile[key]);
         }
         const response = await apiSettings.createListing(formData, accessToken);
-    
-    // if (response.status === 200) {
-    //     // Success: Handle the success case (e.g., show success message or redirect)
-    //     console.log("Profile updated successfully:", response.data);
-    // } else if (response.status === 400) {
-    //     // Validation errors
-    //     setErrors(response.data);
-    // } else {
-    //     // Other errors
-    //     console.error("An error occurred:", response);
-    // }
     };
     
-    
-    // useEffect(() => {
-    //     const user = JSON.parse(localStorage.getItem('user'));
-    //     if (user) {
-    //         setUserId(user.user_id);
-    //     }
-    // }, []);
 
     useEffect( () => {
         const fetchUserProfile = async () => {

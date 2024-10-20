@@ -83,17 +83,37 @@ class CourseAPIView(APIView):
     parser_classes = (MultiPartParser, FormParser)
 
     def get(self, request):
-        courses = Course.objects.all()
+        # Check the user's role
+        if request.user.role == 'mentor':
+            # For mentors, return only their courses
+            courses = Course.objects.filter(mentor=request.user)
+        elif request.user.role == 'admin':
+            # Admin can see all courses
+            courses = Course.objects.all()
+        elif request.user.role == 'student':
+            # Check if the student's is_verified field is True
+            courses = Course.objects.filter(mentor__is_verified=True) | Course.objects.filter(mentor__role='admin')
+            
+        else:
+            return Response({'error': 'User role not recognized.'}, status=status.HTTP_403_FORBIDDEN)
+        
         serializer = CourseSerializer(courses, many=True)
-        permission_classes = [IsAuthenticated]
-        return Response(serializer.data)
+        return Response(serializer.data, status=status.HTTP_200_OK)
     
     def post(self, request):
         # Create a new request data dict including mentor_id
         data = request.data.copy()  # Create a copy of the request data
         print("Incoming data:", data)
         data['mentor_id'] = request.user.id  # Add the mentor_id field
-        data['active'] = True  # Set active to True
+        # Set active and status based on the user's role
+        if request.user.role == 'mentor':
+            data['active'] = False
+            data['status'] = 'pending'
+        elif request.user.role == 'admin':
+            data['active'] = True
+            data['status'] = 'approval'
+        else:
+            return Response({'error': 'User role not recognized.'}, status=status.HTTP_403_FORBIDDEN)
 
         serializer = CourseSerializer(data=data)  # Use the modified data
         if serializer.is_valid():

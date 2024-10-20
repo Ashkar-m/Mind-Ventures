@@ -1,5 +1,7 @@
 from django.urls import path
 from . import views
+from django.conf.urls.static import static
+from django.conf import settings
 from rest_framework_simplejwt.views import(
     # TokenObtainPairView,
     TokenRefreshView,
@@ -20,4 +22,4 @@ urlpatterns = [
     path('user-profile/<int:pk>/', views.UserProfileView.as_view(), name='user-profile-detail'),
     path('student-profile/update/', views.update_student_profile, name='student-profile-update'),
     path('mentor-profile/<int:pk>/update/', views.update_mentor_profile, name='mentor-profile-update'),
-]
+] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
