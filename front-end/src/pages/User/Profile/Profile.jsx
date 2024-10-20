@@ -42,12 +42,14 @@ const UserProfile = () => {
         formData.append('first_name', userProfile.first_name);
         formData.append('last_name', userProfile.last_name);
         formData.append('gender', userProfile.gender);
-        formData.append('date_of_birth', userProfile.date_of_birth);
+        // formData.append('date_of_birth', userProfile.date_of_birth);
         formData.append('bio', userProfile.bio);
         formData.append('highest_education_qualification', userProfile.highest_education_qualification);
         formData.append('current_education_qualification', userProfile.current_education_qualification);
-        formData.append('expected_graduation_date', userProfile.expected_graduation_date);
-    
+        // formData.append('expected_graduation_date', userProfile.expected_graduation_date);
+        formData.append('date_of_birth', new Date(userProfile.date_of_birth).toISOString().slice(0, 10));
+        formData.append('expected_graduation_date', new Date(userProfile.expected_graduation_date).toISOString().slice(0, 10));
+
         try {
             for (let pair of formData.entries()) {
                 console.log(`${pair[0]}: ${pair[1]}`);
@@ -55,6 +57,7 @@ const UserProfile = () => {
             const response = await fetch(`${baseUrl}/users/user-profile/`, {
                 method: 'PATCH',
                 headers: {
+                    'Content-Type': 'multipart/form-data',
                     // Do not set Content-Type for FormData, browser will set it automatically
                     Authorization: `Bearer ${accessToken}`, // Include token if using authentication
                 },

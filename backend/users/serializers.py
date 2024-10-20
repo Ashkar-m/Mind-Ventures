@@ -168,17 +168,18 @@ class ProfileBaseSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     username = serializers.CharField(source='user.username', read_only=True)
-    profile_picture = serializers.SerializerMethodField()
+    profile_picture = serializers.ImageField(required=False)
+    user_id = serializers.ReadOnlyField(source='user.id')
 
     class Meta:
-        fields = ['user', 'profile_picture', 'bio', 'date_of_birth', 'gender', 'first_name', 'username', 'last_name']
+        fields = ['user', 'user_id', 'profile_picture', 'bio', 'date_of_birth', 'gender', 'first_name', 'username', 'last_name']
         abstract = True
     
-    def get_profile_picture(self, obj):
-        request = self.context.get('request', None)
-        if obj.profile_picture:
-            return request.build_absolute_uri(obj.profile_picture.url)
-        return None
+    # def get_profile_picture(self, obj):
+    #     request = self.context.get('request', None)
+    #     if obj.profile_picture:
+    #         return request.build_absolute_uri(obj.profile_picture.url)
+    #     return None
 
 
 class StudentProfileSerializer(ProfileBaseSerializer):

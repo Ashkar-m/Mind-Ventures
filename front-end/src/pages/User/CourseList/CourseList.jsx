@@ -5,11 +5,13 @@ import { baseUrl } from '../../../components/auth/authService';
 import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../components/Bearer/axiosInterceptor';
 import { useSelector } from 'react-redux';
+import _ from 'lodash';
 
 
 export default function CourseList() {
 
     const navigate = useNavigate();
+    const [refetch, setRefetch] = useState(false); 
     const [courses, setCourses] = useState([]);
     const { accessToken } = useSelector( state => state.auth )
 
@@ -22,13 +24,21 @@ export default function CourseList() {
                     },
                 });
                 const course = response.data
-                setCourses(course);
+                // setCourses(course);
+                if (!_.isEqual(course, courses)) {
+                    setCourses(course);
+                }
             } catch (error) {
                 console.error("Error while fetching the course:",error);
             }
         }
         fetchCourses();
-    },[])
+        // Poll the server every 5 seconds to check for course updates
+        const intervalId = setInterval(fetchCourses, 5000); // Fetch every 5 seconds
+
+        // Cleanup interval when the component unmounts
+        return () => clearInterval(intervalId);
+    },[courses])
     console.log(courses);
 
     const handleButton = (courseId) => {

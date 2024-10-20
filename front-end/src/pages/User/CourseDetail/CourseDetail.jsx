@@ -41,7 +41,7 @@ const CourseDetail = () => {
             <div className="lg:grid lg:grid-cols-2 lg:gap-8 xl:gap-16">
                 <div className="shrink-0 max-w-md lg:max-w-lg mx-auto">
                 
-                <img className="w-full hidden dark:block" 
+                <img className="w-60 h-60 hidden dark:block" 
                 src={course?.preview_image 
                     ? `${baseUrl}${course.preview_image}`
                     : "https://flowbite.s3.amazonaws.com/blocks/e-commerce/imac-front-dark.svg"

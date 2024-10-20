@@ -217,14 +217,17 @@ const AdminCourseManagement = () => {
                     </thead>
                     <tbody>
                         { courseList.map( (course) => (
-                                <tr key={ course.id }  onClick={ () => handleCourseClick(course.id)}>
+                                <tr key={ course.id }  >
                                 <td className="p-4 border-b border-blue-gray-50">
-                                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
-                                        { course.title }
+                                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-700 text-blue-gray-900" onClick={ () => handleCourseClick(course.id)}>
+                                        { course.title } 
                                         </p>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
-                                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                                    <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900" style={{
+                                            maxWidth: '25ch',  
+                                            wordWrap: 'break-word'  
+                                        }}>
                                         { course.description }
                                         </p>
                                     </td>

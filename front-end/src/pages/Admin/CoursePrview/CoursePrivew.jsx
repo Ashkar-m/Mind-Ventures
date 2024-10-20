@@ -667,13 +667,18 @@ const CoursePreview = () => {
       .positive("Price must be greater than zero"),
     category: Yup.number().required("Category is required"),
     preview_image: Yup.mixed()
-      .required("An image file is required")
-      .test("fileType", "Only image files are allowed", (value) => {
-        if (!value) return false;
-        const supportedFormats = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-        return supportedFormats.includes(value.type);
-      }),
   });
+
+  const handleCategoryChange = (e) => {
+    const selectedCategoryId = e.target.value; // Get the selected category ID
+    console.log(selectedCategoryId); // Log the selected value for testing or further use
+    setCourse({
+      ...course,
+      category_id: selectedCategoryId, // Update the category_id in your course state
+    });
+  };
+  
+  
 
   return (
     <div>
@@ -692,7 +697,7 @@ const CoursePreview = () => {
               description: course.description || '',
               duration: course.duration || '',
               price: course.price || '',
-              category: course.category || '',
+              category: course.category_id || '',
               preview_image: '', // We set this on file upload
             }}
             enableReinitialize
@@ -704,10 +709,13 @@ const CoursePreview = () => {
               formDataToSend.append('duration', parseFloat(values.duration));
               formDataToSend.append('price', parseFloat(values.price));
               formDataToSend.append('category', parseInt(values.category, 10));
-              formDataToSend.append('preview_image', values.preview_image);
+              // formDataToSend.append('preview_image', values.preview_image);
+              if (values.preview_image) {
+                formDataToSend.append('preview_image', values.preview_image);
+              }
 
               try {
-                await axiosInstance.post(`${baseUrl}/courses/course-list/`, formDataToSend, {
+                await axiosInstance.patch(`${baseUrl}/courses/course-list/${id}/`, formDataToSend, {
                   headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${accessToken}`,
@@ -719,7 +727,7 @@ const CoursePreview = () => {
               }
             }}
           >
-            {({ setFieldValue }) => (
+            {({ setFieldValue, values }) => (
               <Form className="bg-white p-8 rounded-lg shadow-md mt-12">
                 <div className="space-y-12">
                   <div className="border-b border-gray-300 pb-8">
@@ -743,11 +751,42 @@ const CoursePreview = () => {
                       </div>
 
                       {/* Course Category */}
-                      <div>
+                      {/* <div>
                         <label htmlFor="category" className="block text-sm font-medium leading-6 text-gray-800">Category</label>
                         <div className="mt-2">
-                          <Field as="select" name="category" id="category" className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm">
-                            <option value="">Select a category</option>
+                          <Field as="select" value={ course.category_id } 
+                          name="category" 
+                          id="category" 
+                          className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                          onChange={(e) => handleCategoryChange(e)}>
+                            <option disabled>Select a category</option>
+                            {categoryList.map((category) => (
+                              <option key={category.id} value={category.id}>
+                                {category.name}
+                              </option>
+                            ))}
+                          </Field>
+                          <ErrorMessage name="category" component="div" className="text-red-600" />
+                        </div>
+                      </div> */}
+
+                       {/* Course Category */}
+                       <div>
+                        <label htmlFor="category" className="block text-sm font-medium leading-6 text-gray-800">Category</label>
+                        <div className="mt-2">
+                          <Field
+                            as="select"
+                            name="category"
+                            id="category"
+                            value={values.category} // Bind to Formik state
+                            onChange={(e) => {
+                              setFieldValue("category", e.target.value); // Update Formik state on change
+                              // Displaying selected category ID to the user
+                              const selectedId = e.target.value; // Change this to display as needed
+                            }}
+                            className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                          >
+                            <option disabled>Select a category</option>
                             {categoryList.map((category) => (
                               <option key={category.id} value={category.id}>
                                 {category.name}
@@ -809,19 +848,34 @@ const CoursePreview = () => {
                     <div className="col-span-full mt-8">
                       <label htmlFor="preview_image" className="block text-sm font-medium leading-6 text-gray-800">Preview Image</label>
                       <div className="mt-2">
-                        {course.preview_image && (
+                        {/* {course.preview_image && (
                           <img
-                            src={course.preview_image} // Assuming this is a valid URL
+                          src={`url(${
+                            userProfile?.profile_picture
+                            ? userProfile.profile_picture:
+                            : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"})`
+                            } // Assuming this is a valid URL
                             alt="Current Preview"
                             className="mb-4 rounded-lg shadow-sm"
                             style={{ maxWidth: "100%", height: "auto" }}
                           />
+                        )} */}
+                        {course.preview_image && (
+                          <img
+                            src={course?.preview_image
+                              ? `http://localhost:8000${course.preview_image}`
+                              : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                            }
+                            alt="Current Preview"
+                            className="mb-4 rounded-lg shadow-sm w-40 h-40"
+                          />
                         )}
+
                         <input
                           type="file"
                           name="preview_image"
                           id="preview_image"
-                          accept="image/*"
+                          accept="image/jpeg, image/png, image/gif, image/jpg"
                           onChange={(event) => {
                             setFieldValue("preview_image", event.currentTarget.files[0]);
                           }}

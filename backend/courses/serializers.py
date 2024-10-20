@@ -23,6 +23,7 @@ class CategorySerializer(serializers.ModelSerializer):
         
 class CourseSerializer(serializers.ModelSerializer):
     category = serializers.PrimaryKeyRelatedField(queryset=Category.objects.all())
+    category_id = serializers.ReadOnlyField(source='category.id')
     mentor = serializers.ReadOnlyField(source='mentor.username')
     mentor_role = serializers.ReadOnlyField(source='mentor.role')
     mentor_id = serializers.ReadOnlyField(source='mentor.id')
@@ -31,7 +32,7 @@ class CourseSerializer(serializers.ModelSerializer):
     class Meta:
         model = Course
         fields = ['id', 'title', 'description', 'category', 'mentor', 'mentor_id', 'status', 'preview_image',
-         'created_at', 'price', 'duration', 'updated_at','mentor_role','active']
+         'created_at', 'category_id', 'price', 'duration', 'updated_at','mentor_role','active']
 
     def create(self, validated_data):
         # Extract the category from validated data (which is an ID)

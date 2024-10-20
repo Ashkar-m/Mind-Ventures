@@ -13,6 +13,7 @@ from django.conf import settings
 from rest_framework import generics
 from rest_framework.permissions import IsAuthenticated
 from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework.parsers import MultiPartParser, FormParser
 
 import os
 import random
@@ -163,6 +164,7 @@ class ForgotPasswordView(APIView):
         
 
 class UserProfileView(APIView):
+    parser_classes = (MultiPartParser, FormParser)
     def get(self, request, pk, *args, **kwargs):
         try:
             user = UserAccount.objects.get(pk=pk)
@@ -196,6 +198,7 @@ class UserProfileView(APIView):
         else:
             return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         
+        print(request.data)
         serializer = StudentProfileSerializer(profile_instance, data=request.data, partial=True)
         permission_classes = [IsAuthenticated]
         if serializer.is_valid():
