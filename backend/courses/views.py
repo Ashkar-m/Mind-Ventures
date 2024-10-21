@@ -137,6 +137,37 @@ class CourseAPIView(APIView):
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
+class ChangeCourseStatusAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def patch(self, request, pk):
+        """
+        Change the status of a course to 'approved' or 'rejected'.
+        Expects 'action' in the request data.
+        """
+        try:
+            course = Course.objects.get(pk=pk)
+        except Course.DoesNotExist:
+            return Response({'error': 'Course not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Check if the user is an admin (only admins can approve/reject)
+        if request.user.role != 'admin':
+            return Response({'error': 'Permission denied.'}, status=status.HTTP_403_FORBIDDEN)
+
+        action = request.data.get('action')  # Get the action from the request data
+        
+        if action == 'approve':
+            course.status = 'approval'
+        elif action == 'reject':
+            course.status = 'rejected'
+        else:
+            return Response({'error': 'Invalid action. Use "approve" or "reject".'}, status=status.HTTP_400_BAD_REQUEST)
+
+        course.save()  # Save the course with the updated status
+        serializer = CourseSerializer(course)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+
 class CourseViewset(viewsets.ModelViewSet):
     queryset = Course.objects.all()
     serializer_class = CourseSerializer
