@@ -69,7 +69,7 @@ export default function EditCourse() {
 
     const validationSchema = Yup.object().shape({
         title: Yup.string()
-          .matches(/^[A-Za-z][A-Za-z0-9 ]*$/, "Course name must start with a letter and can contain only alphanumeric characters and spaces")
+          .matches(/^[A-Za-z].*$/, "Give a valid course name")
           .required("Course title is required"),
         description: Yup.string().required("Description is required"),
         duration: Yup.number()
@@ -80,7 +80,7 @@ export default function EditCourse() {
           .typeError("Price must be a number")
           .required("Price is required")
           .positive("Price must be greater than zero"),
-        category: Yup.number().required("Category is required"),
+        category: Yup.number(),
         preview_image: Yup.mixed()
       });
 

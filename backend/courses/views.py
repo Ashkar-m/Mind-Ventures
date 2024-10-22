@@ -13,7 +13,7 @@ from . serializers import CategorySerializer, CourseSerializer, CourseVariantSer
 class CategoryListView(APIView):
     permission_classes = [IsAuthenticated]
     def get(self, request):
-        categories = Category.objects.all()
+        categories = Category.objects.filter(active=True)
         serializer = CategorySerializer(categories, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK) 
 
@@ -92,7 +92,13 @@ class CourseAPIView(APIView):
             courses = Course.objects.all()
         elif request.user.role == 'student':
             # Check if the student's is_verified field is True
-            courses = Course.objects.filter(mentor__is_verified=True) | Course.objects.filter(mentor__role='admin')
+            # courses = Course.objects.filter(mentor__is_verified=True) | Course.objects.filter(mentor__role='admin')
+            courses = Course.objects.filter(
+                status='approval'
+            ) | Course.objects.filter(
+                mentor__role='admin', 
+                status='approval'
+            )
             
         else:
             return Response({'error': 'User role not recognized.'}, status=status.HTTP_403_FORBIDDEN)

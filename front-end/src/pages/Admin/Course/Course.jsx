@@ -330,12 +330,12 @@ const AdminCourseManagement = () => {
                                         <span>{course.active ? 'Delete' : 'Admit'}</span>
                                     </div> */}
                                      <div 
-                                    className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-red-500/20 text-red-900`}
+                                    className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap  bg-green-500/20 text-green-900`}
                                     >
                                         <span onClick={ () => approveCourse(course.id)}>APPROVE</span>
                                     </div>
                                     <div 
-                                    className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-green-500/20 text-green-900`}
+                                    className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-red-500/20 text-red-900`}
                                     >
                                         <span onClick={ () => rejectCourse(course.id)}>REJECT</span>
                                     </div>
