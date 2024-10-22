@@ -319,16 +319,7 @@ const AdminCourseManagement = () => {
                                     </p>
                                 </td>
                                 <td className="p-4 border-b border-blue-gray-50">
-                                    {/* <div 
-                                        onClick={() => handleToggleStatus(course.id)}
-                                        className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${
-                                            course.active
-                                                ? 'bg-red-500/20 text-red-900'
-                                                : 'bg-green-500/20 text-green-900'
-                                        }`}
-                                    >
-                                        <span>{course.active ? 'Delete' : 'Admit'}</span>
-                                    </div> */}
+                                    
                                      <div 
                                     className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap  bg-green-500/20 text-green-900`}
                                     >

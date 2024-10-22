@@ -168,12 +168,21 @@ class ProfileBaseSerializer(serializers.ModelSerializer):
     first_name = serializers.CharField(source='user.first_name')
     last_name = serializers.CharField(source='user.last_name')
     username = serializers.CharField(source='user.username', read_only=True)
-    profile_picture = serializers.ImageField(required=False)
+    profile_picture = serializers.ImageField(required=False, allow_null=True)
     user_id = serializers.ReadOnlyField(source='user.id')
 
     class Meta:
         fields = ['user', 'user_id', 'profile_picture', 'bio', 'date_of_birth', 'gender', 'first_name', 'username', 'last_name']
         abstract = True
+    def update(self, instance, validated_data):
+        user_data = validated_data.pop('user', None)
+        if user_data:
+            user = instance.user
+            user.first_name = user_data.get('first_name', user.first_name)
+            user.last_name = user_data.get('last_name', user.last_name)
+            user.save()
+
+        return super().update(instance, validated_data)
     
     # def get_profile_picture(self, obj):
     #     request = self.context.get('request', None)

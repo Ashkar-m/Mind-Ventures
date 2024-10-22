@@ -2,82 +2,65 @@ import React, { useEffect, useRef, useState } from "react";
 import { baseUrl } from "../../../components/auth/authService";
 import MentorNavbar from "../Navbar/Navbar";
 import MentorSidebar from "../Sidebar/Sidebar";
-import axios from 'axios';
 import { useSelector } from "react-redux";
-import apiSettings from "./API";
+import { Formik, Form, Field, ErrorMessage } from "formik";
+import * as Yup from "yup";
+import { useNavigate } from "react-router-dom";
+import axiosInstance from "../../../components/Bearer/axiosInterceptor";
 
 const MentorProfile = () => {
-
-    const [userProfile, setUserProfile] = useState('');
-    const formRef = useRef(null);
-    const [data, setData] = useState({
-        first_name: "",
-        last_name: "",
-        gender: "",
-        profile_picture: "",
-        bio: "",
-        dob: "",
-        highest_education_qualification: "",
-        current_education_qualification: "",
-    });
-    const [errors, setErrors] = useState({
-        first_name: "",
-        last_name: "",
-        gender: "",
-        profile_picture: "",
-        bio: "",
-        dob: "",
-        highest_education_qualification: "",
-        current_education_qualification: "",
-    });    
-
-    const { accessToken, user } = useSelector(state => state.auth);
-    
-
-    const handleChange = (e) => {
-        setUserProfile({
-            ...userProfile,
-            [e.target.name]: e.target.value,
-        });
-    };
-    
-    const handleImageChange = (e) => {
-        setUserProfile({
-            ...userProfile,
-            profile_picture: e.target.files[0],
-        });
-    };
-
-    const doSubmit = async (e) => {
-        e.preventDefault();
-        const formData = new FormData();
-        for (const key in userProfile) {
-            formData.append(key, userProfile[key]);
-        }
-        const response = await apiSettings.createListing(formData, accessToken);
-    };
-    
+ 
+    const [mentorProfile, setMentorProfile] = useState([]);
+    const { accessToken, user } = useSelector( state => state.auth );
+    const userId = user.user_id ;
+    const navigate = useNavigate();
 
     useEffect( () => {
-        const fetchUserProfile = async () => {
+        const fetchMentorProfile = async () => {
             try{
-                if (user.user_id){
-                    const response = await fetch(`${baseUrl}/users/user-profile/${user.user_id}/`);
-                if (!response.ok) {
-                    throw new Error("Error fetching user profile");
-                }
-                const list = await response.json();
-                setUserProfile(list);
-                }
+                const response = await axiosInstance.get(`${baseUrl}/users/user-profile/${userId}/`);
+                const list = response.data;
+                setMentorProfile(list);
             } catch (error) {
                 console.error("Error while fetching details",error);
             }
         }
-        if (user.user_id){
-            fetchUserProfile();
-        }
-        
-    },[user.user_id]);
+        fetchMentorProfile();
+    },[])
+    console.log(mentorProfile);
+
+    const validationSchema = Yup.object().shape({
+        profile_picture: Yup.mixed()
+          .nullable() // Allow null or empty values if needed
+          .test(
+            "fileFormat",
+            "Unsupported Format",
+            value => !value || (value && ['image/jpeg', 'image/png'].includes(value.type))
+          ), // Validate the image format
+        first_name: Yup.string()
+          .matches(/^[A-Za-z]+$/, "First name must contain only letters")
+          .required("First name is required"),
+        last_name: Yup.string()
+          .matches(/^[A-Za-z]+$/, "Last name must contain only letters")
+          .required("Last name is required"),
+        gender: Yup.string()
+          .required("Gender is required"),
+        date_of_birth: Yup.date()
+          .typeError("Invalid date of birth")
+          .required("Date of birth is required"),
+        bio: Yup.string()
+          .max(500, "Bio can't be longer than 500 characters")
+          .required("Bio is required"),
+        highest_education_qualification: Yup.string().required("Highest education qualification is required"),
+        experience: Yup.string().required("Your experience is required"),
+        specialisation: Yup.string()
+          .required("Specialisation is required"),
+      });
+
+    function ParseDate(dateInput) {
+        const date = new Date(dateInput);
+        return date.toISOString().split('T')[0]; // For 'YYYY-MM-DD' format
+    }
     
     return (
         <div className="min-w-full" >
@@ -88,195 +71,215 @@ const MentorProfile = () => {
             <MentorSidebar />
 
 
-            <div className="p-4 sm:ml-64 mt-16">
-                <section className="py-10 my-auto dark:bg-gray-900">
-                    <div className="lg:w-[80%] md:w-[90%] xs:w-[96%] mx-auto flex gap-4">
-                    <div className="lg:w-[88%] md:w-[80%] sm:w-[88%] xs:w-full mx-auto shadow-2xl p-4 rounded-xl h-fit self-center dark:bg-gray-800/40">
-                        <div className="">
-                        <h1 className="lg:text-3xl md:text-2xl sm:text-xl xs:text-xl font-serif font-extrabold mb-2 dark:text-white">
-                            Profile
-                        </h1>
+            { mentorProfile && (
+                    <Formik
+                        initialValues={{
+                            profile_picture : '',
+                            first_name: mentorProfile.first_name || '',
+                            last_name : mentorProfile.last_name || '',
+                            gender : mentorProfile.gender ||  '',
+                            date_of_birth : mentorProfile.date_of_birth ||  '',
+                            bio : mentorProfile.bio || '',
+                            highest_education_qualification : mentorProfile.highest_education_qualification || '',
+                            experience : mentorProfile.experience || '',
+                            specialisation : mentorProfile.specialisation || '',
+                            
+                        }}
+                        enableReinitialize
+                        validationSchema={validationSchema}
+                        onSubmit={ async (values) => {
+                            const formDataToSend = new FormData();
+                            formDataToSend.append('first_name', values.first_name);
+                            formDataToSend.append('last_name', values.last_name);
+                            formDataToSend.append('gender', values.gender);
+                            formDataToSend.append('date_of_birth',ParseDate(values.date_of_birth));
+                            formDataToSend.append('bio',values.bio);
+                            formDataToSend.append('highest_education_qualification',values.highest_education_qualification);
+                            formDataToSend.append('experience', parseFloat(values.experience));
+                            formDataToSend.append('specialisation',values.specialisation);  
+                            if (values.profile_picture) {
+                                formDataToSend.append('profile_picture', values.profile_picture);
+                            }
+                            try {
 
-                        <form ref={formRef} onSubmit={doSubmit}>
-                            {/* Profile Picture */}
-                            <div className="w-full rounded-sm bg-cover bg-center bg-no-repeat items-center">
-        <input
-            type="file"
-            name="profile_picture"
-            accept="image/jpeg,image/png,image/gif"
-            onChange={(e) => handleImageChange(e)}
-        />
-        <div
-            className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-cover bg-center bg-no-repeat"
-            style={{
-                backgroundImage: `url(${userProfile.profile_picture || "default-image-url"})`,
-            }}
-        >
-            <div className="bg-white/90 rounded-full w-6 h-6 text-center ml-28 mt-4">
-                <input
-                    type="file"
-                    name="profile_picture_hidden"
-                    hidden
-                    
-                />
-                <label htmlFor="upload_profile">
-                    <svg
-                        className="w-6 h-5 text-blue-700"
-                        fill="none"
-                        strokeWidth="1.5"
-                        stroke="currentColor"
-                        viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg"
-                        aria-hidden="true"
-                    >
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M6.827 6.175A2.31 2.31 0 0 1 5.186 7.23c-.38.054-.757.112-1.134.175C2.999 7.58 2.25 8.507 2.25 9.574V18a2.25 2.25 0 0 0 2.25 2.25h15A2.25 2.25 0 0 0 21.75 18V9.574c0-1.067-.75-1.994-1.802-2.169a47.865 47.865 0 0 0-1.134-.175 2.31 2.31 0 0 1-1.64-1.055l-.822-1.316a2.192 2.192 0 0 0-1.736-1.039 48.774 48.774 0 0 0-5.232 0 2.192 2.192 0 0 0-1.736 1.039l-.821 1.316Z"
-                        ></path>
-                        <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M16.5 12.75a4.5 4.5 0 1 1-9 0 4.5 4.5 0 0 1 9 0ZM18.75 10.5h.008v.008h-.008V10.5Z"
-                        ></path>
-                    </svg>
-                </label>
-            </div>
-        </div>
-    </div>
+                                await axiosInstance.patch(`${baseUrl}/users/user-profile/`, formDataToSend, {
+                                    headers: {
+                                        'Content-Type': 'multipart/form-data',
+                                        // Do not set Content-Type for FormData, browser will set it automatically
+                                        Authorization: `Bearer ${accessToken}`, // Include token if using authentication
+                                    },
+                                });
+                                navigate('/mentor/dashboard')
+                            } catch (error) {
+                                console.error('Error updating profile:', error);
+                            }
+                        }}
+                        >
 
-                            {/* Name Fields */}
-                            <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
-                            <div className="w-full mb-4 mt-6">
-                                <label className="mb-2 dark:text-gray-300">First Name</label>
-                                <input
-                                type="text"
-                                className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                                placeholder="First Name"
-                                name="first_name"
-                                value={userProfile.first_name}
-            onChange={(e) => handleChange(e)}
-                                />
-                            </div>
-                            <div className="w-full mb-4 lg:mt-6">
-                                <label className="dark:text-gray-300">Last Name</label>
-                                <input
-                                type="text"
-                                className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                                placeholder="Last Name"
-                                name="last_name"
-                                value={userProfile.last_name}
-            onChange={(e) => handleChange(e)}
-                                />
-                            </div>
-                            </div>
+                            {({ setFieldValue, values}) => (
+                                <section className="py-10 my-auto dark:bg-gray-900">
+                                <div className="lg:w-[80%] md:w-[90%] xs:w-[96%] mx-auto flex gap-4">
+                                <div className="lg:w-[88%] md:w-[80%] sm:w-[88%] xs:w-full mx-auto shadow-2xl p-4 rounded-xl h-fit self-center dark:bg-gray-800/40">
+                                    <div className="">
+                                    <h1 className="lg:text-3xl md:text-2xl sm:text-xl xs:text-xl font-serif font-extrabold mb-2 dark:text-white">
+                                        Profile
+                                    </h1>
+                                    <Form >
+                                        <div  className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-cover bg-center bg-no-repeat"
+                                            style={{
+                                                backgroundImage: `url(${
+                                                    mentorProfile?.profile_picture
+                                                    ? mentorProfile.profile_picture
+                                                    : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                                                })`,
+                                                }}>
 
-                            {/* Gender and Date of Birth */}
-                            <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
-                            <div className="w-full">
-                                <h3 className="dark:text-gray-300 mb-2">Gender</h3>
-                                <select
-                                className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                                value={userProfile.gender}
-            onChange={(e) => handleChange(e)}
-                                name="gender"
-                                >
-                                <option disabled value="">
-                                    Select Gender
-                                </option>
-                                <option value="Male">Male</option>
-                                <option value="Female">Female</option>
-                                </select>
-                            </div>
-                            <div className="w-full">
-                                <h3 className="dark:text-gray-300 mb-2">Date Of Birth</h3>
-                                <input
-                                type="date"
-                                name="dob"
-                                className="text-grey p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                                value={userProfile.dob}
-            onChange={(e) => handleChange(e)}
-                                />
-                            </div>
-                            </div>
-
-                            {/* Bio */}
-                            <div className="w-full mb-4 mt-6">
-                            <label className="mb-2 dark:text-gray-300">Bio</label>
-                            <textarea
-                                className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                                placeholder="Bio"
-                                name="bio"
-                                value={userProfile.bio}
-            onChange={(e) => handleChange(e)}
-                            />
-                            </div>
-
-                            {/* Education Fields */}
-                            <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
-                            <div className="w-full">
-                                <h3 className="dark:text-gray-300 mb-2">Highest Education Qualification</h3>
-                                <select
-                                className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                                name="highest_education_qualification"
-                                value={userProfile.highest_education_qualification}
-            onChange={(e) => handleChange(e)}
-                                >
-                                <option disabled value="">
-                                    Select Qualification
-                                </option>
-                                <option value="diploma">Diploma</option>
-                                <option value="sslc">SSLC</option>
-                                <option value="highersecondary">Higher Secondary</option>
-                                <option value="undergraduate">Under Graduate</option>
-                                <option value="postgraduate">Post Graduate</option>
-                                </select>
-                            </div>
-                            <div className="w-full">
-                                <h3 className="dark:text-gray-300 mb-2">Current Education Qualification</h3>
-                                <select
-                                className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                                name="current_education_qualification"
-                                value={userProfile.current_education_qualification}
-            onChange={(e) => handleChange(e)}
-                                >
-                                <option disabled value="">
-                                    Select Qualification
-                                </option>
-                                <option value="diploma">Diploma</option>
-                                <option value="sslc">SSLC</option>
-                                <option value="highersecondary">Higher Secondary</option>
-                                <option value="undergraduate">Under Graduate</option>
-                                <option value="postgraduate">Post Graduate</option>
-                                </select>
-                            </div>
-                            </div>
-                            {errors.description && (
-            <span className="text-red-500">{errors.first_name}</span>
-        )}
-
-                            {/* Expected Graduation Date */}
-                            {/* <div className="w-full mb-4 mt-6">
-                            <label className="mb-2 dark:text-gray-300">Expected Graduation Date</label>
-                            <input
-                                type="date"
-                                className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
-                                name="expected_graduation_date"
-                                value={data.title}
-            onChange={(e) => handleChange(e)}
-                            />
-                            </div> */}
-                            <div class="w-full rounded-lg bg-blue-500 mt-4 text-white text-lg font-semibold">
-                                <button type="submit" class="w-full p-4">Save</button>
-                            </div>
-                        </form>
-
+                                        </div>
+                                        <input
+                                        type="file"
+                                        name="profile_picture"
+                                        id="profile_picture"
+                                        accept="image/jpeg, image/png, image/gif, image/jpg"
+                                        onChange={(event) => {
+                                            setFieldValue("profile_picture", event.currentTarget.files[0]);
+                                        }}
+                                        className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                                        />
+                                        <ErrorMessage name="profile_picture" component="div" className="text-red-600" />
+            
+                                        {/* Name Fields */}
+                                        <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
+                                        <div className="w-full mb-4 mt-6">
+                                            <label className="mb-2 dark:text-gray-300">First Name</label>
+                                            <Field
+                                            type="text"
+                                            className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                            placeholder="First Name"
+                                            name="first_name"
+                                            />
+                                        </div>
+                                        <ErrorMessage name="first_name" component="div" className="text-red-600" />
                        
-                        </div>
-                    </div>
-                    </div>
-                </section>
-            </div>
+                                        <div className="w-full mb-4 lg:mt-6">
+                                            <label className="dark:text-gray-300">Last Name</label>
+                                            <Field
+                                            type="text"
+                                            className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                            placeholder="Last Name"
+                                            name="last_name"
+                                            />
+                                        </div>
+                                        <ErrorMessage name="last_name" component="div" className="text-red-600" />
+                       
+                                        </div>
+            
+                                        {/* Gender and Date of Birth */}
+                                        <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
+                                        <div className="w-full">
+                                            <h3 className="dark:text-gray-300 mb-2">Gender</h3>
+                                            <Field as="select"
+                                            className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                            name="gender"
+                                            value = { values.gender }
+                                            onChange={(e) => {
+                                                setFieldValue("gender", e.target.value); // Update Formik state on change
+                                                // Displaying selected category ID to the user
+                                                const selectedId = e.target.value; // Change this to display as needed
+                                              }}
+                                            >
+                                            <option disabled value="">
+                                                Select Gender
+                                            </option>
+                                            <option value="male">Male</option>
+                                            <option value="memale">Female</option>
+                                            </Field>
+                                            <ErrorMessage name="gender" component="div" className="text-red-600" />
+                       
+                                        </div>
+                                        <div className="w-full">
+                                            <h3 className="dark:text-gray-300 mb-2">Date Of Birth</h3>
+                                            <Field as="input"
+                                            type="date"
+                                            name="date_of_birth"
+                                            className="text-grey p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                            />
+                                        </div>
+                                        <ErrorMessage name="date_of_birth" component="div" className="text-red-600" />
+                       
+                                        </div>
+            
+                                        {/* Bio */}
+                                        <div className="w-full mb-4 mt-6">
+                                        <label className="mb-2 dark:text-gray-300">Bio</label>
+                                        <Field as="textarea"
+                                            className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                            placeholder="Bio"
+                                            name="bio"
+                                            />
+                                            <ErrorMessage name="bio" component="div" className="text-red-600" />
+                       
+                                        </div>
+            
+                                        {/* Education Fields */}
+                                        <div className="flex lg:flex-row md:flex-col sm:flex-col xs:flex-col gap-2 justify-center w-full">
+                                        <div className="w-full">
+                                            <h3 className="dark:text-gray-300 mb-2">Highest Education Qualification</h3>
+                                            <Field as="select"
+                                            className="w-full text-grey border-2 rounded-lg p-4 pl-2 pr-2 dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                            name="highest_education_qualification"
+                                            value={ values.highest_education_qualification } // populate dynamically
+                                            onChange = { (e) => {
+                                                setFieldValue("highest_education_qualification", e.target.value);
+                                                const selectedId = e.target.value;
+                                            }}
+                                            >
+                                            <option disabled value="">
+                                                Select Qualification
+                                            </option>
+                                            <option value="sslc">SSLC</option>
+                                            <option value="highersecondary">Higher Secondary</option>
+                                            <option value="diploma">Diploma</option>
+                                            <option value="undergraduate">Under Graduate</option>
+                                            <option value="postgraduate">Post Graduate</option>
+                                            </Field>
+                                            <ErrorMessage name="highest_education_qualification" component="div" className="text-red-600" />
+                       
+                                        </div>
+                                        <div className="w-full">
+                                        <label className="mb-2 dark:text-gray-300">Experience</label>
+                                        <Field type="text"
+                                            className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                            placeholder="experience"
+                                            name="experience"
+                                            />
+                                            <ErrorMessage name="experience" component="div" className="text-red-600" />
+                       
+                                        </div >
+                                        </div>
+            
+                                        {/* Speicialisation */}
+                                        <div className="w-full mb-4 mt-6">
+                                        <label className="mb-2 dark:text-gray-300">Specialisation</label>
+                                        <Field type="text"
+                                            className="mt-2 p-4 w-full border-2 rounded-lg dark:text-gray-200 dark:border-gray-600 dark:bg-gray-800"
+                                            placeholder="specialisation"
+                                            name="specialisation"
+                                            />
+                                            <ErrorMessage name="specialisation" component="div" className="text-red-600" />
+                       
+                                        
+                                        </div>
+                                        <div class="w-full rounded-lg bg-blue-500 mt-4 text-white text-lg font-semibold">
+                                            <button type="submit" class="w-full p-4">Save</button>
+                                        </div>
+                                    </Form>
+                                    </div>
+                                </div>
+                                </div>
+                            </section>
+                            )}
+                        </Formik>
+                )}
         </div>
     )
 }

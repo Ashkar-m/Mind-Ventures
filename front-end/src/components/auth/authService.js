@@ -59,57 +59,6 @@ const login = async (email,password) => {
         }
 };
 
-// const login = async (email, password) => {
-//     try {
-//         const response = await axios.post(`${baseUrl}/users/token-view/`, {
-//             email,
-//             password
-//         });
-
-//         if (response.status === 200) {
-//             const data = response.data;
-//             const { access, refresh } = data;
-
-//             const tokenData = JSON.parse(atob(access.split('.')[1]));
-
-//             const userDetailsResponse = await axios.get(`${baseUrl}/users/user-detail/${tokenData.user_id}/`);
-
-//             if (userDetailsResponse.status === 200) {
-//                 const userDetails = userDetailsResponse.data;
-
-//                 if (userDetails.is_verified) {
-//                     localStorage.setItem('ACCESS_TOKEN', JSON.stringify(data.access));
-//                     localStorage.setItem('REFRESH_TOKEN', JSON.stringify(data.refresh));
-//                     localStorage.setItem('user', JSON.stringify({
-//                         user_id: tokenData.user_id,
-//                         email: tokenData.email,
-//                         role: tokenData.role
-//                     }));
-//                     store.dispatch(setCredentials({
-//                         user: {
-//                             user_id: tokenData.user_id,
-//                             email: tokenData.email,
-//                             role: tokenData.role
-//                         },
-//                         accessToken: access,
-//                         refreshToken: refresh,
-//                     }));
-//                     console.log('Login success');
-
-//                     return tokenData;
-//                 } else {
-//                     return { error: { message: 'Your account is blocked or unverified' } };
-//                 }
-//             } else {
-//                 throw new Error('Failed to fetch user details');
-//             }
-//         }
-//     } catch (error) {
-//         console.error('Error logging in:', error.response?.data?.detail || 'unknown error');
-//         return { error: error };
-//     }
-// };
-
 const signUp = async (email, username, password, password2, role) => {
     try {
         const response = await axios.post(`${baseUrl}/users/register/`,{
@@ -139,44 +88,6 @@ const signUp = async (email, username, password, password2, role) => {
         throw error;
     }
 };
-
-
-// const adminLogin = async (email,password) => {
-//     try {
-//         const response = await axios.post(`${baseUrl}/users/token-view/`,{
-//             email,password 
-//         });
-
-//             if (response.status === 200) {
-//                 const data = response.data
-//                 const { access, refresh } = data;
-            
-//                 const tokenData = JSON.parse(atob(access.split('.')[1]));
-//                 localStorage.setItem('ACCESS_TOKEN', JSON.stringify(data.access));
-//                 localStorage.setItem('REFRESH_TOKEN', JSON.stringify(data.refresh));
-//                 localStorage.setItem('user', JSON.stringify({
-//                     user_id : tokenData.user_id,
-//                     email : tokenData.email,
-//                     role : tokenData.role
-//                 }));
-//                 store.dispatch(setCredentials({
-//                     user : {
-//                         user_id : tokenData.user_id,
-//                         email : tokenData.email,
-//                         role : tokenData.role
-//                     },
-//                     accessToken : access,
-//                     refreshToken : refresh,
-//                 }));
-//                 console.log('Login success');
-                
-//                 return tokenData;
-//             }
-//         } catch (error) {
-//             console.error('Error logging in:', error.response?.data?.detail || 'unknown error');
-//             return { error:error };
-//         }
-// };
 
 const adminLogin = async (email, password) => {
     try {

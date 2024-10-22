@@ -85,64 +85,7 @@ const LoginPage = () => {
             }
         },
     })
-    // const formik = useFormik({
-    //     initialValues: {
-    //         email: '',
-    //         password: ''
-    //     },
-    //     validationSchema,
-    //     onSubmit: async (values) => {
-    //         try {
-    //             const { email, password } = values;
-    //             const tokenData = await login(email, password);
     
-    //             if (tokenData && tokenData.error) {
-    //                 setToastMessage([{ message: 'Invalid Email or password ', type: 'danger' }]);
-    //                 return;
-    //             }
-    
-    //             if (tokenData) {
-    //                 const userId = tokenData.user_id;
-    //                 const userDetailsResponse = await fetch(`http://127.0.0.1:8000/users/user-detail/${userId}/`);
-    
-    //                 if (!userDetailsResponse.ok) {
-    //                     throw new Error('Failed to fetch user details');
-    //                 }
-    
-    //                 const userDetails = await userDetailsResponse.json();
-    
-    //                 if (userDetails.role === 'student' && !userDetails.is_verified) {
-    //                     setToastMessage([{ message: 'You are blocked.Please contact with support.', type: 'danger' }]);
-    //                     return;
-    //                 }
-    //                 if (userDetails.role === 'mentor' && !userDetails.is_verified) {
-    //                     setToastMessage([{ message: 'Your profile is not verified.Please connect with support', type: 'danger' }]);
-    //                     return;
-    //                 }
-    
-    //                 let messages = [];
-    
-    //                 if (userDetails.role === 'student') {
-    //                     navigate('/home');
-    //                     messages.push({ message: 'Succeffully logged in', type: 'success' });
-    //                 } else if (userDetails.role === 'mentor') {
-    //                     navigate('/mentor/home');
-    //                     messages.push({ message: 'Successfully logged in as mentor', type: 'success' });
-    //                 } else if (userDetails.role === 'admin') {
-    //                     messages.push({ message: 'Admin can not login using this page.', type: 'warning' });
-    //                 } else {
-    //                     messages.push({ message: 'Unknown role', type: 'danger' });
-    //                 }
-    
-    //                 setToastMessage(messages);
-    //             } else {
-    //                 setToastMessage([{ message: 'Invalid username or password ', type: 'danger' }]);
-    //             }
-    //         } catch (error) {
-    //             setToastMessage([{ message: error.message || "Login failed", type: 'danger' }]);
-    //         }
-    //     },
-    // });
 
 
 const handleToastClose =(indexToRemove) => {

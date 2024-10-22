@@ -134,26 +134,6 @@ const CoursePreview = () => {
                         </div>
                       </div>
 
-                      {/* Course Category */}
-                      {/* <div>
-                        <label htmlFor="category" className="block text-sm font-medium leading-6 text-gray-800">Category</label>
-                        <div className="mt-2">
-                          <Field as="select" value={ course.category_id } 
-                          name="category" 
-                          id="category" 
-                          className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
-                          onChange={(e) => handleCategoryChange(e)}>
-                            <option disabled>Select a category</option>
-                            {categoryList.map((category) => (
-                              <option key={category.id} value={category.id}>
-                                {category.name}
-                              </option>
-                            ))}
-                          </Field>
-                          <ErrorMessage name="category" component="div" className="text-red-600" />
-                        </div>
-                      </div> */}
-
                        {/* Course Category */}
                        <div>
                         <label htmlFor="category" className="block text-sm font-medium leading-6 text-gray-800">Category</label>
@@ -232,18 +212,7 @@ const CoursePreview = () => {
                     <div className="col-span-full mt-8">
                       <label htmlFor="preview_image" className="block text-sm font-medium leading-6 text-gray-800">Preview Image</label>
                       <div className="mt-2">
-                        {/* {course.preview_image && (
-                          <img
-                          src={`url(${
-                            userProfile?.profile_picture
-                            ? userProfile.profile_picture:
-                            : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"})`
-                            } // Assuming this is a valid URL
-                            alt="Current Preview"
-                            className="mb-4 rounded-lg shadow-sm"
-                            style={{ maxWidth: "100%", height: "auto" }}
-                          />
-                        )} */}
+                        
                         {course.preview_image && (
                           <img
                             src={course?.preview_image

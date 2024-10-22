@@ -165,6 +165,7 @@ class ForgotPasswordView(APIView):
 
 class UserProfileView(APIView):
     parser_classes = (MultiPartParser, FormParser)
+    permission_classes = [IsAuthenticated]
     def get(self, request, pk, *args, **kwargs):
         try:
             user = UserAccount.objects.get(pk=pk)
@@ -174,7 +175,7 @@ class UserProfileView(APIView):
         if hasattr(user, 'studentprofile'):
             serializer = StudentProfileSerializer(user.studentprofile, context={'request': request})
         elif hasattr(user, 'mentorprofile'):
-            serializer = StudentProfileSerializer(user.mentorprofile, context={'request': request})
+            serializer = MentorProfileSerializer(user.mentorprofile, context={'request': request})
         else:
             return Response({ "detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         
@@ -182,7 +183,7 @@ class UserProfileView(APIView):
     
     def post(self, request, *args, **kwargs):
         serializer = StudentProfileSerializer(data=request.data, context={'request': request})
-        permission_classes = [IsAuthenticated]
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
@@ -193,17 +194,20 @@ class UserProfileView(APIView):
         user = request.user
         if hasattr(user, 'studentprofile'):
             profile_instance = user.studentprofile
+            serializer_class = StudentProfileSerializer
         elif hasattr(user, 'mentorprofile'):
             profile_instance = user.mentorprofile
+            serializer_class = MentorProfileSerializer
         else:
             return Response({"detail": "Profile not found"}, status=status.HTTP_404_NOT_FOUND)
         
         print(request.data)
-        serializer = StudentProfileSerializer(profile_instance, data=request.data, partial=True)
-        permission_classes = [IsAuthenticated]
+        serializer = serializer_class(profile_instance, data=request.data, partial=True)
+        
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 
