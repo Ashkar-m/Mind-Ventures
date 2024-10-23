@@ -83,8 +83,8 @@ const MentorDashboard = () => {
                     {/* Course details */}
                     <h3 className="text-lg font-bold">{course.title}</h3>
                     <p className="text-sm text-gray-600">{course.description}</p>
-                    <p className="text-sm text-gray-600">{course.price}</p>
-                    <p className="text-sm text-gray-600">{course.duration}</p>
+                    <p className="text-sm text-gray-600">{course.price} (₹)</p>
+                    <p className="text-sm text-gray-600">{course.duration} hours</p>
 
                     {/* Edit button */}
                     <button onClick={ () => handleButton(course.id) } className="bg-blue-500 text-white py-1 px-3 rounded mt-2 hover:bg-blue-600">

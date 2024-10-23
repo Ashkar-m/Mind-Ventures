@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from users.models import UserAccount
+from users.models import UserAccount, MentorProfile
 
 
 class UserDetailSerializers(serializers.ModelSerializer):
@@ -12,3 +12,8 @@ class MentorDetailSerialzer(serializers.ModelSerializer):
     class Meta:
         model = UserAccount
         fields = ['id', 'email', 'phone_number', 'username', 'is_verified']
+
+class MentorProfileSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = MentorProfile
+        fields = '__all__'

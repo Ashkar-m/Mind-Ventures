@@ -6,5 +6,5 @@ urlpatterns = [
     path('users/toggle-status/<int:pk>/', views.ToggleUserStatusView.as_view(), name='user-toggle-status'),
     path('mentor-list/', views.MentorDetailView.as_view(), name='mentor-list'),
     path('mentors/toggle-status/<int:pk>/', views.ToggleMentorStatusView.as_view(), name='mentor-toggle-status'),
-    
+    path('mentor/toggle-approval/<int:pk>/', views.ToggleMentorApprovalView.as_view(), name='toggle-mentor-approval'),
 ]

@@ -184,12 +184,6 @@ class ProfileBaseSerializer(serializers.ModelSerializer):
 
         return super().update(instance, validated_data)
     
-    # def get_profile_picture(self, obj):
-    #     request = self.context.get('request', None)
-    #     if obj.profile_picture:
-    #         return request.build_absolute_uri(obj.profile_picture.url)
-    #     return None
-
 
 class StudentProfileSerializer(ProfileBaseSerializer):
     
@@ -209,5 +203,7 @@ class MentorProfileSerializer(ProfileBaseSerializer):
             'highest_education_qualification',
             'experience',
             'average_rating',
-            'specialisation'
+            'specialisation',
+            'document_image',
+            'approved'
         ]

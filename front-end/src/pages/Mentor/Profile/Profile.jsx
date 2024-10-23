@@ -84,6 +84,7 @@ const MentorProfile = () => {
                             highest_education_qualification : mentorProfile.highest_education_qualification || '',
                             experience : mentorProfile.experience || '',
                             specialisation : mentorProfile.specialisation || '',
+                            document_image : '',
                             
                         }}
                         enableReinitialize
@@ -100,6 +101,9 @@ const MentorProfile = () => {
                             formDataToSend.append('specialisation',values.specialisation);  
                             if (values.profile_picture) {
                                 formDataToSend.append('profile_picture', values.profile_picture);
+                            }
+                            if (values.document_image) {
+                                formDataToSend.append('document_image', values.document_image);
                             }
                             try {
 
@@ -271,6 +275,72 @@ const MentorProfile = () => {
                                             <ErrorMessage name="specialisation" component="div" className="text-red-600" />
                        
                                         
+                                        </div>
+                                        {/* Document upload */}
+
+                                        {/* <div className="mt-8">
+                                        <label htmlFor="document_image" className="block text-sm font-medium text-gray-700 text-left">Upload Course Image</label>
+                                        <div className="mt-2 flex items-center">
+                                            <div className="h-16 w-16 flex-shrink-0 overflow-hidden rounded-full bg-gray-100">
+                                                <img
+                                                    src="https://via.placeholder.com/64"
+                                                    alt="Course preview"
+                                                    id="course-image-preview"
+                                                    className="h-full w-full object-cover"
+                                                />
+                                            </div>
+                                            <div className="ml-4 flex flex-col">
+                                                <input
+                                                    id="document_image"
+                                                    name="document_image"
+                                                    type="file"
+                                                    accept="image/png, image/jpeg, image/gif"
+                                                    className="hidden"
+                                                    onChange={(event) => {
+                                                        setFieldValue("document_image", event.currentTarget.files[0]);
+                                                        const reader = new FileReader();
+                                                        reader.onload = () => {
+                                                            const img = document_image.getElementById('course-image-preview');
+                                                            img.src = reader.result;
+                                                        };
+                                                        reader.readAsDataURL(event.currentTarget.files[0]);
+                                                    }}
+                                                />
+                                                <label htmlFor="document_image" className="inline-block rounded-md border border-gray-300 bg-white px-4 py-2 text-center font-medium text-gray-700 shadow-sm hover:bg-gray-50">
+                                                    Choose an image
+                                                </label>
+                                                <ErrorMessage name="document_image" component="div" className="text-red-600" />
+                                            </div>
+                                        </div>
+                                    </div> */}
+                                        <div className="col-span-full mt-8">
+                                        <label htmlFor="document_image" className="block text-sm font-medium leading-6 text-white">Preview Image</label>
+                                        <div className="mt-2">
+                                            {mentorProfile.document_image && (
+                                            <img
+                                                src={mentorProfile?.document_image
+                                                ? `${mentorProfile.document_image}`
+                                                : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                                                }
+                                                alt="Current Preview"
+                                                className="mb-4 rounded-lg shadow-sm w-40 h-40"
+                                            />
+                                            )}
+
+                                            <input
+                                            type="file"
+                                            name="document_image"
+                                            id="document_image"
+                                            accept="image/jpeg, image/png, image/gif, image/jpg"
+                                            onChange={(event) => {
+                                                setFieldValue("document_image", event.currentTarget.files[0]);
+                                            }}
+                                            className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm
+                                                        file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold
+                                                        file:bg-indigo-500 file:text-white hover:file:bg-indigo-600 file:cursor-pointer text-white"
+                                            />
+                                            <ErrorMessage name="document_image" component="div" className="text-red-600" />
+                                        </div>
                                         </div>
                                         <div class="w-full rounded-lg bg-blue-500 mt-4 text-white text-lg font-semibold">
                                             <button type="submit" class="w-full p-4">Save</button>

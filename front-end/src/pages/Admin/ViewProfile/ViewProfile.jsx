@@ -13,6 +13,22 @@ const AdminMentorProfile = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     console.log(id);
+    const [isModalOpen, setIsModalOpen] = useState(false);
+    // const [isactiveUpdated,setIsActiveUpdated] = useState('');
+
+    // Function to toggle modal
+    const toggleModal = () => {
+        setIsModalOpen(!isModalOpen);
+    };
+    // const handleToggleStatus = async (userId) => {
+    //     try {
+    //         const response = await axiosInstance.patch(`${baseUrl}/useradmin/mentor/toggle-approval/${userId}/`);
+    //         console.log('Mentor approval status', response.data);
+    //         setIsActiveUpdated((prev) => !prev);
+    //     } catch (error) {
+    //         console.error('Error updating status:', error);
+    //     }
+    // }
 
     
 
@@ -147,7 +163,65 @@ const AdminMentorProfile = () => {
                                                 disabled
                                             />
                                         </div>
+
+                                        {/* Document submitted */}
+                                        {/* <div className="mx-auto flex justify-center w-40 h-40 bg-blue-300/20 bg-cover bg-center bg-no-repeat"
+                                            style={{
+                                                backgroundImage: `url(${
+                                                    mentorProfile?.document_image
+                                                    ? mentorProfile.document_image
+                                                    : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                                                })`
+                                            }}>
+                                        </div> */}
+                                         <div
+                                        className="mx-auto flex justify-center w-40 h-40 bg-blue-300/20 bg-cover bg-center bg-no-repeat cursor-pointer"
+                                        style={{
+                                        backgroundImage: `url(${
+                                            mentorProfile?.document_image
+                                            ? mentorProfile.document_image
+                                            : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                                        })`,
+                                        }}
+                                        onClick={toggleModal} // Open modal on image click
+                                    />
+
+                                    {/* Modal */}
+                                    {isModalOpen && (
+                                        <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
+                                        <div className="relative bg-white p-4 rounded-lg shadow-lg">
+                                            {/* Close Button */}
+                                            <button
+                                            onClick={toggleModal}
+                                            className="absolute top-2 right-2 text-gray-600 hover:text-gray-800"
+                                            >
+                                            ✖
+                                            </button>
+
+                                            {/* Large Image with w-50 and h-50 size */}
+                                            <img
+                                            src={
+                                                mentorProfile?.document_image
+                                                ? mentorProfile.document_image
+                                                : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                                            }
+                                            alt="Large Preview"
+                                            className="w-1/4 h-1/4 object-cover"
+                                            />
+                                        </div>
+                                        </div>
+                                    )}
                                     </div>
+                                    {/* <div 
+                                        onClick={() => handleToggleStatus(mentorProfile.user_id)}
+                                        className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${
+                                            mentorProfile.approved
+                                                ? 'bg-red-500/20 text-red-900'
+                                                : 'bg-green-500/20 text-green-900 '
+                                        }`}
+                                    >
+                                        <span>{mentorProfile.is_verified ? 'Approve' : 'DisApprove'}</span>
+                                    </div> */}
                                     <div className="w-full rounded-lg bg-blue-500 mt-4 text-white text-lg font-semibold">
                                         <button className="w-full p-4" onClick={ () => navigate('/admin/mentor-management') }>Back to Home</button>
                                     </div>

@@ -44,6 +44,7 @@ const CoursePreview = () => {
     };
     fetchCourse();
   }, [id]);
+  
 
   // Form validation schema
   const validationSchema = Yup.object().shape({

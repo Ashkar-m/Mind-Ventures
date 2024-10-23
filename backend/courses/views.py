@@ -13,27 +13,7 @@ from . serializers import CategorySerializer, CourseSerializer, CourseVariantSer
 
 class CategoryListView(APIView):
     permission_classes = [IsAuthenticated]
-    # def get(self, request):
-    #     categories = Category.objects.filter(active=True)
-    #     serializer = CategorySerializer(categories, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK) 
-    # def get(self, request):
-    #     # Get query parameter 'all' to determine if admin wants all categories
-    #     show_all = request.query_params.get('all', 'false').lower() == 'true'
-
-    #     if request.user.role == 'admin':
-    #         # If 'all' parameter is passed as true, return all categories
-    #         if show_all:
-    #             categories = Category.objects.all()
-    #         else:
-    #             # Admin wants only active categories
-    #             categories = Category.objects.filter(active=True)
-    #     else:
-    #         # Non-admin users: Return only active categories
-    #         categories = Category.objects.filter(active=True)
-
-    #     serializer = CategorySerializer(categories, many=True)
-    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    
     def get(self, request, category_id=None):
         # If category_id is provided, fetch a single category
         if category_id:
