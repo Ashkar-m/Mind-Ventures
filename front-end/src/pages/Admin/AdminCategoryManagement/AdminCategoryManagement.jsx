@@ -51,6 +51,10 @@ const AdminCategoryManagement = () => {
         }
     }
 
+    const handleCategoryClick = (categoryId) => {
+        navigate(`/admin/edit-category/${categoryId}`)
+    }
+
     return (
         
     <div className="w-full">
@@ -186,11 +190,10 @@ const AdminCategoryManagement = () => {
                 </tr>
             </thead>
             <tbody>
-                {/* ['id', 'name', 'description', 'parent', 'subcategories', 'full_path','active'] */}
                 { categoryList.map( (course) => (
                         <tr key={ course.id }>
                         <td className="p-4 border-b border-blue-gray-50">
-                            <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                            <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-600" onClick={ () => handleCategoryClick(course.id)}>
                                 { course.name }
                                 </p>
                         </td>

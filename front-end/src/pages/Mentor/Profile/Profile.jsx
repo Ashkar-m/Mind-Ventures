@@ -144,7 +144,9 @@ const MentorProfile = () => {
                                         onChange={(event) => {
                                             setFieldValue("profile_picture", event.currentTarget.files[0]);
                                         }}
-                                        className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                                        className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm
+                                        file:mr-4 file:py-2 file:px-4 file:rounded-lg file:border-0 file:text-sm file:font-semibold
+                                        file:bg-indigo-500 file:text-white hover:file:bg-indigo-600 file:cursor-pointer text-white"
                                         />
                                         <ErrorMessage name="profile_picture" component="div" className="text-red-600" />
             

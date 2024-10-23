@@ -5,6 +5,7 @@ from rest_framework import status
 from rest_framework import viewsets
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
+from django.shortcuts import get_object_or_404
 
 from . models import Category, Course, CourseVariant, Chapters
 from . serializers import CategorySerializer, CourseSerializer, CourseVariantSerializer, ChapterSerializers
@@ -16,7 +17,35 @@ class CategoryListView(APIView):
     #     categories = Category.objects.filter(active=True)
     #     serializer = CategorySerializer(categories, many=True)
     #     return Response(serializer.data, status=status.HTTP_200_OK) 
-    def get(self, request):
+    # def get(self, request):
+    #     # Get query parameter 'all' to determine if admin wants all categories
+    #     show_all = request.query_params.get('all', 'false').lower() == 'true'
+
+    #     if request.user.role == 'admin':
+    #         # If 'all' parameter is passed as true, return all categories
+    #         if show_all:
+    #             categories = Category.objects.all()
+    #         else:
+    #             # Admin wants only active categories
+    #             categories = Category.objects.filter(active=True)
+    #     else:
+    #         # Non-admin users: Return only active categories
+    #         categories = Category.objects.filter(active=True)
+
+    #     serializer = CategorySerializer(categories, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK)
+    def get(self, request, category_id=None):
+        # If category_id is provided, fetch a single category
+        if category_id:
+            category = get_object_or_404(Category, id=category_id)
+
+            # Only admins can see inactive categories
+            if request.user.role != 'admin' and not category.active:
+                return Response({'detail': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+            serializer = CategorySerializer(category)
+            return Response(serializer.data, status=status.HTTP_200_OK)
+        
         # Get query parameter 'all' to determine if admin wants all categories
         show_all = request.query_params.get('all', 'false').lower() == 'true'
 
@@ -43,6 +72,24 @@ class CategoryListView(APIView):
                return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+    
+    def patch(self, request, category_id):
+        # Update an existing category
+        category = get_object_or_404(Category, id=category_id)
+
+        # Only admins can update inactive categories
+        if request.user.role != 'admin' and not category.active:
+            return Response({'detail': 'Category not found.'}, status=status.HTTP_404_NOT_FOUND)
+
+        serializer = CategorySerializer(category, data=request.data, partial=True)  # Use partial=True to allow partial updates
+        if serializer.is_valid():
+            try:
+                serializer.save()
+                return Response(serializer.data, status=status.HTTP_200_OK)
+            except Exception as e:
+                return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

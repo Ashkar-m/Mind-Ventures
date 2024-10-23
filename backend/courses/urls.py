@@ -11,6 +11,7 @@ router.register(r'courseview', CourseViewset, basename='courseview')
 urlpatterns = [
     path('', include(router.urls)),
     path('category-list/', views.CategoryListView.as_view(), name='category-list'),
+    path('category-list/<int:category_id>/', views.CategoryListView.as_view(), name='category-list-individual'),
     path('category/toggle-status/<int:pk>/', views.ToggleCategoryActiveView.as_view(), name='category-toggle'),
     path('course-list/', views.CourseAPIView.as_view(), name='course-list'),
     path('course-list/<int:pk>/', views.CourseAPIView.as_view(), name='course-edit'),
