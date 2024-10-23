@@ -5,6 +5,7 @@ from . models import Category, Chapters, CourseVariant, Course
 class CategorySerializer(serializers.ModelSerializer):
     subcategories = serializers.StringRelatedField(many=True, read_only=True)
     full_path = serializers.SerializerMethodField()
+    parent = serializers.StringRelatedField(read_only=True)
 
     class Meta:
         model = Category

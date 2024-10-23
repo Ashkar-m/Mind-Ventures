@@ -13,6 +13,8 @@ const AdminAddCategory = () => {
 
     const { accessToken } = useSelector(state => state.auth)
     const [categoryList, setCategoryList] = useState([]);
+    const [errorMessage,  setErrorMessage] = useState("");
+
 
     const navigate = useNavigate();
 
@@ -59,6 +61,9 @@ const AdminAddCategory = () => {
             navigate('/admin/category-management');
         } catch (error) {
             console.error("Error adding category:", error);
+            if (error.response.data.name) {
+                setErrorMessage(error.response.data.name[0])
+            }
         }
     };
 
@@ -114,6 +119,7 @@ const AdminAddCategory = () => {
                                                     placeholder="Enter category name"
                                                 />
                                                 <ErrorMessage name="categoryName" component="div" className="text-red-500 text-sm mt-1" />
+                                                {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                                             </div>
                                         </div>
 

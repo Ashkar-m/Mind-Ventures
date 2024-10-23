@@ -12,10 +12,27 @@ from . serializers import CategorySerializer, CourseSerializer, CourseVariantSer
 
 class CategoryListView(APIView):
     permission_classes = [IsAuthenticated]
+    # def get(self, request):
+    #     categories = Category.objects.filter(active=True)
+    #     serializer = CategorySerializer(categories, many=True)
+    #     return Response(serializer.data, status=status.HTTP_200_OK) 
     def get(self, request):
-        categories = Category.objects.filter(active=True)
+        # Get query parameter 'all' to determine if admin wants all categories
+        show_all = request.query_params.get('all', 'false').lower() == 'true'
+
+        if request.user.role == 'admin':
+            # If 'all' parameter is passed as true, return all categories
+            if show_all:
+                categories = Category.objects.all()
+            else:
+                # Admin wants only active categories
+                categories = Category.objects.filter(active=True)
+        else:
+            # Non-admin users: Return only active categories
+            categories = Category.objects.filter(active=True)
+
         serializer = CategorySerializer(categories, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK) 
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def post(self, request):
         # Create a new category with the option of assigning a parent category
@@ -26,7 +43,6 @@ class CategoryListView(APIView):
                return Response(serializer.data, status=status.HTTP_201_CREATED)
             except Exception as e:
                 return Response({"detail": str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

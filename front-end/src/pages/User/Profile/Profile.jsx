@@ -67,14 +67,16 @@ const UserProfile = () => {
     
     
     return (
-        <div className="min-w-full" >
+        <div className="min-w-full flex flex-col" >
             {/* Navbar */}
             <UserNavbar />
 
-            {/* Sidebar */}
-            <UserSidebar />
-
-            { userProfile && (
+            <div className="flex w-full h-full">
+                <div className="w-1/4 lg:w-1/5">
+                <UserSidebar />
+                </div>
+                <div className="w-3/4 lg:w-4/5">
+                { userProfile && (
                     <Formik
                         initialValues={{
                             profile_picture : '',
@@ -295,7 +297,9 @@ const UserProfile = () => {
                             )}
                         </Formik>
                 )}
+                </div>
 
+            </div>
         </div>
     )
 }

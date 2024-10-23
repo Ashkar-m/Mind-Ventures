@@ -63,15 +63,16 @@ const MentorProfile = () => {
     }
     
     return (
-        <div className="min-w-full" >
+        <div className="min-w-full flex flex-col" >
             {/* Navbar */}
             <MentorNavbar />
-
-            {/* Sidebar */}
-            <MentorSidebar />
-
-
-            { mentorProfile && (
+            <div className="flex w-full h-full">
+                <div className="w-1/4 lg:w-1/5">
+                {/* Sidebar */}
+                <MentorSidebar />
+                </div>
+                <div className="w-3/4 lg:w-4/5">
+                { mentorProfile && (
                     <Formik
                         initialValues={{
                             profile_picture : '',
@@ -109,7 +110,7 @@ const MentorProfile = () => {
                                         Authorization: `Bearer ${accessToken}`, // Include token if using authentication
                                     },
                                 });
-                                navigate('/mentor/dashboard')
+                                navigate('/mentor/home')
                             } catch (error) {
                                 console.error('Error updating profile:', error);
                             }
@@ -280,6 +281,10 @@ const MentorProfile = () => {
                             )}
                         </Formik>
                 )}
+
+                </div>
+            </div>
+ 
         </div>
     )
 }

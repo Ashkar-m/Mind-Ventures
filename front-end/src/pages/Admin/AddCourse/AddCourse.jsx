@@ -14,6 +14,7 @@ const AdminAddCourse = () => {
     const [categoryList, setCategoryList] = useState([]);
     const accessToken = useSelector((state) => state.auth.accessToken);
     const navigate = useNavigate();
+    const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
         const fetchCategoryList = async () => {
@@ -96,6 +97,9 @@ const AdminAddCourse = () => {
                             navigate('/admin/course-management')
                         } catch (error) {
                             console.error("Error:", error);
+                            if (error.response.data.title) {
+                                setErrorMessage(error.response.data.title[0])
+                            }
                         }
                     }}
                 >
@@ -119,6 +123,7 @@ const AdminAddCourse = () => {
                                                     placeholder="Enter course name"
                                                 />
                                                 <ErrorMessage name="title" component="div" className="text-red-600" />
+                                                {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
                                             </div>
                                         </div>
 

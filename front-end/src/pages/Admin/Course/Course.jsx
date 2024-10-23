@@ -120,7 +120,7 @@ const AdminCourseManagement = () => {
             {/* Course management body part */}
 
             <div className="p-4 sm:ml-64 mt-20 ">
-            <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-md rounded-xl bg-clip-border ">
+            <div className="relative flex flex-col w-full h-full text-gray-700 bg-white shadow-xl rounded-xl bg-clip-border transform hover:scale-105 hover:shadow-2xl transition-all duration-300 ease-in-out">
                 <div className="relative mx-4 mt-4 overflow-hidden text-gray-700 bg-white rounded-none bg-clip-border">
                     <div className="flex items-center justify-center gap-8 mb-8">
                     <div>
@@ -164,12 +164,12 @@ const AdminCourseManagement = () => {
                 </div>
                 <div className="p-6 px-0 overflow-scroll">
                     <table className="w-full mt-4 text-left table-auto min-w-max">
-                    <thead>
+                    <thead className="shadow-2xl bg-gradient-to-r from-white via-white to-gray-100">
                         <tr>
                         <th
-                            className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                            className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                             <p
-                            className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                            className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                             Course
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -179,9 +179,9 @@ const AdminCourseManagement = () => {
                             </p>
                         </th>
                         <th
-                            className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                            className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                             <p
-                            className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                            className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                             Description
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -191,9 +191,9 @@ const AdminCourseManagement = () => {
                             </p>
                         </th>
                         <th 
-                            className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                            className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                             <p
-                            className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                            className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                             Category
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -203,9 +203,9 @@ const AdminCourseManagement = () => {
                             </p>
                         </th>
                         <th
-                            className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                            className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                             <p
-                            className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                            className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                             Course Image
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -215,9 +215,9 @@ const AdminCourseManagement = () => {
                             </p>
                         </th>
                         <th
-                            className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                            className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                             <p
-                            className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                            className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                             Duration
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -227,9 +227,9 @@ const AdminCourseManagement = () => {
                             </p>
                         </th>
                         <th
-                            className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                            className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                             <p
-                            className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                            className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                             Price
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -239,9 +239,9 @@ const AdminCourseManagement = () => {
                             </p>
                         </th>
                         <th
-                            className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                            className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                             <p
-                            className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                            className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                             Mentor
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -251,9 +251,9 @@ const AdminCourseManagement = () => {
                             </p>
                         </th>
                         <th
-                            className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                            className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                             <p
-                            className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                            className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                             Status
                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="2"
                                 stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -277,7 +277,9 @@ const AdminCourseManagement = () => {
                                             maxWidth: '25ch',  
                                             wordWrap: 'break-word'  
                                         }}>
-                                        { course.description }
+                                         {course.description.length > 90
+                                            ? `${course.description.slice(0, 90)}...`
+                                            : course.description}
                                         </p>
                                     </td>
                                 <td className="p-4 border-b border-blue-gray-50">

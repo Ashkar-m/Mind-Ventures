@@ -44,7 +44,7 @@ class Course(models.Model):
         ("approval", "Approval"),
         ("rejected", "Rejected")
     ]
-    title = models.CharField(max_length=255)
+    title = models.CharField(max_length=255,unique=True)
     description = models.TextField(blank=True)
     category = models.ForeignKey(Category, on_delete=models.SET_NULL, null=True)
     preview_image = models.ImageField(

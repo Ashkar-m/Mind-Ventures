@@ -3,11 +3,13 @@ import { baseUrl } from "../../../components/auth/authService";
 import axios from "axios";
 import AdminNavbar from "../AdminNavbar/AdminNavbar";
 import AdminSidebar from "../AdminSidebar/AdminSidebar";
+import { useNavigate } from "react-router-dom";
 
 const AdminMentorManagement = () => {
    
     const [userList, setUserList] = useState([]);
     const [isActiveUpdated, setIsActiveUpdated] = useState(false);
+    const navigate = useNavigate();
 
     useEffect( () => {
         const fetchUserList = async () => {
@@ -36,6 +38,11 @@ const AdminMentorManagement = () => {
             console.error('Error updating status:', error);
         }
     }
+
+    const handleMentorClick =  (userId) => {
+        navigate(`/admin/view-mentor-profile/${userId}`);
+        }
+
 
     return (
         
@@ -86,12 +93,12 @@ const AdminMentorManagement = () => {
         </div>
         <div className="p-6 px-0 overflow-scroll">
             <table className="w-full mt-4 text-left table-auto min-w-max">
-            <thead>
+            <thead className="shadow-2xl bg-gradient-to-r from-white via-white to-gray-100">
                 <tr>
                 <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                    className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                     Username
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -101,9 +108,9 @@ const AdminMentorManagement = () => {
                     </p>
                 </th>
                 <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                    className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                     Email
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -112,7 +119,7 @@ const AdminMentorManagement = () => {
                     </svg>
                     </p>
                 </th>
-                <th
+                {/* <th
                     className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
                     <p
                     className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
@@ -123,11 +130,11 @@ const AdminMentorManagement = () => {
                         d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                     </svg>
                     </p>
-                </th>
+                </th> */}
                 <th
-                    className="p-4 transition-colors cursor-pointer border-y border-blue-gray-100 bg-blue-gray-50/50 hover:bg-blue-gray-50">
+                    className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
-                    className="flex items-center justify-between gap-2 font-sans text-sm antialiased font-normal leading-none text-blue-gray-900 opacity-70">
+                    className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
                     Block/Unblock
                     <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
                         stroke="currentColor" aria-hidden="true" className="w-4 h-4">
@@ -152,7 +159,7 @@ const AdminMentorManagement = () => {
                             <img src={ user.profileImage || "https://demos.creative-tim.com/test/corporate-ui-dashboard/assets/img/team-3.jpg"}
                                 alt={ user.username } 
                                 className="relative inline-block h-9 w-9 !rounded-full object-cover object-center" />
-                            <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
+                            <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-600" onClick={ () => handleMentorClick(user.id)}>
                             { user.username }
                             </p>
                             </div>
@@ -162,18 +169,18 @@ const AdminMentorManagement = () => {
                                 { user.email }
                                 </p>
                             </td>
-                        <td className="p-4 border-b border-blue-gray-50">
+                        {/* <td className="p-4 border-b border-blue-gray-50">
                         <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                             { user.phone_number }
                             </p>
-                        </td>
+                        </td> */}
                         <td className="p-4 border-b border-blue-gray-50">
                             <div 
                                 onClick={() => handleToggleStatus(user.id)}
                                 className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${
                                     user.is_verified
-                                        ? 'bg-green-500/20 text-green-900'
-                                        : 'bg-red-500/20 text-red-900'
+                                        ? 'bg-red-500/20 text-red-900'
+                                        : 'bg-green-500/20 text-green-900 '
                                 }`}
                             >
                                 <span>{user.is_verified ? 'Block' : 'Unblock'}</span>

@@ -124,7 +124,7 @@ const AdminUserManagement = () => {
                     </svg>
                     </p>
                 </th>
-                <th
+                {/* <th
                     className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
                     className="flex items-center justify-between gap-2 font-sans text-sm font-semibold leading-none text-blue-gray-900 opacity-90">
@@ -135,7 +135,7 @@ const AdminUserManagement = () => {
                         d="M8.25 15L12 18.75 15.75 15m-7.5-6L12 5.25 15.75 9"></path>
                     </svg>
                     </p>
-                </th>
+                </th> */}
                 <th
                     className="p-4 transition-colors cursor-pointer border-y-2 border-blue-gray-200 bg-blue-gray-50 hover:bg-blue-gray-100 shadow-md transform hover:translate-y-1 hover:scale-105">
                     <p
@@ -163,21 +163,21 @@ const AdminUserManagement = () => {
                             { user.email }
                             </p>
                         </td>
-                    <td className="p-4 border-b border-blue-gray-50">
+                    {/* <td className="p-4 border-b border-blue-gray-50">
                     <p className="block font-sans text-sm antialiased font-normal leading-normal text-blue-gray-900">
                         { user.phone_number }
                         </p>
-                    </td>
+                    </td> */}
                     <td className="p-4 border-b border-blue-gray-50">
                         <div 
                             onClick={() => handleToggleStatus(user.id)}
                             className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap ${
                                 user.is_verified
-                                    ? 'bg-green-500/20 text-green-900'
-                                    : 'bg-red-500/20 text-red-900'
+                                    ? 'bg-red-500/20 text-red-900'
+                                    : 'bg-green-500/20 text-green-900'
                             }`}
                         >
-                            <span>{user.is_verified ? 'Unlock' : 'Block'}</span>
+                            <span>{user.is_verified ? 'Block' : 'Unblock'}</span>
                         </div>
                     </td>
                     </tr>
