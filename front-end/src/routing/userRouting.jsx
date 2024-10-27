@@ -10,6 +10,7 @@ import OtpPage from '../pages/User/OtpPage/OtpPage'
 import UserProfile from '../pages/User/Profile/Profile'
 import PageRedirect from '../components/PageRedirect/PageRedirect'
 import LoginPage from '../pages/User/Login/Login'
+import CourseChapters from '../pages/User/CourseChapters/CourseChapters'
 
  const UserRouting = () => {
   return (
@@ -23,6 +24,7 @@ import LoginPage from '../pages/User/Login/Login'
             <Route path='/course-detail/:id' element={<CourseDetail/>} />
             <Route path='/otp' element={<OtpPage/>} />
             <Route path='/student/profile' element={<PageRedirect allowedRoles={['student']}><UserProfile /></PageRedirect>} />
+            <Route path='/course/chapters' element={<PageRedirect allowedRoles={['student']}><CourseChapters /></PageRedirect>} />
         </Routes>
         
     </div>

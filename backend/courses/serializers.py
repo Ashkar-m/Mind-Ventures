@@ -69,6 +69,6 @@ class ChapterSerializers(serializers.ModelSerializer):
 
     class Meta:
         model = Chapters
-        fields = ['id', 'title', 'content', 'video_file', 'order', 'course', 'created_at', 'updated_at']
+        fields = ['id', 'title', 'content', 'video_url', 'order', 'course', 'created_at', 'updated_at']
 
 

@@ -297,7 +297,7 @@ class CourseVariantDetailAPIView(APIView):
 class ChapterAPIView(APIView):
 
     def get(self, request):
-        chapter = Chapter.objects.all()
+        chapter = Chapters.objects.all()
         serializer = ChapterSerializers(chapter, many=True)
         return Response(serializer.data)
     

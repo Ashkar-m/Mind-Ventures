@@ -1,6 +1,7 @@
 from django.db import models
 from decimal import Decimal
 from django.contrib.auth import get_user_model
+from django.core.validators import URLValidator
 from django.core.validators import MinValueValidator, FileExtensionValidator
 
 
@@ -93,11 +94,11 @@ class Chapters(models.Model):
     course = models.ForeignKey(Course, on_delete=models.CASCADE, related_name="chapters")
     title = models.CharField(max_length=255)
     content = models.TextField(blank=True)
-    video_file = models.FileField(
-        upload_to='videos/',
+    video_url = models.URLField(
         blank=True,
         null=True,
-        validators=[FileExtensionValidator(["mp4"])],
+        validators=[URLValidator()],
+        help_text="Enter the full YouTube URL (e.g., https://www.youtube.com/watch?v=example)"
     )
     active = models.BooleanField(default=False)
     # For order of each chapters
@@ -107,4 +108,7 @@ class Chapters(models.Model):
     
     def __str__(self):
         return self.title
+    
+    class Meta:
+        ordering = ['order']
         
