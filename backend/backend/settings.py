@@ -62,6 +62,9 @@ INSTALLED_APPS = [
     'users',
     'adminuser',
     'courses',
+    'wishlist',
+    'cart',
+    'orders',
     
 ]
 
@@ -101,17 +104,7 @@ REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'rest_framework_simplejwt.authentication.JWTAuthentication',
     ),
-    # 'DEFAULT_PERMISSION_CLASSES': (
-    #     'rest_framework.permissions.IsAuthenticated',  # Or IsAuthenticatedOrReadOnly based on your needs
-    # ),
-    # 'DEFAULT_VERSIONING_CLASS': None,
-    # 'DEFAULT_PAGINATION_CLASS': None,
-    # 'DEFAULT_SCHEMA_CLASS': 'rest_framework.schemas.openapi.AutoSchema',
-    # 'URL_FORMAT_OVERRIDE': None,
-    # 'DEFAULT_THROTTLE_RATES': {
-    #     'user': '1000/day',
-    # },
-    # 'DEFAULT_TRAILING_SLASH': False,  # Disable trailing slashes globally
+    
 }
 
 TEMPLATES = [
@@ -268,3 +261,7 @@ MEDIA_URL = '/media/'
 MEDIA_ROOT = os.path.join(os.path.dirname(BASE_DIR), 'mediafiles')
 
 APPEND_SLASH = False
+
+
+RAZORPAY_PUBLIC_KEY = os.getenv('RAZORPAY_PUBLIC_KEY')
+RAZORPAY_SECRET_KEY = os.getenv('RAZORPAY_SECRET_KEY')

@@ -1,6 +1,16 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import Navbar from '../../Navbar/Navbar';
+import axiosInstance from '../../../components/Bearer/axiosInterceptor';
+import { baseUrl } from '../../../components/auth/authService';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = () => {
+
+  const [cart, setCart] = useState({ items: [] });
+  const { accessToken } = useSelector( (state) =>  state.auth );
+  const navigate = useNavigate();
+
   // Placeholder data for the cart items
   const cartItems = [
     {
@@ -20,6 +30,22 @@ const Cart = () => {
       imageUrl: 'https://via.placeholder.com/150',
     },
   ];
+  useEffect( () => {
+    const fetchCart = async () => {
+
+      try {
+        const response = await axiosInstance.get(`${baseUrl}/cart/`)
+        const list =  response.data;
+        setCart(list);
+
+      } catch (error) {
+        console.error('Error while fetching cart details',error);
+        
+      }
+    }
+    fetchCart();
+  },[])
+  console.log(cart);
 
   // Calculate total price of cart items
   const totalPrice = cartItems.reduce((total, item) => total + item.price, 0).toFixed(2);
@@ -39,7 +65,7 @@ const Cart = () => {
         <h2 className="text-xl font-semibold text-gray-700 mb-4">Courses in Your Cart</h2>
 
         {/* Cart Items */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {cartItems.map((course) => (
             <div key={course.id} className="bg-white rounded-lg shadow-md overflow-hidden">
               <img src={course.imageUrl} alt="Course Image" className="w-full h-40 object-cover" />
@@ -61,6 +87,37 @@ const Cart = () => {
               </div>
             </div>
           ))}
+        </div> */}
+
+         <div className="flex flex-col space-y-6">
+          {cart.cart_items.length > 0 ? (
+            cart.cart_items.map((item) => (
+              <div key={item.id} className="bg-white rounded-lg shadow-md overflow-hidden">
+                <div className="p-4">
+                  <h3 className="font-bold text-lg text-gray-800">{item.course_title}</h3>
+                  <p className="text-gray-600 text-sm">Price: ₹{item.course_price}</p>
+                  <div className="mt-4 flex items-center justify-between">
+                    <button className="bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded-md text-sm font-semibold" 
+                    onClick={ () => navigate(`/course-detail/${item.course}`)}>
+                      View Course
+                    </button>
+                    <button className="bg-red-500 hover:bg-red-600 text-white py-1 px-3 rounded-md text-sm font-semibold"
+                    onClick={() => removeFromCart(item.course)}>
+                      Remove
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))
+          ) : (
+            <div className="text-center py-20" id="empty-wishlist">
+              <h3 className="text-gray-500 text-lg font-medium">Your cart is empty.</h3>
+              <p className="text-gray-400">Browse our courses and add your favorites here.</p>
+              <a href="/courses" className="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-md">
+                Browse Courses
+              </a>
+            </div>
+          )}
         </div>
 
         {/* Cart Summary */}

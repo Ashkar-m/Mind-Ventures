@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { setCredentials } from '../../features/authReducer'
+import { logout, setCredentials } from '../../features/authReducer'
 import store from '../../store/store';
 
 export const baseUrl='http://127.0.0.1:8000';
@@ -31,13 +31,15 @@ const login = async (email,password) => {
                     localStorage.setItem('user', JSON.stringify({
                         user_id : tokenData.user_id,
                         email : tokenData.email,
-                        role : tokenData.role
+                        role : tokenData.role,
+                        is_verified : tokenData.is_verified
                     }));
                     store.dispatch(setCredentials({
                         user : {
                             user_id : tokenData.user_id,
                             email : tokenData.email,
-                            role : tokenData.role
+                            role : tokenData.role,
+                            is_verified : tokenData.is_verified
                         },
                         accessToken : access,
                         refreshToken : refresh,
@@ -143,5 +145,35 @@ const adminLogin = async (email, password) => {
         return { error: error };
     }
 };
+
+
+export const checkVerificationStatus = async () => {
+     const user = JSON.parse(localStorage.getItem('user'));
+     if (!user) return;
+
+     try {
+        const response = await axios.get(`${baseUrl}/users/user-detail/${user.user_id}/`);
+        if (response.status === 200) {
+            const {is_verified} = response.data;
+            if (user.is_verified !== is_verified) {
+                const updatedUser = { ...user, is_verified };
+                localStorage.setItem('user', JSON.stringify(updatedUser));
+                store.dispatch(setCredentials({
+                    user : updatedUser,
+                    accessToken : JSON.parse(localStorage.getItem('ACCESS_TOKEN')),
+                    refreshToken : JSON.stringify(JSON.parse(localStorage.getItem('REFRESH_TOKEN'))),
+                }));
+
+                if (!is_verified) {
+                    console.log('Your account has been blocked by admin');
+                    store.dispatch(logout());
+                }
+            }
+        }
+    } catch (error) {
+        console.error('Error while fetching verificaiton status', error.response?.data || error.message);
+        
+    }
+}
 
 export {signUp,login,adminLogin}

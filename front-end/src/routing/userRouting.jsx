@@ -11,6 +11,9 @@ import UserProfile from '../pages/User/Profile/Profile'
 import PageRedirect from '../components/PageRedirect/PageRedirect'
 import LoginPage from '../pages/User/Login/Login'
 import CourseChapters from '../pages/User/CourseChapters/CourseChapters'
+import Wishlist from '../pages/User/Wishlist/Wishlist'
+import Cart from '../pages/User/Cart/Cart'
+import Checkout from '../pages/User/Checkout/Checkout'
 
  const UserRouting = () => {
   return (
@@ -25,6 +28,9 @@ import CourseChapters from '../pages/User/CourseChapters/CourseChapters'
             <Route path='/otp' element={<OtpPage/>} />
             <Route path='/student/profile' element={<PageRedirect allowedRoles={['student']}><UserProfile /></PageRedirect>} />
             <Route path='/course/chapters' element={<PageRedirect allowedRoles={['student']}><CourseChapters /></PageRedirect>} />
+            <Route path='/wishlist' element={<PageRedirect allowedRoles={['student']}> <Wishlist /> </PageRedirect>} />
+            <Route path='/cart' element={<PageRedirect allowedRoles={['student']}> <Cart /> </PageRedirect>} />
+            <Route path='/checkout' element={<PageRedirect allowedRoles={['student']}> <Checkout /> </PageRedirect>} />
         </Routes>
         
     </div>

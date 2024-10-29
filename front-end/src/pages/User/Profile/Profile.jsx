@@ -1,7 +1,7 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import UserNavbar from "../Navbar/Navbar";
 import UserSidebar from "../Sidebar/Sidebar";
-import { baseUrl } from "../../../components/auth/authService";
+import { baseUrl, checkVerificationStatus } from "../../../components/auth/authService";
 import { useSelector } from "react-redux";
 import axiosInstance from "../../../components/Bearer/axiosInterceptor";
 import { Formik, Form, Field, ErrorMessage } from "formik";
@@ -11,10 +11,18 @@ import { useNavigate } from "react-router-dom";
 const UserProfile = () => {
 
     const [userProfile, setUserProfile] = useState([]);
-    const formRef = useRef(null);
     const { accessToken, user } = useSelector( state => state.auth );
     const userId = user.user_id ;
+    console.log(user);
+    
     const navigate = useNavigate();
+
+    useEffect( () => {
+        const intervalId = setInterval(() => {
+            checkVerificationStatus();
+        },5000);
+        return () => clearInterval(intervalId);
+    },[])
 
     useEffect( () => {
         const fetchUserProfile = async () => {
@@ -114,7 +122,7 @@ const UserProfile = () => {
                                         Authorization: `Bearer ${accessToken}`, // Include token if using authentication
                                     },
                                 });
-                                navigate('/mentor/dashboard')
+                                navigate('/student/dashboard')
                             } catch (error) {
                                 console.error('Error updating profile:', error);
                             }
@@ -199,7 +207,7 @@ const UserProfile = () => {
                                                 Select Gender
                                             </option>
                                             <option value="male">Male</option>
-                                            <option value="memale">Female</option>
+                                            <option value="female">Female</option>
                                             </Field>
                                             <ErrorMessage name="gender" component="div" className="text-red-600" />
                        

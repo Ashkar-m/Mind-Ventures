@@ -21,9 +21,11 @@ from django.conf import settings
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('users/',include('users.urls')),
-    path('useradmin/',include('adminuser.urls')),
-    path('courses/',include('courses.urls')),
+    path('users/', include('users.urls')),
+    path('useradmin/', include('adminuser.urls')),
+    path('courses/', include('courses.urls')),
+    path('wishlist/', include('wishlist.urls')),
+    path('cart/', include('cart.urls')),
     path('auth/', include('dj_rest_auth.urls')),
     path('auth/registration/', include('dj_rest_auth.registration.urls')),
 ]

@@ -1,30 +1,21 @@
 from rest_framework.permissions import BasePermission
 
-class CanCreateCoursePermission(BasePermission):
-    """
-    Custom permission to check if the user has the 'can_create_course' permission.
-    """
-
+class IsAdmin(BasePermission):
     def has_permission(self, request, view):
-        # Check if the user is authenticated and has the 'can_create_course' permission
-        return request.user.is_authenticated and request.user.has_perm('courses.can_create_course')
+        return request.user.is_authenticated and request.user.role == 'admin'
 
-
-class CanEditCoursePermission(BasePermission):
-    """
-    Custom permission to check if the user has the 'can_edit_course' permission.
-    """
-
+class IsMentor(BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and request.user.has_perm('courses.can_edit_course')
+        return request.user.is_authenticated and request.user.role == 'mentor'
 
-
-class IsMentorOrAdmin(BasePermission):
-    """
-    Custom permission to allow only mentors or admins to access the view.
-    """
-
+class IsStudent(BasePermission):
     def has_permission(self, request, view):
-        return request.user.is_authenticated and (
-            request.user.role == 'admin' or request.user.role == 'mentor'
-        )
+        return request.user.is_authenticated and request.user.role == 'student'
+
+class AllowAnyUser(BasePermission):
+    def has_permission(self, request, view):
+        return True  
+
+class IsAuthenticatedUser(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_authenticated

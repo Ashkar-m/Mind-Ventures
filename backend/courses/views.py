@@ -7,6 +7,7 @@ from rest_framework.permissions import IsAuthenticated
 from rest_framework.parsers import MultiPartParser, FormParser
 from django.shortcuts import get_object_or_404
 
+from backend.permissions import AllowAnyUser, IsAdmin,  IsMentor, IsStudent, IsAuthenticatedUser
 from . models import Category, Course, CourseVariant, Chapters
 from . serializers import CategorySerializer, CourseSerializer, CourseVariantSerializer, ChapterSerializers
 
