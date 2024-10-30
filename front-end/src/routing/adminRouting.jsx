@@ -28,7 +28,7 @@ const AdminRouting = () => {
                 <Route path='/admin/category-management' element={<PageRedirect allowedRoles={['admin']}><AdminCategoryManagement /></PageRedirect>} />
                 <Route path='/admin/course-management' element={<PageRedirect allowedRoles={['admin']}><AdminCourseManagement/></PageRedirect>} />
                 <Route path='/admin/course-preview/:id' element={<PageRedirect allowedRoles={['admin']}><CoursePreview /></PageRedirect>} />
-                <Route path="/admin/add-course" element={<PageRedirect allowedRoles={['admin']}><AdminAddCourse/></PageRedirect>} />
+                {/* <Route path="/admin/add-course" element={<PageRedirect allowedRoles={['admin']}><AdminAddCourse/></PageRedirect>} /> */}
                 <Route path="/admin/add-category" element={<PageRedirect allowedRoles={['admin']}><AdminAddCategory/></PageRedirect>} />
                 <Route path="/admin/view-mentor-profile/:id" element={<PageRedirect allowedRoles={['admin']}><AdminMentorProfile /></PageRedirect>} />
                 <Route path='/admin/edit-category/:id' element={<PageRedirect allowedRoles={['admin']}><AdminEditCategory /></PageRedirect>} />

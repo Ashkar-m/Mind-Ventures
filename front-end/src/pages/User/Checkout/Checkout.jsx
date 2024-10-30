@@ -1,8 +1,94 @@
-import React from 'react'
+import React, { useState } from 'react';
+import axios from "axios";
+import { baseUrl } from '../../../components/auth/authService';
 
 const Checkout = () => {
+
+  const [name, setName] = useState("");
+  const [amount, setAmount] = useState("");
+  const handlePaymentSuccess = async (response) => {
+    try {
+      let bodyData = new FormData();
+
+      bodyData.append("response", JSON.stringify(response));
+
+      await axios({
+        url: `${baseUrl}/orders/payment/success/`,
+        mehtod : "POST",
+        data: bodyData,
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+
+      })
+      .then((res) => {
+        console.log("Everythins is OK!");
+        setName("")
+        setAmount("");
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+    } catch (error) {
+      console.log(console.error());
+    }
+  }
+
+  const loadScript = () => {
+    const script = document.createElement('script');
+    script.src = "https://checkout.razorpay.com/v1/checkout.js";
+    document.body.appendChild(script);
+  }
+
+  const showRazorpay = async () => {
+    const res = await loadScript();
+    let bodyData = new FormData();
+    bodyData.append("amount", amount);
+    bodyData.append("name",name);
+
+    const data = await axios({
+      url : `${baseUrl}/orders/pay/`,
+      method: "POST",
+      headers: {
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      data: bodyData,
+    }).then((res) => {
+      return res
+    });
+
+    var options = {
+      key_id: process.env.RAZORPAY_KEY_ID,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
+      amout: data.data.payment.amount,
+      currency: "INR",
+      name:"Org. Name",
+      description: "Test transaction",
+      image: "",
+      order_id: data.data.payment.id,
+      handler: function (response) {
+        handlePaymentSuccess(response);
+      },
+      prefill: {
+        name: "User's name",
+        email: "User's email",
+        contact: "User's phone",
+      },
+      notes: {
+        address: "Razorpay Corporate Office"
+      },
+      theme: {
+        color: "#3399cc"
+      },
+    };
+    var rzp1 = new window.Razorpay(options);
+    rzp1.open();
+  }
   return (
-    <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
+    <div>
+      <section className="bg-white py-8 antialiased dark:bg-gray-900 md:py-16">
   <form action="#" className="mx-auto max-w-screen-xl px-4 2xl:px-0">
     <ol className="items-center flex w-full max-w-2xl text-center text-sm font-medium text-gray-500 dark:text-gray-400 sm:text-base">
       <li className="after:border-1 flex items-center text-primary-700 after:mx-6 after:hidden after:h-1 after:w-full after:border-b after:border-gray-200 dark:text-primary-500 dark:after:border-gray-700 sm:after:inline-block sm:after:content-[''] md:w-full xl:after:mx-10">
@@ -461,7 +547,40 @@ const Checkout = () => {
       </div>
     </div>
   </form>
+  
 </section>
+<div className="container" style={{ marginTop: "20vh" }}>
+      <form>
+        <h1>Payment page</h1>
+
+        {/* <div className="form-group">
+          <label htmlFor="name">Product name</label>
+          <input
+            type="text"
+            className="form-control"
+            id="name"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+        </div> */}
+        <div className="form-group">
+          <label htmlFor="exampleInputPassword1">Amount</label>
+          <input
+            type="text"
+            className="form-control"
+            id="amount"
+            value={amount}
+            onChange={(e) => setAmount(e.target.value)}
+          />
+        </div>
+      </form>
+      <button onClick={showRazorpay} className="btn btn-primary btn-block">
+        Pay with razorpay
+      </button>
+    </div>
+
+    </div>
+    
   )
 }
 

@@ -45,6 +45,8 @@ const CoursePreview = () => {
     fetchCourse();
   }, [id]);
   
+  console.log(course);
+  
 
   // Form validation schema
   const validationSchema = Yup.object().shape({
@@ -84,6 +86,7 @@ const CoursePreview = () => {
               price: course.price || '',
               category: course.category_id || '',
               preview_image: '', // We set this on file upload
+              mentor: course.mentor || '',
             }}
             enableReinitialize
             validationSchema={validationSchema}
@@ -94,6 +97,7 @@ const CoursePreview = () => {
               formDataToSend.append('duration', parseFloat(values.duration));
               formDataToSend.append('price', parseFloat(values.price));
               formDataToSend.append('category', parseInt(values.category, 10));
+              formDataToSend.append('mentor', values.mentor);
               // formDataToSend.append('preview_image', values.preview_image);
               if (values.preview_image) {
                 formDataToSend.append('preview_image', values.preview_image);
@@ -151,7 +155,7 @@ const CoursePreview = () => {
                             }}
                             className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
                           >
-                            <option disabled>Select a category</option>
+                            {/* <option disabled>Select a category</option> */}
                             {categoryList.map((category) => (
                               <option key={category.id} value={category.id}>
                                 {category.name}
@@ -191,6 +195,20 @@ const CoursePreview = () => {
                           <ErrorMessage name="price" component="div" className="text-red-600" />
                         </div>
                       </div>
+
+                      <div>
+                        <label htmlFor="mentor" className="block text-sm font-medium leading-6 text-gray-800">Mentor</label>
+                        <div className="mt-2">
+                          <Field
+                            type="text"
+                            name="mentor"
+                            id="mentor"
+                            className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
+                            placeholder="Enter course price"
+                          />
+                          <ErrorMessage name="mentor" component="div" className="text-red-600" />
+                        </div>
+                      </div>
                     </div>
 
                     {/* Course Description */}
@@ -225,7 +243,7 @@ const CoursePreview = () => {
                           />
                         )}
 
-                        <input
+                        {/* <input
                           type="file"
                           name="preview_image"
                           id="preview_image"
@@ -234,7 +252,7 @@ const CoursePreview = () => {
                             setFieldValue("preview_image", event.currentTarget.files[0]);
                           }}
                           className="block w-full rounded-lg border-2 py-2 px-4 shadow-sm ring-1 ring-gray-300 focus:ring-2 focus:ring-indigo-500 sm:text-sm"
-                        />
+                        /> */}
                         <ErrorMessage name="preview_image" component="div" className="text-red-600" />
                       </div>
                     </div>
@@ -244,8 +262,9 @@ const CoursePreview = () => {
                       <button
                         type="submit"
                         className="w-full rounded-lg bg-blue-600 py-2 px-4 text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500"
+                        onClick={ () => navigate('/admin/course-management')}
                       >
-                        Submit Course
+                        Back
                       </button>
                     </div>
                   </div>

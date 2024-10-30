@@ -16,6 +16,7 @@ class WishlistView(APIView):
 
     def post(self, request):
         course_id = request.data.get('course_id')
+        print(course_id)
         try:
             course = Course.objects.get(id=course_id)
         except Course.DoesNotExist:

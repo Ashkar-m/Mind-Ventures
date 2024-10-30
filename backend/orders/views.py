@@ -1,6 +1,5 @@
 from django.shortcuts import render
-import JSONParser
-import environ
+import json
 import razorpay
 
 from django.conf import settings
@@ -10,7 +9,6 @@ from rest_framework.response import Response
 from .models import OrderTransaction
 from .serializers import OrderTransactionSerializer
 
-env=environ.Env()
 
 
 @api_view(['POST'])
@@ -28,7 +26,7 @@ def start_payment(request):
 
         order = OrderTransaction.objects.create(
             order_amount=amount,
-            order_payment_id=payment['id']
+            order_payment_id=payment['id'],
             isPaid=False
         )
         serializer = OrderTransactionSerializer(order)

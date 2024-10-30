@@ -147,7 +147,7 @@ const AdminCourseManagement = () => {
                             Search
                         </label>
                         </div>
-                    <div className="flex flex-col gap-2 shrink-0 sm:flex-row">
+                    {/* <div className="flex flex-col gap-2 shrink-0 sm:flex-row">
                         <button onClick={ ()=> navigate('/admin/add-course')}
                         className="flex select-none items-center gap-3 rounded-lg bg-gray-900 py-2 px-4 text-center align-middle font-sans text-xs font-bold uppercase text-white shadow-md shadow-gray-900/10 transition-all hover:shadow-lg hover:shadow-gray-900/20 focus:opacity-[0.85] focus:shadow-none active:opacity-[0.85] active:shadow-none disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none"
                         type="button">
@@ -159,7 +159,7 @@ const AdminCourseManagement = () => {
                         </svg>
                         Add Course
                         </button>
-                    </div>
+                    </div> */}
                     </div>
                 </div>
                 <div className="p-6 px-0 overflow-scroll">
@@ -263,6 +263,7 @@ const AdminCourseManagement = () => {
                             </p>
                         </th>
                         </tr>
+                        
                     </thead>
                     <tbody>
                         { courseList.map( (course) => (
@@ -320,7 +321,7 @@ const AdminCourseManagement = () => {
                                    
                                     </p>
                                 </td>
-                                <td className="p-4 border-b border-blue-gray-50">
+                                {/* <td className="p-4 border-b border-blue-gray-50">
                                     
                                      <div 
                                     className={`inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap  bg-green-500/20 text-green-900`}
@@ -332,7 +333,37 @@ const AdminCourseManagement = () => {
                                     >
                                         <span onClick={ () => rejectCourse(course.id)}>REJECT</span>
                                     </div>
-                                </td>
+                                </td> */}
+                                 <td className="p-4 border-b border-blue-gray-50">
+                                {course.status === 'pending' && (
+                                    <>
+                                        <div 
+                                            className="inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-green-500/20 text-green-900"
+                                        >
+                                            <span onClick={() => approveCourse(course.id)}>APPROVE</span>
+                                        </div>
+                                        <div 
+                                            className="inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-red-500/20 text-red-900"
+                                        >
+                                            <span onClick={() => rejectCourse(course.id)}>REJECT</span>
+                                        </div>
+                                    </>
+                                )}
+                                {course.status === 'approval' && (
+                                    <div 
+                                        className="inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-red-500/20 text-red-900"
+                                    >
+                                        <span onClick={() => rejectCourse(course.id)}>REJECT</span>
+                                    </div>
+                                )}
+                                {course.status === 'rejected' && (
+                                    <div 
+                                        className="inline-block px-2 py-1 font-sans text-xs font-bold uppercase rounded-md select-none whitespace-nowrap bg-green-500/20 text-green-900"
+                                    >
+                                        <span onClick={() => approveCourse(course.id)}>APPROVE</span>
+                                    </div>
+                                )}
+                            </td>
                                 
                                 </tr>
                             ))}

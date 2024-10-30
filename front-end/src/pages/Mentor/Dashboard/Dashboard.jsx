@@ -9,9 +9,7 @@ const MentorDashboard = () => {
 
     const [courses, setCourses] = useState([]);
     const navigate = useNavigate();
-    const refreshToken = useSelector((state) => state.auth.refreshToken);
     const accessToken = useSelector((state) => state.auth.accessToken);
-    const [loading, setLoading] = useState(false);
     const [userDetails, setUserDetails] = useState(null);
 
     useEffect(() => {
@@ -85,6 +83,17 @@ const MentorDashboard = () => {
                     <p className="text-sm text-gray-600">{course.description}</p>
                     <p className="text-sm text-gray-600">{course.price} (₹)</p>
                     <p className="text-sm text-gray-600">{course.duration} hours</p>
+                    { course.status === 'approval' &&(
+                        <p className="text-sm text-green-600">{course.status}</p>
+                    )}
+                    { course.status === 'pending' &&(
+                        <p className="text-sm text-gray-900">{course.status}</p>
+                    )}
+                    { course.status === 'rejected' &&(
+                        <p className="text-sm text-red-600">{course.status}</p>
+                    )}
+                    
+                    
 
                     {/* Edit button */}
                     <button onClick={ () => handleButton(course.id) } className="bg-blue-500 text-white py-1 px-3 rounded mt-2 hover:bg-blue-600">

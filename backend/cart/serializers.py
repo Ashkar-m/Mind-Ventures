@@ -2,9 +2,12 @@ from rest_framework import serializers
 from .models import Cart, CartItem
 
 class CartItemSerializer(serializers.ModelSerializer):
+    course_title = serializers.CharField(source='course.title', read_only=True)
+    course_price = serializers.DecimalField(source='course.price', max_digits=10, decimal_places=2, read_only=True)
+
     class Meta:
         model = CartItem
-        fields = ['id', 'course', 'price', 'is_active', 'added_at']
+        fields = ['id', 'course', 'price', 'is_active', 'added_at', 'course_title', 'course_price']
 
 class CartSerializer(serializers.ModelSerializer):
     cart_items = CartItemSerializer(many=True, read_only=True)
