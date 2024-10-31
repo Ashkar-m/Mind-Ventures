@@ -82,6 +82,29 @@ export default function CourseList() {
         console.error('Error adding to wishlist', error);
       }
     };
+
+    const handleCartClick = async (courseId) => {
+      console.log(courseId);
+
+      try {
+        const response = await axiosInstance.post(
+          `${baseUrl}/cart/item/`,
+          { course_id : courseId },
+          {
+            headers: {
+              'Authorization': `Bearer ${accessToken}`,
+              'Content-Type': 'application/json',
+            },
+          }
+        );
+        const data = response.data;
+        navigate('/cart')
+      } catch (error) {
+        console.error('Error adding to cart', error);
+        
+      }
+      
+    }
     
 
   return (
@@ -360,7 +383,9 @@ export default function CourseList() {
 
 
                     
-                    <button className="rounded-full pointer-events-none border border-slate-300 p-2.5 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
+                    <button 
+                    onClick={() => handleCartClick(course.id)}
+                    className="rounded-full border border-slate-300 p-2.5 text-center text-sm transition-all shadow-sm hover:shadow-lg text-slate-600 hover:text-white hover:bg-slate-800 hover:border-slate-800 focus:text-white focus:bg-slate-800 focus:border-slate-800 active:border-slate-800 active:text-white active:bg-slate-800 disabled:pointer-events-none disabled:opacity-50 disabled:shadow-none" type="button">
                       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor" className="w-4 h-4">
                           <path d="M7 4h10l1 2H8L7 4zm0 1.5h10l1.5 3H8L7 5.5zM2 3h2l3.5 9h11l1.5-3H8.585L7.414 8H19c1.21 0 2.207.894 2.448 2.062L22 10c0 1.104-.896 2-2 2H8.585L7 12.5H19c1.105 0 2 .896 2 2s-.895 2-2 2H6l-1-2H2v-2h2l3.5-9H2z" />
                           <circle cx="9" cy="21" r="1.5" />

@@ -5,11 +5,33 @@ import razorpay
 from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
+from rest_framework import status
 
 from .models import OrderTransaction
 from .serializers import OrderTransactionSerializer
+from cart.models import Cart
 
 
+@api_view(['POST'])
+def checkout_cart(request):
+    try:
+        user = request.user
+        cart = Cart.objects.get(user=user)
+
+        order = Order.objects.create(user=user, order_status='pending')
+
+        for item in cart.cart_items.filter(is_active=True):
+            OrderCourse.objects.create(
+                order=order,
+                course=item.course,
+                price=item.price
+            )
+            item.delete()
+        return Response({"message": "Checkout successful", "order_id": order.id}, status=status.HTTP_201_CREATED)
+    except Cart.DoesNotExist:
+        return Response({"error": "Cart not found"}, status=status.HTTP_404_NOT_FOUND)
+    except Exception as e:
+        return Response({"error": str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
 @api_view(['POST'])
 def start_payment(request):

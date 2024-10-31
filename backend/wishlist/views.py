@@ -11,7 +11,13 @@ class WishlistView(APIView):
 
     def get(self, request):
         wishlist, created = Wishlist.objects.get_or_create(user=request.user)
-        serializer = WishlistSerializer(wishlist)
+        
+        filtered_items = wishlist.items.filter(
+            course__status="approval",
+            course__mentor__is_verified=True
+        )
+        print(filtered_items)
+        serializer = WishlistSerializer(wishlist, context={'items': filtered_items})
         return Response(serializer.data)
 
     def post(self, request):

@@ -13,9 +13,14 @@ class WishlistItemSerializer(serializers.ModelSerializer):
 
 
 class WishlistSerializer(serializers.ModelSerializer):
-    items = WishlistItemSerializer(many=True, read_only=True)
+    items = serializers.SerializerMethodField()
     total_price = serializers.DecimalField(max_digits=10, decimal_places=2, read_only=True)
 
     class Meta:
         model = Wishlist
         fields = ['user', 'created_at', 'updated_at', 'items', 'total_price']
+
+    def get_items(self, obj):
+        # Retrieve filtered items from context or default to all items
+        items = self.context.get('items', obj.items.all())
+        return WishlistItemSerializer(items, many=True).data

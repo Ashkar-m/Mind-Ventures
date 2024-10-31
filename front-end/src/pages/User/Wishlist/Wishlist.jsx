@@ -127,9 +127,24 @@ const Wishlist = () => {
     }
   };
 
-  const addToCart = (courseId) => {
-    // Add to cart logic can be implemented here
-    console.log(`Adding course ${courseId} to cart.`);
+  const addToCart = async (courseId) => {
+    try {
+      const response = await axiosInstance.post(
+        `${baseUrl}/cart/item/`,
+        { course_id : courseId },
+        {
+          headers: {
+            'Authorization': `Bearer ${accessToken}`,
+            'Content-Type': 'application/json',
+          },
+        }
+      );
+      const data = response.data;
+      removeFromWishlist(courseId);
+      navigate('/cart')
+    } catch (error) {
+      console.error('Error adding to cart', error);
+    }
   };
 
   return (
@@ -152,7 +167,11 @@ const Wishlist = () => {
               {wishlist.items.map((item) => (
                 <tr key={item.id} className="border-b">
                   <td className="px-6 py-4 flex items-center space-x-4">
-                    <img src={item.course} alt={item.course_title} className="w-16 h-16 rounded-lg" />
+                    <img  src={item?.course_image 
+                        ? `${baseUrl}${item.course_image}`
+                        : "https://images.unsplash.com/photo-1499696010180-025ef6e1a8f9?ixlib=rb-4.0.3&amp;ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&amp;auto=format&amp;fit=crop&amp;w=1470&amp;q=80"
+                        } 
+                    alt={item.course_title} className="w-16 h-16 rounded-lg" />
                     <div>
                       <h3 className="font-bold text-gray-800">{item.course_title}</h3>
                       <button
@@ -187,7 +206,7 @@ const Wishlist = () => {
             <h3 className="text-gray-500 text-lg font-medium">Your wishlist is empty.</h3>
             <p className="text-gray-400">Browse our courses and add your favorites here.</p>
             <a
-              href="/courses"
+              href="/course-list"
               className="mt-4 inline-block bg-blue-500 hover:bg-blue-600 text-white py-2 px-6 rounded-md"
             >
               Browse Courses
