@@ -6,9 +6,11 @@ from django.conf import settings
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
-from .models import OrderTransaction
-from .serializers import OrderTransactionSerializer
+from .models import OrderTransaction, Order, OrderCourse
+from .serializers import OrderTransactionSerializer, OrderSerializer, OrderItemSerializer
 from cart.models import Cart
 
 
@@ -94,3 +96,25 @@ def handle_payment_success(request):
     order.save()
 
     return Response({"message": "payment successfullly recieved"}, status=200)
+
+
+class OrderView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        order, created = Order.objects.get_or_create(user=request.user)
+        serializer = OrderSerializer(order)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
+class OrderItemView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def delete(self, request, item_id):
+
+        try:
+            order_item = OrderCourse.objects.get(order__user=request.user, course__id=item_id)
+            order_item.delete()
+            return Response({"message": "Course removed from Order"}, status=status.HTTP_204_NO_CONTENT)
+        except CartItem.DoesNotExist:
+            return Response({"error": "Course not found in Orders"}, status=status.HTTP_404_NOT_FOUND)
+

@@ -19,11 +19,11 @@ const Checkout = () => {
   useEffect( () => {
     const fetchCheckout = async () => {
       try {
-        const response = await axiosInstance.get(`${baseUrl}/orders/checkout/`)
+        const response = await axiosInstance.get(`${baseUrl}/orders/order/`)
         const list = response.data;
         setCheckout(list);
 
-        const total = list.order_items.reduce((sum, item) => sum + Number(item.course__price), 0);
+        const total = list.orders.reduce((sum, item) => sum + Number(item.course__price), 0);
         setTotalPrice(total);
 
       } catch (error) {
@@ -33,18 +33,20 @@ const Checkout = () => {
     }
     fetchCheckout();
   } ,[])
+  console.log(checkout);
+  
 
-  log(checkout);
+  
 
   const removeFromCheckout = async (courseId) => {
     try {
       await axiosInstance.delete(`${baseUrl}/orders/item/${courseId}/`);
       setCheckout((prevCheckout) => ({
         ...prevCheckout,
-        order_items: prevCheckout.order_items.filter((item) => item.course !== courseId),
+        order_items: prevCheckout.orders.filter((item) => item.course !== courseId),
 
       }));
-      const updateTotal = checkout.order_items
+      const updateTotal = checkout.orders
         .filter((item) => item.course  !== courseId)
         .reduce((sum, item) => sum + item.course_price, 0);
       setTotalPrice(updateTotal);
@@ -607,7 +609,7 @@ const Checkout = () => {
       <main className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-semibold mb-6">Your Cart</h2>
 
-        {checkout && checkout.order_items && checkout.order_items.length > 0 ? (
+        {checkout && checkout.orders && checkout.orders.length > 0 ? (
           <>
             <table className="min-w-full bg-white shadow-md rounded-lg overflow-hidden mb-8">
               <thead>
@@ -618,7 +620,7 @@ const Checkout = () => {
                 </tr>
               </thead>
               <tbody>
-                {checkout.order_items.map((item) => (
+                {checkout.orders.map((item) => (
                   <tr key={item.id} className="border-b">
                     <td className="px-6 py-4 flex items-center space-x-4">
                     <img  src={item?.course_image 
