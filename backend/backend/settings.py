@@ -57,6 +57,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'dj_rest_auth.registration',
     'django_extensions',
+    'channels',
 
     
     'users',
@@ -65,7 +66,7 @@ INSTALLED_APPS = [
     'wishlist',
     'cart',
     'orders',
-    
+    'chat',
 ]
 
 
@@ -126,6 +127,7 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'backend.wsgi.application'
 
+ASGI_APPLICATION = 'backend.asgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -265,3 +267,12 @@ APPEND_SLASH = False
 
 RAZORPAY_PUBLIC_KEY = os.getenv('RAZORPAY_PUBLIC_KEY')
 RAZORPAY_SECRET_KEY = os.getenv('RAZORPAY_SECRET_KEY')
+
+CHANNEL_LAYERS = {
+    "default": {
+        "BACKEND": "channels_redis.core.RedisChannelLayer",
+        "CONFIG": {
+            "hosts": [("127.0.0.1", 6379)],  # Ensure Redis is running on this port
+        },
+    },
+}
