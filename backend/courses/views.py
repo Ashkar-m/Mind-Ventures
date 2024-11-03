@@ -297,11 +297,17 @@ class CourseVariantDetailAPIView(APIView):
 
 class ChapterAPIView(APIView):
 
-    def get(self, request):
-        chapter = Chapters.objects.all()
-        serializer = ChapterSerializers(chapter, many=True)
-        return Response(serializer.data)
-    
+    def get(self, request, pk):
+
+        try:
+            course = Course.objects.get(pk=pk)
+            chapters = Chapters.objects.filter(course=course) 
+            serializer = ChapterSerializers(chapters, many=True)
+            return Response(serializer.data)
+
+        except Course.DoesNotExist:
+            return Response({"error": "Course not found"}, status=404)
+
     def post(self, request):
         serializer = ChapterSerializers(data=request.data)
         if serializer.is_valid():
@@ -344,3 +350,15 @@ class ChapterDetailAPIView(APIView):
         chapter.delete()
         return Response({"message": "Chapter deleted"}, status=status.HTTP_204_NO_CONTENT)
 
+    # Add the patch method for updating only video_url
+    def patch(self, request, pk):
+        chapter = self.get_object(pk)
+        if chapter is None:
+            return Response({"error": "Chapter not found"}, status=status.HTTP_404_NOT_FOUND)
+
+        # Only accept the video_url field for partial updates
+        serializer = ChapterSerializers(chapter, data=request.data, partial=True)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

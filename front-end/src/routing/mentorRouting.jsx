@@ -7,6 +7,7 @@ import MentorProfile from "../pages/Mentor/Profile/Profile";
 import MentorDashboard from "../pages/Mentor/Dashboard/Dashboard";
 import EditCourse from "../pages/Mentor/EditCourse/EditCourse";
 import PageRedirect from "../components/PageRedirect/PageRedirect";
+import Chapter from "../pages/Mentor/Chapter/Chapter";
 
 
 const MentorRouting = () => {
@@ -18,6 +19,7 @@ const MentorRouting = () => {
             <Route path="/mentor/profile" element={<PageRedirect allowedRoles={['mentor']}><MentorProfile /></PageRedirect>} />
             <Route path='/mentor/dashboard' element={<PageRedirect allowedRoles={['mentor']}><MentorDashboard /></PageRedirect> } />
             <Route path='/mentor/edit-course/:id' element={<PageRedirect allowedRoles={['mentor']}><EditCourse/></PageRedirect>} />
+            <Route path='/mentor/chapters/:id' element={<PageRedirect allowedRoles={['mentor']}><Chapter /></PageRedirect>} />
             </Routes>
         </div>
     )
