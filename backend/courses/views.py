@@ -320,8 +320,8 @@ class ChapterDetailAPIView(APIView):
 
     def get_object(self, pk):
         try:
-            return Chapter.objects.get(pk=pk)
-        except Chapter.DoesNotExist:
+            return Chapters.objects.get(pk=pk)
+        except Chapters.DoesNotExist:
             return None
     
     def get(self, request, pk):
