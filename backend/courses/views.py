@@ -297,6 +297,8 @@ class CourseVariantDetailAPIView(APIView):
 
 class ChapterAPIView(APIView):
 
+    parser_classes = (MultiPartParser, FormParser)
+
     def get(self, request, pk):
 
         try:
@@ -309,10 +311,12 @@ class ChapterAPIView(APIView):
             return Response({"error": "Course not found"}, status=404)
 
     def post(self, request):
+        
         serializer = ChapterSerializers(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
+        print(serializer.errors)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 

@@ -65,7 +65,7 @@ class CourseVariantSerializer(serializers.ModelSerializer):
 
 
 class ChapterSerializers(serializers.ModelSerializer):
-    course = serializers.StringRelatedField()
+    course = serializers.PrimaryKeyRelatedField(queryset=Course.objects.all())
 
     class Meta:
         model = Chapters

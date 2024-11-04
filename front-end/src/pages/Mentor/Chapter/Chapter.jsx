@@ -200,7 +200,7 @@ const Chapter = () => {
                         <p className="text-center text-gray-500 mb-4">No chapters found.</p>
                         <button
                             className="bg-blue-500 text-white py-2 px-6 rounded-md shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2"
-                            onClick={() => {/* Add functionality to add a new chapter here */}}
+                            onClick={() => addCourse () }
                         >
                             Add New Chapter
                         </button>

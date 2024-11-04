@@ -103,7 +103,7 @@ const MentorDashboard = () => {
                     <button onClick={ () => handleButton(course.id) } className="bg-blue-500 text-white py-1 px-3 rounded mt-2 hover:bg-blue-600">
                         Edit Course
                     </button>
-                    <button onClick={ () => handleChapters(course.id) } className="bg-blue-500 text-white py-1 px-3 rounded mt-2 hover:bg-blue-600">
+                    <button onClick={ () => handleChapters(course.id) } className="bg-blue-500 text-white py-1 px-3 rounded ml-2 mt-2 hover:bg-blue-600">
                         Show Chapters
                     </button>
                     </div>
