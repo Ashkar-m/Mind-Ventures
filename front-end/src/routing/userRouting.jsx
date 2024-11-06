@@ -14,6 +14,7 @@ import CourseChapters from '../pages/User/CourseChapters/CourseChapters'
 import Wishlist from '../pages/User/Wishlist/Wishlist'
 import Cart from '../pages/User/Cart/Cart'
 import Checkout from '../pages/User/Checkout/Checkout'
+import Chat from '../pages/User/Chat/Chat'
 
  const UserRouting = () => {
   return (
@@ -31,6 +32,7 @@ import Checkout from '../pages/User/Checkout/Checkout'
             <Route path='/wishlist' element={<PageRedirect allowedRoles={['student']}> <Wishlist /> </PageRedirect>} />
             <Route path='/cart' element={<PageRedirect allowedRoles={['student']}> <Cart /> </PageRedirect>} />
             <Route path='/checkout' element={<PageRedirect allowedRoles={['student']}> <Checkout /> </PageRedirect>} />
+            <Route path='/chat' element={<PageRedirect allowedRoles={['student']}> <Chat /></PageRedirect>} />
         </Routes>
         
     </div>

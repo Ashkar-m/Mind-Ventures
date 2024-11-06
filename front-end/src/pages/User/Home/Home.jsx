@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import Navbar from '../../Navbar/Navbar';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../Footer/Footer';
+import { useDispatch, useSelector } from 'react-redux';
 
 
 export default function Home() {
@@ -9,6 +10,9 @@ export default function Home() {
 
   const [userDetails, setUserDetails] = useState(null);
   const [userInfo, setUserInfo] = useState(null);
+
+  const dispatch = useDispatch();
+
 
   useEffect(() => {
     const user = JSON.parse(localStorage.getItem('user'));
@@ -49,10 +53,13 @@ export default function Home() {
     }
   }, [userInfo]);
 
+  
+
    
   return (
     <div>
       <Navbar/>
+
       
       {/* Hero section */}
       <section className="bg-white dark:bg-gray-900 left-0 right-0 top-40 mt-16 z-50">

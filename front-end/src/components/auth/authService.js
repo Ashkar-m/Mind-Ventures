@@ -147,33 +147,67 @@ const adminLogin = async (email, password) => {
 };
 
 
-export const checkVerificationStatus = async () => {
-     const user = JSON.parse(localStorage.getItem('user'));
-     if (!user) return;
+// export const checkVerificationStatus = async () => {
+//      const user = JSON.parse(localStorage.getItem('user'));
+//      if (!user) return;
 
-     try {
+//      try {
+//         const response = await axios.get(`${baseUrl}/users/user-detail/${user.user_id}/`);
+//         if (response.status === 200) {
+//             const {is_verified} = response.data;
+//             if (user.is_verified !== is_verified) {
+//                 const updatedUser = { ...user, is_verified };
+//                 localStorage.setItem('user', JSON.stringify(updatedUser));
+//                 store.dispatch(setCredentials({
+//                     user : updatedUser,
+//                     accessToken : JSON.parse(localStorage.getItem('ACCESS_TOKEN')),
+//                     refreshToken : JSON.stringify(JSON.parse(localStorage.getItem('REFRESH_TOKEN'))),
+//                 }));
+
+//                 if (!is_verified) {
+//                     console.log('Your account has been blocked by admin');
+//                     store.dispatch(logout());
+//                 }
+//             }
+//         }
+//     } catch (error) {
+//         console.error('Error while fetching verificaiton status', error.response?.data || error.message);
+        
+//     }
+// }
+
+const checkVerificationStatus = async () => {
+    const user = JSON.parse(localStorage.getItem('user'));
+    if (!user) return;
+
+    try {
         const response = await axios.get(`${baseUrl}/users/user-detail/${user.user_id}/`);
         if (response.status === 200) {
-            const {is_verified} = response.data;
+            const { is_verified } = response.data;
+
             if (user.is_verified !== is_verified) {
                 const updatedUser = { ...user, is_verified };
                 localStorage.setItem('user', JSON.stringify(updatedUser));
+
                 store.dispatch(setCredentials({
-                    user : updatedUser,
-                    accessToken : JSON.parse(localStorage.getItem('ACCESS_TOKEN')),
-                    refreshToken : JSON.stringify(JSON.parse(localStorage.getItem('REFRESH_TOKEN'))),
+                    user: updatedUser,
+                    accessToken: JSON.parse(localStorage.getItem('ACCESS_TOKEN')),
+                    refreshToken: JSON.parse(localStorage.getItem('REFRESH_TOKEN')),
                 }));
 
-                if (!is_verified) {
+                // Dispatch setUserBlockedStatus based on verification status
+                const isBlocked = (updatedUser.role === 'mentor' || updatedUser.role === 'student') && !is_verified;
+                store.dispatch(setUserBlockedStatus(isBlocked));
+
+                if (isBlocked) {
                     console.log('Your account has been blocked by admin');
                     store.dispatch(logout());
                 }
             }
         }
     } catch (error) {
-        console.error('Error while fetching verificaiton status', error.response?.data || error.message);
-        
+        console.error('Error while fetching verification status:', error.response?.data || error.message);
     }
-}
+};
 
-export {signUp,login,adminLogin}
+export { signUp, login, adminLogin, checkVerificationStatus }
