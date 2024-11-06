@@ -37,6 +37,8 @@ export default function Home() {
     };
     fetchUserInfo();
   }, [userDetails]);
+  console.log('hey',userDetails);
+  
 
   useEffect(() => {
     if (userInfo && userInfo['role']) {
