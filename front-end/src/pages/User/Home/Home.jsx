@@ -3,6 +3,7 @@ import Navbar from '../../Navbar/Navbar';
 import { useNavigate } from 'react-router-dom';
 import Footer from '../Footer/Footer';
 import { useDispatch, useSelector } from 'react-redux';
+import { logout } from '../../../features/authReducer';
 
 
 export default function Home() {
@@ -19,26 +20,53 @@ export default function Home() {
     setUserDetails(user);
   }, [])
 
+  // useEffect(() => {
+  //   const fetchUserInfo = async () => {
+  //     if (userDetails) {
+  //       try{
+  //         const id = userDetails['user_id']
+  //         const response = await fetch(`http://127.0.0.1:8000/users/user-detail/${id}/`);
+  //         if (!response.ok) {
+  //           throw new Error('Failed to fetcch user details');
+  //         }
+  //         const info = await response.json();
+  //         setUserInfo(info);
+  //       } catch (error) {
+  //         console.error('Error fetching user details:', error);
+  //       }   
+  //     }
+  //   };
+  //   fetchUserInfo();
+  // }, [userDetails]);
+  
   useEffect(() => {
     const fetchUserInfo = async () => {
-      if (userDetails) {
-        try{
-          const id = userDetails['user_id']
-          const response = await fetch(`http://127.0.0.1:8000/users/user-detail/${id}/`);
-          if (!response.ok) {
-            throw new Error('Failed to fetcch user details');
-          }
-          const info = await response.json();
-          setUserInfo(info);
-        } catch (error) {
-          console.error('Error fetching user details:', error);
-        }   
-      }
+        if (userDetails) {
+            try {
+                const id = userDetails['user_id'];
+                const response = await fetch(`http://127.0.0.1:8000/users/user-detail/${id}/`);
+                if (!response.ok) {
+                    throw new Error('Failed to fetch user details');
+                }
+                const info = await response.json();
+                
+                // Check if the user is verified
+                if (!info.is_verified) {
+                    localStorage.removeItem('ACCESS_TOKEN')
+                    localStorage.removeItem('REFRESH_TOKEN')
+                    dispatch(logout())
+                    navigate('/login')
+                } else {
+                    // If verified, update userInfo
+                    setUserInfo(info);
+                }
+            } catch (error) {
+                console.error('Error fetching user details:', error);
+            }
+        }
     };
     fetchUserInfo();
-  }, [userDetails]);
-  console.log('hey',userDetails);
-  
+}, [userDetails, userInfo]); // Add userInfo as a dependency to re-render on change
 
   useEffect(() => {
     if (userInfo && userInfo['role']) {

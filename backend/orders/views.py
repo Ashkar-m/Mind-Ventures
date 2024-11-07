@@ -106,6 +106,21 @@ class OrderView(APIView):
         serializer = OrderSerializer(order)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
+# class OrderView(APIView):
+#     permission_classes = [IsAuthenticated]
+
+#     def get(self, request):
+#         # Filter for a single active order, if that's the use case
+#         try:
+#             order = Order.objects.get(user=request.user, order_status='active')
+#             serializer = OrderSerializer(order)
+#             return Response(serializer.data, status=status.HTTP_200_OK)
+#         except Order.DoesNotExist:
+#             return Response({"detail": "No active order found for the user."}, status=status.HTTP_404_NOT_FOUND)
+#         except Order.MultipleObjectsReturned:
+#             return Response({"detail": "Multiple active orders found for the user. Please resolve this issue."}, status=status.HTTP_400_BAD_REQUEST)
+
+
 class OrderItemView(APIView):
     permission_classes = [IsAuthenticated]
 

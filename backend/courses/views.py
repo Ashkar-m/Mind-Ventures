@@ -138,9 +138,8 @@ class CourseAPIView(APIView):
             # Check if the student's is_verified field is True
             # courses = Course.objects.filter(mentor__is_verified=True) | Course.objects.filter(mentor__role='admin')
             courses = Course.objects.filter(
-                status='approval'
-            ) | Course.objects.filter(
-                mentor__role='admin', 
+                mentor__role='mentor',
+                mentor__is_verified = True,
                 status='approval'
             )
             
