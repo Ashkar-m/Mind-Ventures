@@ -13,6 +13,7 @@ import AdminAddCourse from "../pages/Admin/AddCourse/AddCourse";
 import AdminAddCategory from "../pages/Admin/Category/Category";
 import AdminMentorProfile from "../pages/Admin/ViewProfile/ViewProfile";
 import AdminEditCategory from "../pages/Admin/EditCategory/EditCategory";
+import AdminChapterManagement from "../pages/Admin/Chapter/Chapter";
 
 
 const AdminRouting = () => {
@@ -32,6 +33,7 @@ const AdminRouting = () => {
                 <Route path="/admin/add-category" element={<PageRedirect allowedRoles={['admin']}><AdminAddCategory/></PageRedirect>} />
                 <Route path="/admin/view-mentor-profile/:id" element={<PageRedirect allowedRoles={['admin']}><AdminMentorProfile /></PageRedirect>} />
                 <Route path='/admin/edit-category/:id' element={<PageRedirect allowedRoles={['admin']}><AdminEditCategory /></PageRedirect>} />
+                <Route path="/admin/course-chapters/:id" element={<PageRedirect allowedRoles={['admin']}><AdminChapterManagement /> </PageRedirect>} />
             </Routes>
         </div>
     )
