@@ -123,7 +123,6 @@ function Chat({ userId, receiverId }) {
     const socketRef = useRef(null);
 
     useEffect(() => {
-        // Initialize WebSocket connection
         socketRef.current = new WebSocket(wsUrl);
 
         socketRef.current.onopen = () => console.log("WebSocket connected");
@@ -134,7 +133,6 @@ function Chat({ userId, receiverId }) {
             setMessages((prevMessages) => [...prevMessages, data]);
         };
 
-        // Close socket on component unmount
         return () => {
             socketRef.current.close();
         };
