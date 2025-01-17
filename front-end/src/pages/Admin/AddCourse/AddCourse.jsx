@@ -125,7 +125,6 @@ const AdminAddCourse = () => {
                                             </div>
                                         </div>
 
-                                        {/* Course Category */}
                                         <div>
                                             <label htmlFor="category" className="block text-sm font-medium leading-6 text-gray-800">Category</label>
                                             <div className="mt-2">
@@ -141,7 +140,6 @@ const AdminAddCourse = () => {
                                             </div>
                                         </div>
 
-                                        {/* Course Duration */}
                                         <div>
                                             <label htmlFor="duration" className="block text-sm font-medium leading-6 text-gray-800">Duration (hours)</label>
                                             <div className="mt-2">
@@ -156,7 +154,6 @@ const AdminAddCourse = () => {
                                             </div>
                                         </div>
 
-                                        {/* Course Price */}
                                         <div>
                                             <label htmlFor="price" className="block text-sm font-medium leading-6 text-gray-800">Price ($)</label>
                                             <div className="mt-2">
