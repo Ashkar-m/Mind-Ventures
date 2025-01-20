@@ -33,7 +33,6 @@ const AdminAddCourse = () => {
         fetchCategoryList();
     }, [accessToken]);
 
-    // Yup validation schema
     const validationSchema = Yup.object().shape({
         title: Yup.string()
         .matches(/^[A-Za-z][A-Za-z0-9 ]*$/, "Course name must start with a letter and can contain only alphanumeric characters and spaces")
@@ -91,7 +90,6 @@ const AdminAddCourse = () => {
                                     'Authorization': `Bearer ${accessToken}`,
                                 },
                             });
-                            // Handle success (e.g., show a success message or redirect)
                             navigate('/admin/course-management')
                         } catch (error) {
                             console.error("Error:", error);
