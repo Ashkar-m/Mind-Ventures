@@ -19,25 +19,6 @@ export default function Home() {
     const user = JSON.parse(localStorage.getItem('user'));
     setUserDetails(user);
   }, [])
-
-  // useEffect(() => {
-  //   const fetchUserInfo = async () => {
-  //     if (userDetails) {
-  //       try{
-  //         const id = userDetails['user_id']
-  //         const response = await fetch(`http://127.0.0.1:8000/users/user-detail/${id}/`);
-  //         if (!response.ok) {
-  //           throw new Error('Failed to fetcch user details');
-  //         }
-  //         const info = await response.json();
-  //         setUserInfo(info);
-  //       } catch (error) {
-  //         console.error('Error fetching user details:', error);
-  //       }   
-  //     }
-  //   };
-  //   fetchUserInfo();
-  // }, [userDetails]);
   
   useEffect(() => {
     const fetchUserInfo = async () => {
@@ -92,7 +73,7 @@ export default function Home() {
 
       
       {/* Hero section */}
-      <section className="bg-white dark:bg-gray-900 left-0 right-0 top-40 mt-16 z-50">
+      {/* <section className="bg-white dark:bg-gray-900 left-0 right-0 top-40 mt-16 z-50">
         <div className="grid max-w-screen-xl px-4 py-8 mx-auto lg:gap-8 xl:gap-0 lg:py-16 lg:grid-cols-12">
             <div className="mr-auto place-self-center lg:col-span-7">
                 <h1 className="max-w-2xl mb-4 text-4xl font-extrabold tracking-tight leading-none md:text-5xl xl:text-6xl dark:text-white">Payments tool for software companies</h1>
@@ -109,7 +90,7 @@ export default function Home() {
                 <img src="https://flowbite.s3.amazonaws.com/blocks/marketing-ui/hero/phone-mockup.png" alt="mockup" />
             </div>                
         </div>
-      </section>
+      </section> */}
 
     {/* Features section */}
     <div class="bg-white py-24 sm:py-32">
