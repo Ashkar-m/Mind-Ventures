@@ -72,8 +72,8 @@ export default function Home() {
       {/* <Navbar/> */}
 
    <section className='bg-gray-100'>
-   <nav  className="fixed top-0 left-0 w-full z-50 p-4 shadow-lg text-white 
-      bg-[rgba(64,36,109,0.7)] backdrop-blur-lg transition-all duration-300 
+   <nav  className="fixed top-0 left-0 w-full z-50 p-4 shadow-lg text-white
+      bg-[rgba(113,78,170,0.7)] backdrop-blur-lg transition-all duration-300 
       hover:bg-[rgba(64,36,109,0.9)]">
         <div class="container mx-auto flex justify-between items-center">
             <h1 class="text-2xl font-extrabold tracking-wide hover:text-yellow-400 transition duration-300">MindVentures</h1>
