@@ -79,9 +79,10 @@ export default function Home() {
             <h1 class="text-2xl font-extrabold tracking-wide hover:text-yellow-400 transition duration-300">MindVentures</h1>
 
             <div class="hidden md:flex space-x-6">
-                <a href="#" class="hover:text-yellow-400 font-semibold transition duration-300">About</a>
+                <a onClick={() => navigate('/about')} class="hover:text-yellow-400 font-semibold transition duration-300">About</a>
                 <a href="#" class="hover:text-yellow-400 font-semibold transition duration-300">Wishlist</a>
-                <a href="#" class="hover:text-yellow-400 font-semibold transition duration-300">Student Profile</a>
+                <a onClick={ () => navigate('/course-list')} class="hover:text-yellow-400 font-semibold transition duration-300">Courses</a>
+                <a onClick={() => navigate('/student/profile')} class="hover:text-yellow-400 font-semibold transition duration-300">Student Profile</a>
             </div>
 
             <a href="#" class="bg-yellow-400 text-purple-900 px-4 py-2 rounded-lg font-semibold hover:bg-yellow-500 transition duration-300 shadow-md">Login</a>
