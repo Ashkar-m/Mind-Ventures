@@ -5,6 +5,7 @@ import { baseUrl } from '../../../components/auth/authService';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import Wishlist from '../Wishlist/Wishlist';
+import UserNavbar from '../Navbar/Navbar';
 
 const Cart = () => {
 
@@ -72,7 +73,7 @@ const Cart = () => {
   return (
     
     <div className="mt-14 min-h-screen">
-      <Navbar />
+      <UserNavbar />
 
       <main className="container mx-auto px-4 py-8">
         <h2 className="text-2xl font-semibold mb-6">Your Cart</h2>
