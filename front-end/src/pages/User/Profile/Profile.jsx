@@ -140,7 +140,7 @@ const UserProfile = () => {
                                     </h1>
                                     <Form >
                                         
-                                        <div  className={`cursor-pointer rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300 ${
+                                        {/* <div  className={`cursor-pointer rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300 ${
                                         isOpen
                                             ? "w-[350px] h-[350px] md:w-[500px] md:h-[500px] border-4 border-white shadow-lg"
                                             : "w-[141px] h-[141px]"
@@ -153,13 +153,45 @@ const UserProfile = () => {
                                                 })`,
                                                 }}
                                                 onClick={ () => setIsOpen(!isOpen)}>
-                                                    {/* <img
-                                                    src={userProfile?.profile_picture}
-                                                    alt="Profile"
-                                                    className="w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full object-cover border-4 border-white shadow-lg"
-                                                    /> */}
 
-                                        </div>
+                                        </div> */}
+                                        <>
+            {/* Profile Image (Clickable) */}
+                                            <div
+                                                className="cursor-pointer w-[141px] h-[141px] rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300"
+                                                style={{
+                                                    backgroundImage: `url(${
+                                                        userProfile?.profile_picture
+                                                            ? userProfile.profile_picture
+                                                            : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                                                    })`
+                                                }}
+                                                onClick={() => setIsOpen(true)}
+                                            ></div>
+
+                                            {/* Modal for Full-Size Image */}
+                                            {isOpen && (
+                                                <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-75 z-50">
+                                                    <div className="relative">
+                                                        <button
+                                                            className="absolute top-3 right-3 bg-white text-black rounded-full p-2"
+                                                            onClick={() => setIsOpen(false)}
+                                                        >
+                                                            ✖
+                                                        </button>
+                                                        <img
+                                                            src={
+                                                                userProfile?.profile_picture
+                                                                    ? userProfile.profile_picture
+                                                                    : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
+                                                            }
+                                                            alt="Profile"
+                                                            className="w-[90vw] md:w-[500px] max-h-[90vh] rounded-lg border-4 border-white shadow-lg"
+                                                        />
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </>
                                         <input
                                         type="file"
                                         name="profile_picture"
