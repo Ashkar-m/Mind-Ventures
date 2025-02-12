@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import axiosInstance from '../../../components/Bearer/axiosInterceptor';
 import { useSelector } from 'react-redux';
 import _ from 'lodash';
+import UserNavbar from '../Navbar/Navbar';
 
 
 export default function CourseList() {
@@ -110,7 +111,7 @@ export default function CourseList() {
   return (
     
     <div className="min-w-full flex flex-col" >
-        <Navbar/>
+        <UserNavbar />
         <div className="flex w-full h-full">
            
             <div className="w-1/4 lg:w-1/5">

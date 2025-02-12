@@ -11,6 +11,7 @@ import { useNavigate } from "react-router-dom";
 const UserProfile = () => {
 
     const [userProfile, setUserProfile] = useState([]);
+    const [isOpen, setIsOpen] = useState(false);
     const { accessToken, user } = useSelector( state => state.auth );
     const userId = user.user_id ;
     console.log(user);
@@ -139,14 +140,24 @@ const UserProfile = () => {
                                     </h1>
                                     <Form >
                                         
-                                        <div  className="mx-auto flex justify-center w-[141px] h-[141px] bg-blue-300/20 rounded-full bg-cover bg-center bg-no-repeat"
+                                        <div  className={`cursor-pointer rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300 ${
+                                        isOpen
+                                            ? "w-[350px] h-[350px] md:w-[500px] md:h-[500px] border-4 border-white shadow-lg"
+                                            : "w-[141px] h-[141px]"
+                                        }`}
                                             style={{
                                                 backgroundImage: `url(${
                                                     userProfile?.profile_picture
                                                     ? userProfile.profile_picture
                                                     : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
                                                 })`,
-                                                }}>
+                                                }}
+                                                onClick={ () => setIsOpen(!isOpen)}>
+                                                    {/* <img
+                                                    src={userProfile?.profile_picture}
+                                                    alt="Profile"
+                                                    className="w-[350px] h-[350px] md:w-[500px] md:h-[500px] rounded-full object-cover border-4 border-white shadow-lg"
+                                                    /> */}
 
                                         </div>
                                         <input
