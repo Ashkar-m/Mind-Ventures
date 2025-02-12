@@ -131,32 +131,17 @@ const UserProfile = () => {
                         >
 
                             {({ setFieldValue, values}) => (
-                                <section className="py-10 my-auto dark:bg-gray-900">
+                                <section className="py-10 my-auto">
                                 <div className="lg:w-[80%] md:w-[90%] xs:w-[96%] mx-auto flex gap-4">
-                                <div className="lg:w-[88%] md:w-[80%] sm:w-[88%] xs:w-full mx-auto shadow-2xl p-4 rounded-xl h-fit self-center dark:bg-gray-800/40">
+                                <div className="lg:w-[88%] md:w-[80%] sm:w-[88%] xs:w-full mx-auto shadow-2xl p-4 rounded-xl h-fit self-center">
                                     <div className="">
-                                    <h1 className="lg:text-3xl md:text-2xl sm:text-xl xs:text-xl font-serif font-extrabold mb-2 dark:text-white">
+                                    <h1 className="lg:text-3xl md:text-2xl sm:text-xl xs:text-xl font-serif font-extrabold mt-4 mb-2 dark:text-black text-center">
                                         Profile
                                     </h1>
                                     <Form >
                                         
-                                        {/* <div  className={`cursor-pointer rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300 ${
-                                        isOpen
-                                            ? "w-[350px] h-[350px] md:w-[500px] md:h-[500px] border-4 border-white shadow-lg"
-                                            : "w-[141px] h-[141px]"
-                                        }`}
-                                            style={{
-                                                backgroundImage: `url(${
-                                                    userProfile?.profile_picture
-                                                    ? userProfile.profile_picture
-                                                    : "https://images.unsplash.com/photo-1438761681033-6461ffad8d80?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w0NzEyNjZ8MHwxfHNlYXJjaHw4fHxwcm9maWxlfGVufDB8MHx8fDE3MTEwMDM0MjN8MA&ixlib=rb-4.0.3&q=80&w=1080"
-                                                })`,
-                                                }}
-                                                onClick={ () => setIsOpen(!isOpen)}>
-
-                                        </div> */}
-                                        <>
-            {/* Profile Image (Clickable) */}
+                                        <div className="flex items-center justify-center cursor-pointer" tabIndex="-1">
+                                            {/* Profile Image (Clickable) */}
                                             <div
                                                 className="cursor-pointer w-[141px] h-[141px] rounded-full bg-cover bg-center bg-no-repeat transition-all duration-300"
                                                 style={{
@@ -191,7 +176,7 @@ const UserProfile = () => {
                                                     </div>
                                                 </div>
                                             )}
-                                        </>
+                                        </div>
                                         <input
                                         type="file"
                                         name="profile_picture"
