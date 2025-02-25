@@ -90,6 +90,7 @@ axiosInstance.interceptors.response.use(
             originalRequest._retry = true;
 
             const accessToken = await refreshToken();
+            
             originalRequest.headers['Authorization'] = `Bearer ${accessToken}`;
 
             return axiosInstance(originalRequest);
@@ -98,5 +99,6 @@ axiosInstance.interceptors.response.use(
         return Promise.reject(error);
     }
 );
+
 
 export default axiosInstance;
